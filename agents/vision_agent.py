@@ -1,14 +1,5 @@
-from __future__ import annotations
+"""Compatibility wrapper for the Phase 1 vision package."""
 
-from .base_agent import BaseAgent
+from .vision.runtime import VisionAgent
 
-
-class VisionAgent(BaseAgent):
-    modality = "vision"
-
-    def __init__(self, artifact_path: str | None = None) -> None:
-        super().__init__(
-            "microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224",
-            ["normal", "benign", "malignant"],
-            artifact_path=artifact_path,
-        )
+__all__ = ["VisionAgent"]

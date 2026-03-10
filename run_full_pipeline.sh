@@ -10,8 +10,9 @@ setup_job=$(sbatch --parsable --export="$SBATCH_EXPORT" slurm/00_setup.sh)
 model_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$setup_job" slurm/01_download_base_models.sh)
 data_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$setup_job" slurm/02_download_data.sh)
 prep_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$data_job":"$model_job" slurm/03_preprocess.sh)
+feature_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$prep_job":"$model_job" slurm/03_extract_vision_features.sh)
 
-vision_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$prep_job" slurm/04_train_vision.sh)
+vision_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$feature_job" slurm/04_train_vision.sh)
 ehr_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$prep_job" slurm/05_train_ehr.sh)
 genomics_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$prep_job" slurm/06_train_genomics.sh)
 literature_job=$(sbatch --parsable --export="$SBATCH_EXPORT" --dependency=afterok:"$prep_job" slurm/07_train_literature.sh)
@@ -25,6 +26,7 @@ echo "  setup:      $setup_job"
 echo "  models:     $model_job"
 echo "  data:       $data_job"
 echo "  preprocess: $prep_job"
+echo "  vfeat:      $feature_job"
 echo "  vision:     $vision_job"
 echo "  ehr:        $ehr_job"
 echo "  genomics:   $genomics_job"

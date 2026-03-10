@@ -40,15 +40,29 @@ class Settings:
 
 
 def _default_root() -> Path:
+    """Return the default project root, preferring scratch on clusters."""
     scratch = os.getenv("SCRATCH")
     if scratch:
         return Path(scratch) / "breast-cancer-multimodal-ai"
     return Path(__file__).resolve().parents[1]
 
 
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Merge nested dictionaries without mutating the input mappings."""
+    merged = dict(base)
+    for key, value in override.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
 def load_settings(config_path: str | os.PathLike[str] | None = None) -> Settings:
+    """Load runtime settings from env vars and optional YAML config files."""
     repo_root = Path(__file__).resolve().parents[1]
     load_dotenv(repo_root / ".env")
+    default_config = repo_root / "config" / "default.yaml"
 
     project_root = Path(os.getenv("PROJECT_ROOT", _default_root()))
     data_root = Path(os.getenv("DATA_ROOT", project_root / "data"))
@@ -72,11 +86,15 @@ def load_settings(config_path: str | os.PathLike[str] | None = None) -> Settings
         kaggle_key=os.getenv("KAGGLE_KEY", ""),
     )
 
+    loaded_config: dict[str, Any] = {}
+    if yaml is not None and default_config.exists():
+        loaded_config = yaml.safe_load(default_config.read_text()) or {}
     if config_path:
         if yaml is None:
             raise RuntimeError("pyyaml is required to load experiment configs")
         loaded = yaml.safe_load(Path(config_path).read_text()) or {}
-        settings.extras.update(loaded)
+        loaded_config = _deep_merge(loaded_config, loaded)
+    settings.extras.update(loaded_config)
 
     for path in (
         settings.raw_data_root,

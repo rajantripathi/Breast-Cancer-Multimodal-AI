@@ -1,0 +1,9 @@
+project:
+  environment: isambard
+vision:
+  extraction:
+    batch_size: 16
+    num_workers: 8
+deployment:
+  slurm_partition: workq
+  account_env: SLURM_ACCOUNT

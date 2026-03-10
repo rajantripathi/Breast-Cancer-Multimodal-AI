@@ -1,0 +1,48 @@
+vision:
+  default_model: uni2
+  smoke_limit: 8
+  models:
+    uni2:
+      repo_id: MahmoodLab/UNI2-h
+      embedding_dim: 1536
+      gated: true
+      input_kind: slide_tiles
+      cache_subdir: vision/uni2
+    conch:
+      repo_id: MahmoodLab/CONCH
+      embedding_dim: 512
+      gated: true
+      input_kind: slide_tiles
+      cache_subdir: vision/conch
+    virchow2:
+      repo_id: paige-ai/Virchow2
+      embedding_dim: 1280
+      gated: true
+      input_kind: slide_tiles
+      cache_subdir: vision/virchow2
+    benchmark_stub:
+      repo_id: local/benchmark-stub
+      embedding_dim: 256
+      gated: false
+      input_kind: image
+      cache_subdir: vision/benchmark_stub
+  datasets:
+    primary:
+      name: tcga_brca
+      manifest_path: data/raw/vision/tcga_brca_manifest.jsonl
+      processed_manifest_path: data/processed/vision/feature_manifest.jsonl
+    benchmark:
+      name: breakhis
+      manifest_path: data/raw/vision/breakhis_manifest.jsonl
+  extraction:
+    output_dir: outputs/vision/features
+    batch_size: 4
+    num_workers: 2
+    pooling: mean
+    file_format: json
+  explainability:
+    mode: provenance_only
+    include_attention_summary: true
+  training:
+    centroid_metric: cosine
+    top_k: 3
