@@ -32,7 +32,7 @@ class Settings:
     checkpoint_root: Path
     log_root: Path
     output_root: Path
-    slurm_account: str = "u6ef"
+    slurm_account: str = "brics.u6ef"
     hf_token: str = ""
     kaggle_username: str = ""
     kaggle_key: str = ""
@@ -66,7 +66,7 @@ def load_settings(config_path: str | os.PathLike[str] | None = None) -> Settings
         checkpoint_root=repo_root / "checkpoints",
         log_root=repo_root / "logs",
         output_root=repo_root / "outputs",
-        slurm_account=os.getenv("SLURM_ACCOUNT", "u6ef"),
+        slurm_account=os.getenv("SLURM_ACCOUNT", "brics.u6ef"),
         hf_token=os.getenv("HF_TOKEN", ""),
         kaggle_username=os.getenv("KAGGLE_USERNAME", ""),
         kaggle_key=os.getenv("KAGGLE_KEY", ""),

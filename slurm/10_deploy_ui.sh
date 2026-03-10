@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bcai-ui
-#SBATCH --account=u6ef
+#SBATCH --account=brics.u6ef
 #SBATCH --partition=workq
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G

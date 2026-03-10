@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bcai-ehr
-#SBATCH --account=u6ef
+#SBATCH --account=brics.u6ef
 #SBATCH --partition=workq
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
