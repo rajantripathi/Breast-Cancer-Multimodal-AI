@@ -31,7 +31,7 @@ def main() -> None:
                     label = "benign_variant"
                 else:
                     continue
-                if label_counts[label] >= 1500:
+                if label_counts[label] >= 2500:
                     continue
                 label_counts[label] += 1
                 flattened = {
@@ -50,7 +50,7 @@ def main() -> None:
                         "metadata": {"source": str(variant_tsv)},
                     }
                 )
-                if sum(label_counts.values()) >= 3000:
+                if sum(label_counts.values()) >= 5000:
                     break
     elif variant_csv.exists():
         with variant_csv.open() as handle:

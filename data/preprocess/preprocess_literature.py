@@ -20,14 +20,21 @@ def main() -> None:
                 label = seed_label
             else:
                 label = "supportive_evidence" if "risk" in text.lower() or "cancer" in text.lower() or "biomarker" in text.lower() else "limited_evidence"
-            rows.append(
-                {
-                    "sample_id": item.get("id", "literature_item"),
-                    "label": label,
-                    "text": text,
-                    "metadata": {"source": str(raw_results), "query": item.get("_query", "")},
-                }
-            )
+            variants = [
+                ("abstract_view", text),
+                ("title_view", item.get("title", "")),
+            ]
+            for variant, variant_text in variants:
+                if not variant_text.strip():
+                    continue
+                rows.append(
+                    {
+                        "sample_id": f"{item.get('id', 'literature_item')}::{variant}",
+                        "label": label,
+                        "text": variant_text,
+                        "metadata": {"source": str(raw_results), "query": item.get("_query", ""), "variant": variant},
+                    }
+                )
     else:
         for case_path in sorted((settings.repo_root / "sample_cases").glob("*.json")):
             case = read_json(case_path)

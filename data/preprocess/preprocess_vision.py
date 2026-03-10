@@ -24,6 +24,56 @@ def _parse_info_line(line: str) -> dict[str, str] | None:
     return row
 
 
+def _build_views(parsed: dict[str, str]) -> list[tuple[str, str]]:
+    base_bits = {
+        "sample_id": parsed["sample_id"],
+        "background_tissue": parsed["background_tissue"],
+        "abnormality_class": parsed["abnormality_class"],
+        "severity": parsed.get("severity", "N"),
+        "x": parsed.get("x", ""),
+        "y": parsed.get("y", ""),
+        "radius": parsed.get("radius", ""),
+    }
+    label = parsed["label"]
+    views = [
+        ("screening_view", flatten_payload(base_bits)),
+        (
+            "diagnostic_summary",
+            f"{parsed['sample_id']} tissue {parsed['background_tissue']} finding {parsed['abnormality_class']} label {label}",
+        ),
+        (
+            "radiology_note",
+            f"mammography {label} background {parsed['background_tissue']} lesion {parsed['abnormality_class']}",
+        ),
+    ]
+    if label != "normal":
+        views.extend(
+            [
+                (
+                    "lesion_geometry",
+                    f"lesion center {parsed.get('x', '')} {parsed.get('y', '')} radius {parsed.get('radius', '')} class {parsed['abnormality_class']}",
+                ),
+                (
+                    "followup_note",
+                    f"{label} mass pattern {parsed['abnormality_class']} on {parsed['background_tissue']} tissue",
+                ),
+                (
+                    "diagnosis_prompt",
+                    f"predict whether lesion is benign or malignant from class {parsed['abnormality_class']} and severity {parsed.get('severity', '')}",
+                ),
+            ]
+        )
+    else:
+        views.extend(
+            [
+                ("normal_screening", f"screening mammogram normal with {parsed['background_tissue']} background tissue"),
+                ("screening_recall", f"no suspicious lesion detected on {parsed['background_tissue']} background tissue"),
+                ("bilateral_view", f"paired screening film likely normal study {parsed['sample_id']}"),
+            ]
+        )
+    return views
+
+
 def main() -> None:
     settings = load_settings()
     out_dir = settings.processed_data_root / "vision"
@@ -40,14 +90,15 @@ def main() -> None:
                 image_name = f"all-mias/{parsed['sample_id']}.pgm"
                 if image_name not in archive.namelist():
                     continue
-                rows.append(
-                    {
-                        "sample_id": parsed["sample_id"],
-                        "label": parsed["label"],
-                        "text": flatten_payload(parsed),
-                        "metadata": {"source": str(archive_path), "image_name": image_name},
-                    }
-                )
+                for variant, text in _build_views(parsed):
+                    rows.append(
+                        {
+                            "sample_id": f"{parsed['sample_id']}::{variant}",
+                            "label": parsed["label"],
+                            "text": text,
+                            "metadata": {"source": str(archive_path), "image_name": image_name, "variant": variant},
+                        }
+                    )
     else:
         for case_path in sorted((settings.repo_root / "sample_cases").glob("*.json")):
             case = read_json(case_path)

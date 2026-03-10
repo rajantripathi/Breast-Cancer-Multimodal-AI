@@ -21,7 +21,9 @@ def main() -> None:
 
     queries = [
         ("supportive_evidence", "breast cancer diagnosis biomarkers"),
+        ("supportive_evidence", "breast cancer pathology genomics review"),
         ("limited_evidence", "benign breast disease mammography screening"),
+        ("limited_evidence", "fibroadenoma breast imaging"),
     ]
     collected: list[dict] = []
     manifest = {"dataset": "Europe PMC", "queries": [], "target_dir": str(out_dir), "status": "fallback_seeded"}

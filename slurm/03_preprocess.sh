@@ -16,4 +16,5 @@ python -m data.preprocess.preprocess_vision
 python -m data.preprocess.preprocess_ehr
 python -m data.preprocess.preprocess_genomics
 python -m data.preprocess.preprocess_literature
+python -m data.preprocess.preprocess_verifier
 python -m data.splits.create_splits

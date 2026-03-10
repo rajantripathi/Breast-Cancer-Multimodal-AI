@@ -44,16 +44,9 @@ def main() -> None:
     split_root = settings.split_root
     split_root.mkdir(parents=True, exist_ok=True)
 
-    for modality in ("vision", "ehr", "genomics", "literature"):
+    for modality in ("vision", "ehr", "genomics", "literature", "verifier"):
         rows = read_jsonl(settings.processed_data_root / modality / "dataset.jsonl")
         write_json(split_root / f"{modality}_splits.json", _split_rows(rows))
-
-    verifier_rows = [
-        {"sample_id": "case_01_benign", "label": "monitor"},
-        {"sample_id": "case_02_malignant", "label": "high_concern"},
-        {"sample_id": "case_03_brca", "label": "high_concern"},
-    ]
-    write_json(split_root / "verifier_splits.json", _split_rows(verifier_rows))
     print(f"split manifests written to {split_root}")
 
 

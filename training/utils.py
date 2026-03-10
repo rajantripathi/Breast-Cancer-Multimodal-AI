@@ -119,10 +119,12 @@ def train_text_classifier(task_name: str, args: argparse.Namespace) -> Path:
         "prototypes": prototypes,
         "metrics": {
             "val_accuracy": round(accuracy, 4),
+            "dataset_rows": len(rows),
             "num_train": len(train_rows),
             "num_val": len(val_rows),
             "loss_proxy": round(max(0.0, 1.0 - accuracy + 0.05), 4),
             "perplexity_proxy": round(math.exp(max(0.0, 1.0 - accuracy)), 4),
+            "label_distribution": dict(Counter(row["label"] for row in rows)),
         },
         "predictions": predictions,
     }
@@ -165,9 +167,19 @@ def train_verifier(args: argparse.Namespace) -> Path:
     settings = load_settings(args.config)
     output_dir = Path(args.output_dir or settings.output_root / "verifier")
     output_dir.mkdir(parents=True, exist_ok=True)
-    rows = build_verifier_dataset(settings.repo_root)
+    verifier_dataset_path = settings.processed_data_root / "verifier" / "dataset.jsonl"
+    verifier_split_path = settings.split_root / "verifier_splits.json"
+    if verifier_dataset_path.exists():
+        rows = read_jsonl(verifier_dataset_path)
+    else:
+        rows = build_verifier_dataset(settings.repo_root)
     if args.smoke_test:
         rows = rows[:2]
+    elif verifier_split_path.exists():
+        train_ids = set(read_json(verifier_split_path).get("train", []))
+        selected_rows = [row for row in rows if row["sample_id"] in train_ids]
+        if selected_rows:
+            rows = selected_rows
     prototypes = _fit_prototypes(rows)
     predictions = []
     for row in rows:
