@@ -1,0 +1,7 @@
+task: literature
+model_name: microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+batch_size: 8
+epochs: 5
+precision: fp16
+data_subdir: processed/literature
+

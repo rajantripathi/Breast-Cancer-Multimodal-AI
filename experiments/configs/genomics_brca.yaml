@@ -1,0 +1,7 @@
+task: genomics
+model_name: zhihan1996/DNA_bert_6
+batch_size: 16
+epochs: 5
+precision: fp16
+data_subdir: processed/genomics
+

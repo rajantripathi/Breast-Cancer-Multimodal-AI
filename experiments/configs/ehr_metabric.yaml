@@ -1,0 +1,7 @@
+task: ehr
+model_name: emilyalsentzer/Bio_ClinicalBERT
+batch_size: 16
+epochs: 5
+precision: fp16
+data_subdir: processed/ehr
+

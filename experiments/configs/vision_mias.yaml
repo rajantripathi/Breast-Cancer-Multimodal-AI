@@ -1,0 +1,7 @@
+task: vision
+model_name: microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224
+batch_size: 8
+epochs: 5
+precision: fp16
+data_subdir: processed/vision
+

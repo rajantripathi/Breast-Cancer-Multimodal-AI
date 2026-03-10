@@ -1,0 +1,17 @@
+{
+  "sample_id": "case_02_malignant",
+  "vision": {
+    "finding": "spiculated irregular mass"
+  },
+  "ehr": {
+    "age": 62,
+    "family_history": true
+  },
+  "genomics": {
+    "brca1": "pathogenic"
+  },
+  "literature": {
+    "query": "triple negative breast cancer aggressive features"
+  }
+}
+

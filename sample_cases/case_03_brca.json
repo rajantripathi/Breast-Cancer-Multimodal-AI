@@ -1,0 +1,17 @@
+{
+  "sample_id": "case_03_brca",
+  "vision": {
+    "finding": "dense tissue with focal asymmetry"
+  },
+  "ehr": {
+    "age": 39,
+    "family_history": true
+  },
+  "genomics": {
+    "brca2": "likely_pathogenic"
+  },
+  "literature": {
+    "query": "BRCA associated breast cancer surveillance"
+  }
+}
+

@@ -1,0 +1,17 @@
+{
+  "sample_id": "case_01_benign",
+  "vision": {
+    "finding": "well circumscribed lesion"
+  },
+  "ehr": {
+    "age": 47,
+    "family_history": false
+  },
+  "genomics": {
+    "brca1": "wildtype"
+  },
+  "literature": {
+    "query": "fibroadenoma imaging benign"
+  }
+}
+

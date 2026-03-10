@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=bcai-eval
+#SBATCH --account=u6ef
+#SBATCH --partition=workq
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=02:00:00
+#SBATCH --output=logs/%j.out
+
+set -euo pipefail
+REPO_DIR="${REPO_DIR:-$PWD}"
+cd "$REPO_DIR"
+source "$REPO_DIR/scripts/isambard/slurm_env.sh"
+python -m orchestrator.run --all-sample-cases
+python -m evaluation.evaluate

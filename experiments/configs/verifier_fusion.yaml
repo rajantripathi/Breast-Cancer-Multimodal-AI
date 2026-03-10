@@ -1,0 +1,7 @@
+task: verifier
+model_name: late_fusion_baseline
+batch_size: 32
+epochs: 5
+precision: fp16
+data_subdir: artifacts
+
