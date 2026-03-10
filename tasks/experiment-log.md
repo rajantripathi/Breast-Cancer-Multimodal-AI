@@ -8,3 +8,5 @@
 - Expanded the verifier dataset builder to encode modality confidence, source provenance, missing-modality cases, and mixed-consensus bundles.
 - Local verifier regeneration produced 2,000 bundled rows, balanced between `monitor` and `high_concern`.
 - Local verifier retraining wrote an artifact with `num_samples=1400` and `val_accuracy=0.9579` on the train split, which is useful as a pipeline check but not a clinical or held-out metric.
+- Fixed a verifier training/inference mismatch by removing target-label leakage from verifier training text and building the same structured fusion features at inference time.
+- Added payload-aware fusion priors so clearly benign cues can counter noisy modality outputs while malignant or BRCA-risk cues still elevate the final decision.

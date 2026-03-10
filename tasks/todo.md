@@ -9,4 +9,5 @@
 - [ ] Replace deterministic fallback embeddings with gated backbone inference on Isambard caches.
 - [ ] Add slide-level aggregation beyond mean pooling.
 - [x] Expand verifier weak-alignment generation with confidence, provenance, and missing-modality bundles.
+- [x] Remove verifier target leakage and align inference-time fusion features with verifier training features.
 - [ ] Re-run the verifier retraining cycle on Isambard after the richer bundle generator lands.

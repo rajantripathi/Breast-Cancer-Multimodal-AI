@@ -115,6 +115,7 @@ def _risk_summary(parts: dict[str, dict]) -> dict[str, object]:
         "risk_score": round(score, 4),
         "positive_modalities": positive_modalities,
         "present_modalities": len(present),
+        "high_conf_positive": high_conf_positive,
         "consensus": consensus,
         "source_mix": dict(Counter(part["source_tag"] for part in present)),
     }
@@ -122,10 +123,11 @@ def _risk_summary(parts: dict[str, dict]) -> dict[str, object]:
 
 def _bundle_text(parts: dict[str, dict], summary: dict[str, object]) -> str:
     payload = {
-        "target_label": summary["target_label"],
+        "decision_context": "fusion_verifier_training_row",
         "risk_score_bucket": _confidence_bucket(min(0.98, max(0.08, abs(float(summary["risk_score"]))))),
         "positive_modalities": summary["positive_modalities"],
         "present_modalities": summary["present_modalities"],
+        "high_conf_positive": summary["high_conf_positive"],
         "consensus": summary["consensus"],
         "source_mix": summary["source_mix"],
     }
@@ -203,10 +205,12 @@ def main() -> None:
                 "label": summary["target_label"],
                 "text": _bundle_text(parts, summary),
                 "metadata": {
+                    "target_label": summary["target_label"],
                     "risk_score": summary["risk_score"],
                     "consensus": summary["consensus"],
                     "positive_modalities": summary["positive_modalities"],
                     "present_modalities": summary["present_modalities"],
+                    "high_conf_positive": summary["high_conf_positive"],
                     "missing_modalities": sorted(missing),
                     "vision_id": parts["vision"].get("sample_id", ""),
                     "ehr_id": parts["ehr"].get("sample_id", ""),
