@@ -20,6 +20,7 @@ class VisionModelSpec:
     architecture: str
     gated: bool
     access_url: str
+    timm_model_name: str | None = None
 
     def cache_dir(self) -> Path:
         """Return the local cache directory for the model.
@@ -54,11 +55,12 @@ MODELS: dict[str, dict[str, Any]] = {
         "access_url": "https://huggingface.co/paige-ai/Virchow2",
     },
     "ctranspath": {
-        "hub": "xiyuez/ctranspath",
+        "hub": "1aurent/swin_tiny_patch4_window7_224.CTransPath",
         "embed_dim": 768,
-        "architecture": "Swin Transformer",
+        "architecture": "Swin Transformer with ConvStem",
         "gated": False,
-        "access_url": "https://huggingface.co/xiyuez/ctranspath",
+        "access_url": "https://huggingface.co/1aurent/swin_tiny_patch4_window7_224.CTransPath",
+        "timm_model_name": "hf-hub:1aurent/swin_tiny_patch4_window7_224.CTransPath",
     },
 }
 
@@ -87,6 +89,7 @@ def get_model_spec(name: str | None = None) -> VisionModelSpec:
         architecture=str(config["architecture"]),
         gated=bool(config["gated"]),
         access_url=str(config["access_url"]),
+        timm_model_name=str(config.get("timm_model_name")) if config.get("timm_model_name") else None,
     )
 
 
@@ -144,12 +147,76 @@ def _load_from_timm(spec: VisionModelSpec) -> Any:
         ) from exc
 
     kwargs = {"pretrained": True, "num_classes": 0}
-    target = f"hf-hub:{spec.hub}"
+    target = spec.timm_model_name or f"hf-hub:{spec.hub}"
+    if spec.name == "ctranspath":
+        kwargs["embed_layer"] = _build_ctranspath_conv_stem()
     try:
         return timm.create_model(target, **kwargs)
     except Exception:
         # Some timm versions or hubs require explicit local cache use.
-        return timm.create_model(target, pretrained=True)
+        retry_kwargs = {"pretrained": True}
+        if spec.name == "ctranspath":
+            retry_kwargs["embed_layer"] = _build_ctranspath_conv_stem()
+        return timm.create_model(target, **retry_kwargs)
+
+
+def _build_ctranspath_conv_stem() -> type[Any]:
+    """Return the custom ConvStem layer required by timm CTransPath checkpoints.
+
+    Returns:
+        A `torch.nn.Module` class implementing the patch embedding stem.
+    """
+    import torch.nn as nn
+    from timm.layers.helpers import to_2tuple
+
+    class ConvStem(nn.Module):
+        """Patch embedding stem used by CTransPath."""
+
+        def __init__(
+            self,
+            img_size: int = 224,
+            patch_size: int = 4,
+            in_chans: int = 3,
+            embed_dim: int = 768,
+            norm_layer: Any | None = None,
+            **_: Any,
+        ) -> None:
+            super().__init__()
+            assert patch_size == 4, "Patch size must be 4 for CTransPath"
+            assert embed_dim % 8 == 0, "Embedding dimension must be divisible by 8"
+
+            image_size = to_2tuple(img_size)
+            patch = to_2tuple(patch_size)
+            self.img_size = image_size
+            self.patch_size = patch
+            self.grid_size = (image_size[0] // patch[0], image_size[1] // patch[1])
+            self.num_patches = self.grid_size[0] * self.grid_size[1]
+
+            stem_layers: list[nn.Module] = []
+            input_dim = in_chans
+            output_dim = embed_dim // 8
+            for _index in range(2):
+                stem_layers.append(nn.Conv2d(input_dim, output_dim, kernel_size=3, stride=2, padding=1, bias=False))
+                stem_layers.append(nn.BatchNorm2d(output_dim))
+                stem_layers.append(nn.ReLU(inplace=True))
+                input_dim = output_dim
+                output_dim *= 2
+            stem_layers.append(nn.Conv2d(input_dim, embed_dim, kernel_size=1))
+            self.proj = nn.Sequential(*stem_layers)
+            self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
+
+        def forward(self, x: Any) -> Any:
+            """Project an image tensor into patch embeddings."""
+            _, _, height, width = x.shape
+            assert (height, width) == self.img_size, (
+                f"Input image size ({height}x{width}) does not match model "
+                f"({self.img_size[0]}x{self.img_size[1]})."
+            )
+            x = self.proj(x)
+            x = x.permute(0, 2, 3, 1)
+            return self.norm(x)
+
+    return ConvStem
 
 
 def _emit_access_error(spec: VisionModelSpec, exc: Exception) -> None:
