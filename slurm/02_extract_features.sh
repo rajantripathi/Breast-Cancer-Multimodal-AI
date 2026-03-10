@@ -25,8 +25,15 @@ python3 -c "import huggingface_hub; print('huggingface_hub version:', huggingfac
 SMOKE_FLAG=()
 [ "${SMOKE_TEST:-0}" = "1" ] && SMOKE_FLAG+=(--smoke-test)
 
-for MODEL in uni2 conch virchow2 ctranspath; do
-  echo "=== Extracting features with ${MODEL} ==="
+mkdir -p "$REPO_DIR/outputs/vision"
+
+declare -A MODEL_STATUS=()
+succeeded=0
+failed=0
+
+for MODEL in ctranspath uni2 conch virchow2; do
+  echo "=== START ${MODEL} ==="
+  set +e
   python -m agents.vision.extract_features \
     --config config/isambard.yaml \
     --model "${MODEL}" \
@@ -36,4 +43,31 @@ for MODEL in uni2 conch virchow2 ctranspath; do
     --batch-size 256 \
     --num-workers 8 \
     "${SMOKE_FLAG[@]}"
+  exit_code=$?
+  set -e
+
+  if [ "$exit_code" -eq 0 ]; then
+    MODEL_STATUS["$MODEL"]="success"
+    succeeded=$((succeeded + 1))
+    echo "=== SUCCESS ${MODEL} ==="
+  else
+    if grep -q "GatedRepoError\|gated repo\|restricted and you are not in the authorized list\|ask for access" "logs/${SLURM_JOB_ID}.out"; then
+      MODEL_STATUS["$MODEL"]="failed_gated_access"
+    else
+      MODEL_STATUS["$MODEL"]="failed"
+    fi
+    failed=$((failed + 1))
+    echo "=== FAILED ${MODEL} (${MODEL_STATUS[$MODEL]}) ==="
+  fi
 done
+
+status_file="$REPO_DIR/outputs/vision/extraction_status.json"
+printf '{' > "$status_file"
+for model_name in ctranspath uni2 conch virchow2; do
+  printf '"%s": "%s", ' "$model_name" "${MODEL_STATUS[$model_name]:-not_run}" >> "$status_file"
+done
+printf '"succeeded": %s, "failed": %s}\n' "$succeeded" "$failed" >> "$status_file"
+
+echo "Extraction summary: succeeded=$succeeded failed=$failed status_file=$status_file"
+[ "$succeeded" -gt 0 ] && exit 0
+exit 1
