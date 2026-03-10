@@ -3,29 +3,29 @@ vision:
   smoke_limit: 8
   models:
     uni2:
-      repo_id: MahmoodLab/UNI2-h
-      embedding_dim: 1536
+      hub: MahmoodLab/UNI2-h
+      embed_dim: 1536
+      architecture: ViT-H
       gated: true
-      input_kind: slide_tiles
-      cache_subdir: vision/uni2
+      access_url: https://huggingface.co/MahmoodLab/UNI2-h
     conch:
-      repo_id: MahmoodLab/CONCH
-      embedding_dim: 512
+      hub: MahmoodLab/CONCH
+      embed_dim: 512
+      architecture: vision-language
       gated: true
-      input_kind: slide_tiles
-      cache_subdir: vision/conch
+      access_url: https://huggingface.co/MahmoodLab/CONCH
     virchow2:
-      repo_id: paige-ai/Virchow2
-      embedding_dim: 1280
+      hub: paige-ai/Virchow2
+      embed_dim: 1280
+      architecture: ViT-H
       gated: true
-      input_kind: slide_tiles
-      cache_subdir: vision/virchow2
-    benchmark_stub:
-      repo_id: local/benchmark-stub
-      embedding_dim: 256
+      access_url: https://huggingface.co/paige-ai/Virchow2
+    ctranspath:
+      hub: xiyuez/ctranspath
+      embed_dim: 768
+      architecture: Swin Transformer
       gated: false
-      input_kind: image
-      cache_subdir: vision/benchmark_stub
+      access_url: https://huggingface.co/xiyuez/ctranspath
   datasets:
     primary:
       name: tcga_brca
@@ -39,7 +39,8 @@ vision:
     batch_size: 4
     num_workers: 2
     pooling: mean
-    file_format: json
+    file_format: pt
+    fallback_model: ctranspath
   explainability:
     mode: provenance_only
     include_attention_summary: true

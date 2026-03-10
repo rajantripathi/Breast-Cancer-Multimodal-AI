@@ -5,7 +5,7 @@ import json
 from config import load_settings
 from agents.vision.foundation_models import list_model_specs
 
-MODELS = {
+TEXT_MODELS = {
     "ehr": "emilyalsentzer/Bio_ClinicalBERT",
     "genomics": "zhihan1996/DNA_bert_6",
     "literature": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
@@ -26,16 +26,16 @@ def main() -> None:
         target_dir = spec.cache_dir()
         target_dir.mkdir(parents=True, exist_ok=True)
         entry = {
-            "repo_id": spec.repo_id,
+            "repo_id": spec.hub,
             "target_dir": str(target_dir),
             "status": "manifest_only",
             "gated": spec.gated,
-            "embedding_dim": spec.embedding_dim,
+            "embedding_dim": spec.embed_dim,
         }
-        if snapshot_download is not None and settings.hf_token and spec.repo_id != "local/benchmark-stub":
+        if snapshot_download is not None and settings.hf_token:
             try:
                 snapshot_download(
-                    repo_id=spec.repo_id,
+                    repo_id=spec.hub,
                     local_dir=str(target_dir),
                     local_dir_use_symlinks=False,
                     token=settings.hf_token,
@@ -45,9 +45,9 @@ def main() -> None:
             except Exception as exc:  # pragma: no cover
                 entry["status"] = "failed"
                 entry["error"] = str(exc)
-        manifest["models"][f"vision::{spec.key}"] = entry
+        manifest["models"][f"vision::{spec.name}"] = entry
 
-    for key, repo_id in MODELS.items():
+    for key, repo_id in TEXT_MODELS.items():
         target_dir = settings.model_cache_dir / key
         target_dir.mkdir(parents=True, exist_ok=True)
         entry = {"repo_id": repo_id, "target_dir": str(target_dir), "status": "manifest_only"}

@@ -10,6 +10,7 @@ from typing import Any
 
 from config import load_settings
 from data.common import flatten_payload, read_json, read_jsonl, write_json
+from agents.vision.foundation_models import get_embed_dim
 
 
 def build_parser(task_name: str) -> argparse.ArgumentParser:
@@ -167,6 +168,13 @@ def train_verifier(args: argparse.Namespace) -> Path:
     settings = load_settings(args.config)
     output_dir = Path(args.output_dir or settings.output_root / "verifier")
     output_dir.mkdir(parents=True, exist_ok=True)
+    vision_model = str(settings.extras.get("vision", {}).get("default_model", "uni2"))
+    vision_artifact_path = settings.output_root / "vision" / "artifact.json"
+    if vision_artifact_path.exists():
+        vision_artifact = read_json(vision_artifact_path)
+        expected_dim = get_embed_dim(vision_model)
+        actual_dim = int(vision_artifact.get("embedding_dim", expected_dim))
+        assert actual_dim == expected_dim, f"vision artifact dim mismatch: expected {expected_dim}, got {actual_dim}"
     verifier_dataset_path = settings.processed_data_root / "verifier" / "dataset.jsonl"
     verifier_split_path = settings.split_root / "verifier_splits.json"
     if verifier_dataset_path.exists():

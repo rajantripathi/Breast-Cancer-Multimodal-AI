@@ -1,6 +1,6 @@
 accelerate
 datasets
-huggingface-hub
+huggingface-hub>=0.23.0
 kaggle
 loguru
 numpy
@@ -12,6 +12,7 @@ python-dotenv
 requests
 scikit-learn
 streamlit
+timm>=1.0.3
 torch
 torchvision
 tqdm

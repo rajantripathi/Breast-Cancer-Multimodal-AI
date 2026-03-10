@@ -12,12 +12,37 @@ from config import load_settings
 from data.common import read_json, read_jsonl, write_json
 
 from agents.vision.aggregator import aggregate_embeddings
+from agents.vision.foundation_models import get_embed_dim
 
 
 def _load_embedding(path: str | Path) -> list[float]:
     """Load an embedding vector from a feature artifact."""
-    payload = json.loads(Path(path).read_text())
+    import torch
+
+    target = Path(path)
+    if target.suffix == ".pt":
+        payload = torch.load(target, map_location="cpu")
+        embedding = payload.get("embedding", [])
+        if hasattr(embedding, "tolist"):
+            return [float(value) for value in embedding.tolist()]
+        return [float(value) for value in embedding]
+    payload = json.loads(target.read_text())
     return [float(value) for value in payload.get("embedding", [])]
+
+
+def _load_embedding_dim(path: str | Path) -> int:
+    """Load the recorded embedding dimension from a feature artifact."""
+    import torch
+
+    target = Path(path)
+    if target.suffix == ".pt":
+        payload = torch.load(target, map_location="cpu")
+        if "embedding_dim" in payload:
+            return int(payload["embedding_dim"])
+        embedding = payload.get("embedding", [])
+        return int(embedding.shape[-1] if hasattr(embedding, "shape") else len(embedding))
+    payload = json.loads(target.read_text())
+    return int(payload.get("embedding_dim", len(payload.get("embedding", []))))
 
 
 def _mean_centroid(vectors: list[list[float]]) -> list[float]:
@@ -68,6 +93,9 @@ def train_feature_classifier(args: argparse.Namespace) -> Path:
     val_ids = set(split_manifest.get("val", []))
     train_rows = [row for row in rows if row["sample_id"] in train_ids] or rows
     val_rows = [row for row in rows if row["sample_id"] in val_ids] or rows[: max(1, len(rows) // 3)]
+    expected_dim = get_embed_dim(selected_model)
+    observed_dim = _load_embedding_dim(train_rows[0]["embedding_path"]) if train_rows else expected_dim
+    assert observed_dim == expected_dim, f"vision embedding dim mismatch: expected {expected_dim}, got {observed_dim}"
 
     label_to_vectors: dict[str, list[list[float]]] = defaultdict(list)
     for row in train_rows:
@@ -93,6 +121,7 @@ def train_feature_classifier(args: argparse.Namespace) -> Path:
     artifact = {
         "task": "vision",
         "model_name": selected_model,
+        "embedding_dim": expected_dim,
         "labels": sorted(centroids),
         "feature_manifest_path": str(feature_manifest_path),
         "split_path": str(split_path),

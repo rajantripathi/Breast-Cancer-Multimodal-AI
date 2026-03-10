@@ -8,9 +8,10 @@ from pathlib import Path
 from typing import Any
 
 from agents.base_agent import AgentPrediction, BaseAgent
+from config import load_settings
 from data.common import flatten_payload
 
-from .foundation_models import get_model_spec
+from .foundation_models import get_embed_dim, get_model_spec, load_model
 
 
 def _hash_embedding(seed_text: str, embedding_dim: int) -> list[float]:
@@ -46,18 +47,23 @@ class VisionAgent(BaseAgent):
     modality = "vision"
 
     def __init__(self, artifact_path: str | None = None, model_key: str | None = None) -> None:
-        spec = get_model_spec(model_key)
-        super().__init__(spec.repo_id, ["normal", "benign", "malignant"], artifact_path=artifact_path)
-        self.model_key = spec.key
-        self.embedding_dim = spec.embedding_dim
+        configured_model = model_key or str(load_settings().extras.get("vision", {}).get("default_model", "uni2"))
+        spec = get_model_spec(configured_model)
+        super().__init__(spec.hub, ["normal", "benign", "malignant"], artifact_path=artifact_path)
+        self.model_key = spec.name
+        self.embedding_dim = get_embed_dim(spec.name)
         self.aggregator = "mean"
         self.class_centroids: dict[str, list[float]] = {}
         self.feature_manifest_path = ""
+        self.embedding_backend = "deterministic_runtime"
+        self.loader = load_model
         if self.artifact_path and self.artifact_path.exists():
             artifact = json.loads(self.artifact_path.read_text())
             self.class_centroids = artifact.get("class_centroids", {})
             self.feature_manifest_path = artifact.get("feature_manifest_path", "")
             self.aggregator = artifact.get("aggregation_mode", "mean")
+            self.embedding_dim = int(artifact.get("embedding_dim", self.embedding_dim))
+            self.model_key = str(artifact.get("model_name", self.model_key))
 
     def encode(self, payload: dict[str, Any]) -> list[float]:
         """Encode a payload into a deterministic embedding vector.
@@ -77,6 +83,8 @@ class VisionAgent(BaseAgent):
         return {
             "model_key": self.model_key,
             "model_name": self.model_name,
+            "embedding_dim": self.embedding_dim,
+            "embedding_backend": self.embedding_backend,
             "aggregation_mode": self.aggregator,
             "patch_count": patch_count,
             "source_id": payload.get("sample_id", "") if isinstance(payload, dict) else "",

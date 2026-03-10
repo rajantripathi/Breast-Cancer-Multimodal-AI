@@ -3,16 +3,31 @@
 #SBATCH --account=brics.u6ef
 #SBATCH --partition=workq
 #SBATCH --gpus=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
-#SBATCH --time=08:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
 #SBATCH --output=logs/%j.out
 
 set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-$PWD}"
 cd "$REPO_DIR"
+set -a
+[ -f "$REPO_DIR/.env" ] && source "$REPO_DIR/.env"
+set +a
 source "$REPO_DIR/scripts/isambard/slurm_env.sh"
 SMOKE_FLAG=()
 [ "${SMOKE_TEST:-0}" = "1" ] && SMOKE_FLAG+=(--smoke-test)
-python -m agents.vision.extract_features --config config/isambard.yaml --model "${VISION_MODEL_KEY:-uni2}" --data-dir "${DATA_ROOT:-}" "${SMOKE_FLAG[@]}"
+
+for MODEL in uni2 conch virchow2 ctranspath; do
+  echo "=== Extracting features with ${MODEL} ==="
+  python -m agents.vision.extract_features \
+    --config config/isambard.yaml \
+    --model "${MODEL}" \
+    --data-dir "${DATA_ROOT:-$REPO_DIR/data}" \
+    --manifest "${DATA_ROOT:-$REPO_DIR/data}/processed/vision/feature_manifest.jsonl" \
+    --output-dir "$REPO_DIR/outputs/vision/features/${MODEL}" \
+    --batch-size 256 \
+    --num-workers 8 \
+    "${SMOKE_FLAG[@]}"
+done
