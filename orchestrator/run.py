@@ -27,7 +27,7 @@ def _load_verifier(repo_root: Path) -> dict[str, Any]:
     artifact_path = repo_root / "outputs" / "verifier" / "artifact.json"
     if artifact_path.exists():
         return read_json(artifact_path)
-    return {"prototypes": {}, "labels": ["monitor", "high_concern"]}
+    return {"prototypes": {}, "labels": ["monitor", "high_concern"], "alignment_status": "unaligned_legacy"}
 
 
 def _confidence_bucket(score: float) -> str:
@@ -168,6 +168,52 @@ def _build_verifier_features(case_payload: dict[str, Any], predictions: list[Any
     return flatten_payload(feature_payload), heuristic_scores
 
 
+def _normalize_contributions(weighted_scores: dict[str, float]) -> dict[str, float]:
+    total = sum(weighted_scores.values()) or 1.0
+    return {key: round(value / total, 4) for key, value in weighted_scores.items()}
+
+
+def _structured_output(
+    case_payload: dict[str, Any],
+    predictions: list[Any],
+    verifier_scores: dict[str, float],
+    verifier: dict[str, Any],
+) -> dict[str, Any]:
+    risk_score = round(float(verifier_scores.get("high_concern", 0.0)), 4)
+    if risk_score <= 0.33:
+        risk_classification = "low"
+    elif risk_score <= 0.66:
+        risk_classification = "intermediate"
+    else:
+        risk_classification = "high"
+
+    weighted_confidences: dict[str, float] = {}
+    modality_predictions: dict[str, dict[str, Any]] = {}
+    for prediction in predictions:
+        confidence = round(_prediction_confidence(prediction.scores), 4)
+        weighted_confidences[prediction.modality] = MODALITY_WEIGHTS[prediction.modality] * confidence
+        modality_predictions[prediction.modality] = {
+            "class": prediction.predicted_label,
+            "confidence": confidence,
+        }
+    modality_contributions = _normalize_contributions(weighted_confidences)
+    alignment_status = str(verifier.get("alignment_status", "unaligned_legacy"))
+    fused_label = "high_concern" if risk_score >= 0.5 else "monitor"
+    return {
+        "patient_id": case_payload["sample_id"],
+        "risk_classification": risk_classification,
+        "risk_score": risk_score,
+        "confidence": round(max(verifier_scores.values()) if verifier_scores else 0.0, 4),
+        "modality_contributions": modality_contributions,
+        "modality_predictions": modality_predictions,
+        "alignment_status": alignment_status,
+        "sample_id": case_payload["sample_id"],
+        "fused_label": fused_label,
+        "agent_predictions": [pred.__dict__ for pred in predictions],
+        "verifier_scores": verifier_scores,
+    }
+
+
 def run_case(case_payload: dict[str, Any], repo_root: Path | None = None) -> dict[str, Any]:
     sample_id = case_payload["sample_id"]
     root = repo_root or Path(__file__).resolve().parents[1]
@@ -189,13 +235,7 @@ def run_case(case_payload: dict[str, Any], repo_root: Path | None = None) -> dic
         }
     else:
         verifier_scores = heuristic_scores
-    fused_label = "high_concern" if verifier_scores.get("high_concern", 0.0) >= 0.5 else "monitor"
-    return {
-        "sample_id": sample_id,
-        "fused_label": fused_label,
-        "agent_predictions": [pred.__dict__ for pred in predictions],
-        "verifier_scores": verifier_scores,
-    }
+    return _structured_output(case_payload, predictions, verifier_scores, verifier)
 
 
 def main() -> None:
@@ -211,9 +251,11 @@ def main() -> None:
         case_paths = case_paths[:1]
 
     results = [run_case(read_json(case_path), repo_root=repo_root) for case_path in case_paths]
-    out_path = repo_root / "outputs" / "fused_predictions.json"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(results, indent=2))
+    outputs_root = repo_root / "outputs"
+    outputs_root.mkdir(parents=True, exist_ok=True)
+    (outputs_root / "sample_case_results.json").write_text(json.dumps(results, indent=2))
+    # Preserve the legacy filename for downstream compatibility.
+    (outputs_root / "fused_predictions.json").write_text(json.dumps(results, indent=2))
     print(json.dumps(results, indent=2))
 
 

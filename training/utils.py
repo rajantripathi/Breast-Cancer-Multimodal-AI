@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import math
 import re
@@ -10,6 +11,7 @@ from typing import Any
 
 from config import load_settings
 from data.common import flatten_payload, read_json, read_jsonl, write_json
+from data.preprocess.build_aligned_bundles import load_crosswalk
 from agents.vision.foundation_models import get_embed_dim
 
 
@@ -21,6 +23,7 @@ def build_parser(task_name: str) -> argparse.ArgumentParser:
     parser.add_argument("--split-path", default=None, help="Split manifest json path")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--crosswalk", default=None, help="Optional patient-alignment crosswalk CSV")
     parser.add_argument("--smoke-test", action="store_true")
     return parser
 
@@ -164,6 +167,129 @@ def build_verifier_dataset(repo_root: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def _load_embedding_stats(path: str | Path) -> dict[str, Any]:
+    """Load simple embedding statistics from a `.pt` feature file.
+
+    Args:
+        path: Path to an embedding artifact.
+
+    Returns:
+        Summary statistics suitable for text-feature generation.
+    """
+    import torch
+
+    payload = torch.load(Path(path), map_location="cpu")
+    embedding = payload.get("embedding", payload)
+    if hasattr(embedding, "detach"):
+        embedding = embedding.detach().cpu().reshape(-1)
+    elif hasattr(embedding, "reshape"):
+        embedding = embedding.reshape(-1)
+    values = embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+    if not values:
+        return {"dim": 0, "mean_bucket": "zero", "std_bucket": "zero"}
+    mean_value = sum(values) / len(values)
+    variance = sum((value - mean_value) ** 2 for value in values) / len(values)
+    std_value = variance ** 0.5
+    return {
+        "dim": len(values),
+        "mean_bucket": "positive" if mean_value > 0.05 else ("negative" if mean_value < -0.05 else "neutral"),
+        "std_bucket": "high" if std_value >= 0.75 else ("medium" if std_value >= 0.35 else "low"),
+        "source_model": payload.get("model_key", "unknown"),
+    }
+
+
+def _load_clinical_row(clinical_csv: Path, row_idx: int) -> dict[str, Any]:
+    """Load one clinical row by index from a CSV file.
+
+    Args:
+        clinical_csv: Clinical data CSV path.
+        row_idx: Integer row index recorded in the crosswalk.
+
+    Returns:
+        Clinical row as a flat dictionary.
+    """
+    with clinical_csv.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        for index, row in enumerate(reader):
+            if index == int(row_idx):
+                return {str(key): value for key, value in row.items()}
+    raise IndexError(f"clinical row index {row_idx} out of range for {clinical_csv}")
+
+
+def _literature_text_for_patient(patient_id: str, clinical_row: dict[str, Any]) -> str:
+    """Generate aligned literature context from the patient profile.
+
+    Args:
+        patient_id: Patient identifier.
+        clinical_row: Clinical row for the same patient.
+
+    Returns:
+        Generated literature context text.
+    """
+    flattened = flatten_payload(clinical_row).lower()
+    tags = ["surveillance"]
+    if "brca" in flattened or "family_history" in flattened:
+        tags.append("brca_context")
+    if "recurrence" in flattened or "high" in flattened:
+        tags.append("aggressive_profile")
+    return f"patient {patient_id} literature_context {' '.join(tags)} clinical_profile {flattened}"
+
+
+def _build_aligned_verifier_rows(crosswalk_path: Path, clinical_csv: Path) -> list[dict[str, Any]]:
+    """Build aligned verifier rows from a patient crosswalk.
+
+    Args:
+        crosswalk_path: Path to the patient-level crosswalk CSV.
+        clinical_csv: Source clinical CSV used by the crosswalk.
+
+    Returns:
+        Aligned verifier rows for training.
+    """
+    frame = load_crosswalk(crosswalk_path)
+    missing_paths = [row for _, row in frame.iterrows() if not Path(str(row["vision_path"])).exists() or not Path(str(row["genomics_path"])).exists()]
+    assert not missing_paths, "crosswalk rows reference missing vision or genomics paths"
+    rows: list[dict[str, Any]] = []
+    for _, row in frame.iterrows():
+        patient_id = str(row["patient_id"])
+        vision_stats = _load_embedding_stats(str(row["vision_path"]))
+        genomics_stats = _load_embedding_stats(str(row["genomics_path"]))
+        clinical_row = _load_clinical_row(clinical_csv, int(row["clinical_row_idx"]))
+        clinical_text = flatten_payload(clinical_row).lower()
+        literature_text = _literature_text_for_patient(patient_id, clinical_row)
+        positive_votes = sum(
+            [
+                "positive" in vision_stats["mean_bucket"] or "high" in vision_stats["std_bucket"],
+                "pathogenic" in clinical_text or "brca" in clinical_text,
+                "recurrence" in clinical_text or "high" in clinical_text,
+                "brca_context" in literature_text or "aggressive_profile" in literature_text,
+            ]
+        )
+        label = "high_concern" if positive_votes >= 2 else "monitor"
+        rows.append(
+            {
+                "sample_id": patient_id,
+                "label": label,
+                "text": flatten_payload(
+                    {
+                        "patient_id": patient_id,
+                        "vision": vision_stats,
+                        "genomics": genomics_stats,
+                        "clinical": clinical_row,
+                        "literature": literature_text,
+                    }
+                ),
+                "metadata": {
+                    "patient_id": patient_id,
+                    "alignment_status": "patient_aligned",
+                    "vision_path": str(row["vision_path"]),
+                    "genomics_path": str(row["genomics_path"]),
+                    "clinical_row_idx": int(row["clinical_row_idx"]),
+                },
+            }
+        )
+    return rows
+
+
 def train_verifier(args: argparse.Namespace) -> Path:
     settings = load_settings(args.config)
     output_dir = Path(args.output_dir or settings.output_root / "verifier")
@@ -177,9 +303,24 @@ def train_verifier(args: argparse.Namespace) -> Path:
         assert actual_dim == expected_dim, f"vision artifact dim mismatch: expected {expected_dim}, got {actual_dim}"
     verifier_dataset_path = settings.processed_data_root / "verifier" / "dataset.jsonl"
     verifier_split_path = settings.split_root / "verifier_splits.json"
-    if verifier_dataset_path.exists():
+    crosswalk_candidates = [Path(args.crosswalk)] if args.crosswalk else []
+    crosswalk_candidates.extend([settings.data_root / "crosswalk.csv", settings.repo_root / "data" / "crosswalk.csv"])
+    crosswalk_path = next((path for path in crosswalk_candidates if path and path.exists()), None)
+    alignment_status = "unaligned_legacy"
+    aligned_count = 0
+    if crosswalk_path is not None:
+        clinical_csv = settings.raw_data_root / "ehr" / "clinical.csv"
+        if not clinical_csv.exists():
+            clinical_csv = settings.data_root / "clinical.csv"
+        rows = _build_aligned_verifier_rows(crosswalk_path, clinical_csv)
+        alignment_status = "patient_aligned"
+        aligned_count = len(rows)
+        print(f"Verifier training on {aligned_count} patient-aligned bundles")
+    elif verifier_dataset_path.exists():
+        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).")
         rows = read_jsonl(verifier_dataset_path)
     else:
+        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).")
         rows = build_verifier_dataset(settings.repo_root)
     if args.smoke_test:
         rows = rows[:2]
@@ -209,7 +350,14 @@ def train_verifier(args: argparse.Namespace) -> Path:
         "device": args.device,
         "smoke_test": args.smoke_test,
         "prototypes": prototypes,
-        "metrics": {"val_accuracy": round(accuracy, 4), "num_samples": len(rows)},
+        "alignment_status": alignment_status,
+        "aligned_sample_count": aligned_count,
+        "metrics": {
+            "val_accuracy": round(accuracy, 4),
+            "num_samples": len(rows),
+            "alignment_status": alignment_status,
+            "aligned_sample_count": aligned_count,
+        },
         "predictions": predictions,
     }
     write_json(output_dir / "artifact.json", artifact)

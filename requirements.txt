@@ -2,6 +2,7 @@ accelerate
 datasets
 huggingface-hub>=0.23.0
 kaggle
+lifelines>=0.29.0
 loguru
 numpy
 opencv-python
@@ -10,7 +11,7 @@ pillow
 pyyaml
 python-dotenv
 requests
-scikit-learn
+scikit-learn>=1.4.0
 streamlit
 timm>=1.0.3
 torch
