@@ -17,4 +17,11 @@ module load cray-python/3.11.7 2>/dev/null || true
 module load cudatoolkit/24.11_12.6 2>/dev/null || true
 
 source "$VENV_DIR/bin/activate"
-
+python3 -c "import timm" >/dev/null 2>&1 || {
+  echo "FATAL: timm is not available in $VENV_DIR. Rerun slurm/00_setup.sh." >&2
+  exit 1
+}
+python3 -c "import huggingface_hub" >/dev/null 2>&1 || {
+  echo "FATAL: huggingface_hub is not available in $VENV_DIR. Rerun slurm/00_setup.sh." >&2
+  exit 1
+}

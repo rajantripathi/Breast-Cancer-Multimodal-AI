@@ -187,6 +187,11 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True, help="Output directory for .pt feature files")
     parser.add_argument("--batch-size", type=int, default=16, help="Batch size placeholder for interface compatibility")
     parser.add_argument("--num-workers", type=int, default=4, help="Number of workers to advertise in logs")
+    parser.add_argument(
+        "--allow-deterministic-fallback",
+        action="store_true",
+        help="Use deterministic placeholder embeddings only for development or debugging",
+    )
     parser.add_argument("--smoke-test", action="store_true")
     args = parser.parse_args()
 
@@ -218,12 +223,23 @@ def main() -> None:
 
     model = None
     transform = None
-    model_backend = "fallback"
+    model_backend = "foundation_model"
     try:
         model, transform = load_model(spec.name)
-        model_backend = "timm"
     except Exception as exc:
-        print(f"Using deterministic fallback extraction for {spec.name}: {exc}")
+        if not args.allow_deterministic_fallback:
+            raise RuntimeError(
+                "Foundation model extraction failed. "
+                "Install: pip install timm>=1.0.3 huggingface-hub>=0.23.0\n"
+                "To use deterministic fallback (NOT for production), pass "
+                "--allow-deterministic-fallback"
+            ) from exc
+        print(
+            "WARNING: timm or model loading failed. Using deterministic fallback. "
+            "These are NOT real foundation model embeddings. "
+            f"Original error for {spec.name}: {exc}"
+        )
+        model_backend = "deterministic_fallback"
 
     feature_rows = []
     for index, row in enumerate(rows, start=1):
@@ -232,6 +248,16 @@ def main() -> None:
             embedding = _extract_tensor_embedding(model, image_path, transform)
             backend = model_backend
         else:
+            if not args.allow_deterministic_fallback:
+                if image_path is None:
+                    raise RuntimeError(
+                        f"Could not resolve a readable image path for sample '{row.get('sample_id', 'unknown')}'. "
+                        "Pass --allow-deterministic-fallback only for development debugging."
+                    )
+                raise RuntimeError(
+                    f"Foundation model extraction unavailable for sample '{row.get('sample_id', 'unknown')}'. "
+                    "Pass --allow-deterministic-fallback only for development debugging."
+                )
             seed = "::".join(
                 [
                     spec.name,

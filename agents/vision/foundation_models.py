@@ -135,7 +135,13 @@ def _load_from_timm(spec: VisionModelSpec) -> Any:
     Returns:
         Loaded model instance.
     """
-    import timm
+    try:
+        import timm
+    except ImportError as exc:
+        raise RuntimeError(
+            "timm is required for foundation model extraction. "
+            "Install: pip install timm>=1.0.3 huggingface-hub>=0.23.0"
+        ) from exc
 
     kwargs = {"pretrained": True, "num_classes": 0}
     target = f"hf-hub:{spec.hub}"
@@ -187,23 +193,20 @@ def load_model(name: str) -> tuple[Any, Any]:
         Tuple of `(model, transform)`.
 
     Raises:
-        RuntimeError: If `timm` is unavailable or all eligible load attempts fail.
+        RuntimeError: If required dependencies are unavailable or the model cannot be loaded.
     """
     spec = get_model_spec(name)
     try:
+        import huggingface_hub  # noqa: F401
+    except ImportError as exc:
+        raise RuntimeError(
+            "huggingface_hub is required for foundation model extraction. "
+            "Install: pip install timm>=1.0.3 huggingface-hub>=0.23.0"
+        ) from exc
+    try:
         model = _load_from_timm(spec)
         return _freeze_encoder(model), _build_transform(model)
-    except ImportError as exc:
-        raise RuntimeError("timm is required to load pathology foundation models") from exc
     except Exception as exc:
         if spec.gated:
             _emit_access_error(spec, exc)
-            if spec.name != "ctranspath":
-                fallback = get_model_spec("ctranspath")
-                print(
-                    f"Falling back to open model '{fallback.name}' from {fallback.access_url}",
-                    file=sys.stderr,
-                )
-                model = _load_from_timm(fallback)
-                return _freeze_encoder(model), _build_transform(model)
         raise RuntimeError(f"failed to load model '{spec.name}' from {spec.hub}: {exc}") from exc

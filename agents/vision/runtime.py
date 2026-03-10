@@ -55,7 +55,7 @@ class VisionAgent(BaseAgent):
         self.aggregator = "mean"
         self.class_centroids: dict[str, list[float]] = {}
         self.feature_manifest_path = ""
-        self.embedding_backend = "deterministic_runtime"
+        self.embedding_backend = "local_deterministic_runtime"
         self.loader = load_model
         if self.artifact_path and self.artifact_path.exists():
             artifact = json.loads(self.artifact_path.read_text())

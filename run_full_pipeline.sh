@@ -4,6 +4,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
+echo "=== Pre-flight dependency check ==="
+python3 -c "import timm; print('timm:', timm.__version__)" || {
+  echo "FATAL: timm not installed. Run slurm/00_setup.sh or install it in the project venv." >&2
+  exit 1
+}
+python3 -c "import huggingface_hub; print('huggingface_hub:', huggingface_hub.__version__)" || {
+  echo "FATAL: huggingface_hub not installed. Run slurm/00_setup.sh or install it in the project venv." >&2
+  exit 1
+}
+echo "=== Dependencies OK ==="
+
 SBATCH_EXPORT="ALL,REPO_DIR=$ROOT_DIR,SMOKE_TEST=${SMOKE_TEST:-0}"
 
 setup_job=$(sbatch --parsable --export="$SBATCH_EXPORT" slurm/00_setup.sh)
