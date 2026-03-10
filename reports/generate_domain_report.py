@@ -8,6 +8,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from config import load_settings
 from data.common import read_jsonl
 
 
@@ -15,12 +16,13 @@ def _read_json(path: Path) -> dict:
     return json.loads(path.read_text())
 
 
-def _dataset_size(root: Path, modality: str) -> int:
-    return len(read_jsonl(root / "data" / "processed" / modality / "dataset.jsonl"))
+def _dataset_size(data_root: Path, modality: str) -> int:
+    return len(read_jsonl(data_root / modality / "dataset.jsonl"))
 
 
 def main() -> None:
     repo_root = REPO_ROOT
+    settings = load_settings()
     outputs_root = repo_root / "outputs"
     summaries = {
         modality: _read_json(outputs_root / modality / "summary.json")
@@ -32,7 +34,10 @@ def main() -> None:
     if (outputs_root / "evaluation_report.txt").exists():
         evaluation["report_path"] = str(outputs_root / "evaluation_report.txt")
 
-    dataset_sizes = {modality: _dataset_size(repo_root, modality) for modality in ("vision", "ehr", "genomics", "literature", "verifier")}
+    dataset_sizes = {
+        modality: _dataset_size(settings.processed_data_root, modality)
+        for modality in ("vision", "ehr", "genomics", "literature", "verifier")
+    }
     lines = [
         "# Domain Expert Review Pack",
         "",
