@@ -15,13 +15,17 @@ def main() -> None:
         payload = read_json(raw_results)
         for item in payload.get("resultList", {}).get("result", []):
             text = f"{item.get('title', '')} {item.get('abstractText', '')}".strip()
-            label = "supportive_evidence" if "risk" in text.lower() or "cancer" in text.lower() else "limited_evidence"
+            seed_label = item.get("_seed_label")
+            if seed_label:
+                label = seed_label
+            else:
+                label = "supportive_evidence" if "risk" in text.lower() or "cancer" in text.lower() or "biomarker" in text.lower() else "limited_evidence"
             rows.append(
                 {
                     "sample_id": item.get("id", "literature_item"),
                     "label": label,
                     "text": text,
-                    "metadata": {"source": str(raw_results)},
+                    "metadata": {"source": str(raw_results), "query": item.get("_query", "")},
                 }
             )
     else:

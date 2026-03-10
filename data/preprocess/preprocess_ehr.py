@@ -12,17 +12,31 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     rows = []
 
-    fallback_csv = settings.raw_data_root / "ehr" / "ehr_fallback.csv"
-    if fallback_csv.exists():
-        with fallback_csv.open() as handle:
-            reader = csv.DictReader(handle)
-            for row in reader:
+    raw_file = settings.raw_data_root / "ehr" / "ehr_source.data"
+    if raw_file.exists():
+        with raw_file.open() as handle:
+            reader = csv.reader(handle)
+            for raw_row in reader:
+                if not raw_row or "?" in raw_row:
+                    continue
+                sample_id = raw_row[0]
+                recurrence = raw_row[1]
+                time_months = raw_row[2]
+                features = {
+                    "sample_id": sample_id,
+                    "recurrence_status": recurrence,
+                    "time_months": time_months,
+                    "radius_mean": raw_row[3],
+                    "texture_mean": raw_row[4],
+                    "perimeter_mean": raw_row[5],
+                    "area_mean": raw_row[6],
+                }
                 rows.append(
                     {
-                        "sample_id": row["sample_id"],
-                        "label": row["label"],
-                        "text": flatten_payload(row),
-                        "metadata": {"source": str(fallback_csv)},
+                        "sample_id": sample_id,
+                        "label": "high_risk" if recurrence == "R" else "low_risk",
+                        "text": flatten_payload(features),
+                        "metadata": {"source": str(raw_file)},
                     }
                 )
     else:

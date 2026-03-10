@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import random
 from pathlib import Path
 from typing import Any
 
@@ -38,3 +39,8 @@ def flatten_payload(payload: Any) -> str:
         return " ".join(flatten_payload(item) for item in payload)
     return str(payload)
 
+
+def stable_shuffle(values: list[Any], seed: int = 7) -> list[Any]:
+    items = list(values)
+    random.Random(seed).shuffle(items)
+    return items

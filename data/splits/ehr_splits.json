@@ -1,12 +1,10 @@
 {
   "train": [
-    "ehr_001",
-    "ehr_002"
+    "case_01_benign",
+    "case_02_malignant"
   ],
-  "val": [
-    "ehr_003"
-  ],
+  "val": [],
   "test": [
-    "ehr_004"
+    "case_03_brca"
   ]
 }
