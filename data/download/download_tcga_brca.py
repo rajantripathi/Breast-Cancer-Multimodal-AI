@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from requests import exceptions as requests_exceptions
 
 from config import load_settings
 
@@ -187,21 +188,44 @@ def _target_path(target_dir: Path, patient_barcode: str, file_uuid: str, file_na
 
 
 def _download_via_api(file_uuid: str, target_path: Path) -> None:
-    """Download one GDC file via the HTTP data endpoint."""
-    with requests.get(f"{GDC_API}/data/{file_uuid}", stream=True, timeout=3600) as response:
-        response.raise_for_status()
-        with target_path.open("wb") as handle:
-            for chunk in response.iter_content(chunk_size=1024 * 1024):
-                if chunk:
-                    handle.write(chunk)
+    """Download one GDC file via the HTTP data endpoint with retry support."""
+    partial_path = target_path.with_suffix(f"{target_path.suffix}.partial")
+    for attempt in range(1, 5):
+        existing_size = partial_path.stat().st_size if partial_path.exists() else 0
+        headers = {"Range": f"bytes={existing_size}-"} if existing_size else {}
+        try:
+            with requests.get(f"{GDC_API}/data/{file_uuid}", headers=headers, stream=True, timeout=3600) as response:
+                response.raise_for_status()
+                if existing_size and response.status_code != 206:
+                    partial_path.unlink(missing_ok=True)
+                    existing_size = 0
+                mode = "ab" if existing_size and response.status_code == 206 else "wb"
+                with partial_path.open(mode) as handle:
+                    for chunk in response.iter_content(chunk_size=1024 * 1024):
+                        if chunk:
+                            handle.write(chunk)
+            partial_path.replace(target_path)
+            return
+        except (requests_exceptions.ChunkedEncodingError, requests_exceptions.ConnectionError, requests_exceptions.Timeout) as exc:
+            print(f"retryable download failure for {file_uuid} on attempt {attempt}: {exc}")
+            if attempt == 4:
+                raise
+        except requests_exceptions.RequestException:
+            raise
 
 
 def _download_via_gdc_client(file_uuid: str, target_dir: Path) -> Path:
     """Download one GDC file via gdc-client into the target directory."""
-    subprocess.run(
-        ["gdc-client", "download", file_uuid, "-d", str(target_dir)],
-        check=True,
-    )
+    for attempt in range(1, 4):
+        try:
+            subprocess.run(
+                ["gdc-client", "download", file_uuid, "-d", str(target_dir)],
+                check=True,
+            )
+            break
+        except subprocess.CalledProcessError:
+            if attempt == 3:
+                raise
     download_dir = target_dir / file_uuid
     files = [path for path in download_dir.iterdir() if path.is_file()]
     if not files:
@@ -209,7 +233,12 @@ def _download_via_gdc_client(file_uuid: str, target_dir: Path) -> Path:
     return files[0]
 
 
-def _download_records(records: list[dict[str, Any]], target_dir: Path, progress_label: str) -> list[dict[str, str]]:
+def _download_records(
+    records: list[dict[str, Any]],
+    target_dir: Path,
+    progress_label: str,
+    on_update: callable | None = None,
+) -> list[dict[str, str]]:
     """Download TCGA file records to a local directory.
 
     Args:
@@ -247,6 +276,8 @@ def _download_records(records: list[dict[str, Any]], target_dir: Path, progress_
                 "file_name": file_name,
             }
         )
+        if on_update is not None:
+            on_update(rows)
         if index % 10 == 0:
             print(f"{progress_label}: downloaded {index} / {len(records)}")
     return rows
@@ -410,11 +441,19 @@ def main() -> None:
     rnaseq_meta = _rnaseq_records(args.max_samples)
     print("querying GDC clinical metadata")
     clinical_rows = _clinical_rows()
-
-    slide_rows = _download_records(slide_meta, slides_dir, "slides")
-    rnaseq_rows = _download_records(rnaseq_meta, rnaseq_dir, "rnaseq")
     _write_csv(clinical_csv, clinical_rows, CLINICAL_COLUMNS)
-    _build_master_manifest(slide_rows, rnaseq_rows, clinical_rows, manifest_csv)
+
+    slide_rows: list[dict[str, str]] = []
+    rnaseq_rows: list[dict[str, str]] = []
+
+    def update_manifest(_: list[dict[str, str]] | None = None) -> None:
+        _build_master_manifest(slide_rows, rnaseq_rows, clinical_rows, manifest_csv)
+
+    update_manifest()
+    slide_rows = _download_records(slide_meta, slides_dir, "slides", on_update=update_manifest)
+    update_manifest()
+    rnaseq_rows = _download_records(rnaseq_meta, rnaseq_dir, "rnaseq", on_update=update_manifest)
+    update_manifest()
 
     summary = {
         "slides_downloaded": len(slide_rows),
