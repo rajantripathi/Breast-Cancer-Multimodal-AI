@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 from typing import Any
+from zipfile import ZipFile
 
 from config import load_settings
 from data.common import read_jsonl, write_json, write_jsonl
@@ -14,7 +16,7 @@ from data.common import read_jsonl, write_json, write_jsonl
 from .foundation_models import get_embed_dim, get_model_spec, load_model
 
 
-IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp", ".pgm"}
 
 
 def _default_manifest_path(settings_data_root: Path) -> Path:
@@ -61,6 +63,30 @@ def _resolve_image_path(row: dict[str, Any], data_dir: Path) -> Path | None:
     if joined.exists() and _is_image(joined):
         return joined
     return None
+
+
+def load_image(path: str) -> Any:
+    """Load an image from a filesystem path or zip-backed archive path.
+
+    Args:
+        path: Filesystem path or `archive.zip::member/path` reference.
+
+    Returns:
+        PIL image converted to RGB.
+    """
+    from PIL import Image
+
+    if "::" in path:
+        archive_path, member_path = path.split("::", maxsplit=1)
+        with ZipFile(archive_path) as archive:
+            with archive.open(member_path) as member_file:
+                image_bytes = member_file.read()
+        image = Image.open(BytesIO(image_bytes))
+    else:
+        image = Image.open(path)
+    if str(path).lower().endswith(".pgm"):
+        image = image.convert("L")
+    return image.convert("RGB")
 
 
 def _scan_images(data_dir: Path) -> list[dict[str, Any]]:
@@ -116,10 +142,9 @@ def _extract_tensor_embedding(model: Any, image_path: Path, transform: Any) -> l
     Returns:
         Flattened embedding vector.
     """
-    from PIL import Image
     import torch
 
-    image = Image.open(image_path).convert("RGB")
+    image = load_image(str(image_path))
     batch = transform(image).unsqueeze(0)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = model.to(device)
@@ -242,18 +267,34 @@ def main() -> None:
         model_backend = "deterministic_fallback"
 
     feature_rows = []
+    skipped = 0
     for index, row in enumerate(rows, start=1):
+        raw_source_path = str(row.get("source_path", "")).strip()
         image_path = _resolve_image_path(row, data_dir)
         if model is not None and transform is not None and image_path is not None:
-            embedding = _extract_tensor_embedding(model, image_path, transform)
-            backend = model_backend
+            try:
+                embedding = _extract_tensor_embedding(model, image_path, transform)
+                backend = model_backend
+            except Exception as exc:
+                skipped += 1
+                print(f"Skipping image due to load/extract failure: {raw_source_path or image_path} ({exc})")
+                continue
+        elif model is not None and transform is not None and "::" in raw_source_path:
+            try:
+                embedding = _extract_tensor_embedding(model, Path(raw_source_path), transform)
+                backend = model_backend
+            except Exception as exc:
+                skipped += 1
+                print(f"Skipping image due to load/extract failure: {raw_source_path} ({exc})")
+                continue
         else:
             if not args.allow_deterministic_fallback:
                 if image_path is None:
-                    raise RuntimeError(
-                        f"Could not resolve a readable image path for sample '{row.get('sample_id', 'unknown')}'. "
-                        "Pass --allow-deterministic-fallback only for development debugging."
+                    skipped += 1
+                    print(
+                        f"Skipping image because path could not be resolved: {raw_source_path or row.get('sample_id', 'unknown')}"
                     )
+                    continue
                 raise RuntimeError(
                     f"Foundation model extraction unavailable for sample '{row.get('sample_id', 'unknown')}'. "
                     "Pass --allow-deterministic-fallback only for development debugging."
@@ -284,9 +325,15 @@ def main() -> None:
             "data_dir": str(data_dir),
             "batch_size": args.batch_size,
             "num_workers": args.num_workers,
+            "skipped": skipped,
         },
     )
-    print(json.dumps({"output_dir": str(output_dir), "num_records": len(feature_rows), "model_key": spec.name}, indent=2))
+    print(
+        json.dumps(
+            {"output_dir": str(output_dir), "num_records": len(feature_rows), "model_key": spec.name, "skipped": skipped},
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":
