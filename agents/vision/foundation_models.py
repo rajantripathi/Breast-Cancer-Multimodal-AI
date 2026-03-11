@@ -21,6 +21,7 @@ class VisionModelSpec:
     gated: bool
     access_url: str
     timm_model_name: str | None = None
+    timm_kwargs: dict[str, Any] | None = None
 
     def cache_dir(self) -> Path:
         """Return the local cache directory for the model.
@@ -39,6 +40,21 @@ MODELS: dict[str, dict[str, Any]] = {
         "architecture": "ViT-H",
         "gated": True,
         "access_url": "https://huggingface.co/MahmoodLab/UNI2-h",
+        "timm_kwargs": {
+            "img_size": 224,
+            "patch_size": 14,
+            "depth": 24,
+            "num_heads": 24,
+            "init_values": 1e-5,
+            "embed_dim": 1536,
+            "mlp_ratio": 5.33334,
+            "num_classes": 0,
+            "no_embed_class": True,
+            "mlp_layer": "SwiGLUPacked",
+            "act_layer": "SiLU",
+            "reg_tokens": 8,
+            "dynamic_img_size": True,
+        },
     },
     "conch": {
         "hub": "MahmoodLab/CONCH",
@@ -90,6 +106,7 @@ def get_model_spec(name: str | None = None) -> VisionModelSpec:
         gated=bool(config["gated"]),
         access_url=str(config["access_url"]),
         timm_model_name=str(config.get("timm_model_name")) if config.get("timm_model_name") else None,
+        timm_kwargs=dict(config.get("timm_kwargs", {})) if config.get("timm_kwargs") else None,
     )
 
 
@@ -146,7 +163,7 @@ def _load_from_timm(spec: VisionModelSpec) -> Any:
             "Install: pip install timm>=1.0.3 huggingface-hub>=0.23.0"
         ) from exc
 
-    kwargs = {"pretrained": True, "num_classes": 0}
+    kwargs = _resolve_timm_kwargs(spec)
     target = spec.timm_model_name or f"hf-hub:{spec.hub}"
     if spec.name == "ctranspath":
         kwargs["embed_layer"] = _build_ctranspath_conv_stem()
@@ -154,10 +171,39 @@ def _load_from_timm(spec: VisionModelSpec) -> Any:
         return timm.create_model(target, **kwargs)
     except Exception:
         # Some timm versions or hubs require explicit local cache use.
-        retry_kwargs = {"pretrained": True}
+        retry_kwargs = dict(kwargs)
         if spec.name == "ctranspath":
             retry_kwargs["embed_layer"] = _build_ctranspath_conv_stem()
         return timm.create_model(target, **retry_kwargs)
+
+
+def _resolve_timm_kwargs(spec: VisionModelSpec) -> dict[str, Any]:
+    """Return timm creation kwargs for a registered model.
+
+    Args:
+        spec: Selected model specification.
+
+    Returns:
+        Keyword arguments for `timm.create_model`.
+    """
+    kwargs: dict[str, Any] = {"pretrained": True, "num_classes": 0}
+    if not spec.timm_kwargs:
+        return kwargs
+
+    try:
+        import timm
+        import torch
+    except ImportError:
+        return {**kwargs, **spec.timm_kwargs}
+
+    resolved = dict(spec.timm_kwargs)
+    mlp_layer = resolved.get("mlp_layer")
+    if mlp_layer == "SwiGLUPacked":
+        resolved["mlp_layer"] = timm.layers.SwiGLUPacked
+    act_layer = resolved.get("act_layer")
+    if act_layer == "SiLU":
+        resolved["act_layer"] = torch.nn.SiLU
+    return {**kwargs, **resolved}
 
 
 def _build_ctranspath_conv_stem() -> type[Any]:
