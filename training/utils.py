@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import re
@@ -75,6 +76,67 @@ def _score_text(text: str, prototypes: dict[str, dict[str, float]]) -> dict[str,
         uniform = 1 / len(scores)
         return {label: uniform for label in scores}
     return {label: score / total for label, score in scores.items()}
+
+
+def _sha256_file(path: Path) -> str:
+    """Return the SHA256 digest for a file.
+
+    Args:
+        path: File to hash.
+
+    Returns:
+        Hex-encoded SHA256 digest.
+    """
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _vision_artifact_metadata(settings: Any, vision_model: str) -> dict[str, Any]:
+    """Validate that the vision artifact matches the latest extracted features.
+
+    Args:
+        settings: Loaded runtime settings.
+        vision_model: Selected vision model key.
+
+    Returns:
+        Freshness metadata for the vision artifact.
+
+    Raises:
+        AssertionError: If the artifact is stale or points at the wrong feature manifest.
+    """
+    vision_artifact_path = settings.output_root / "vision" / "artifact.json"
+    expected_manifest_path = settings.output_root / "vision" / "features" / vision_model / "features_manifest.jsonl"
+    assert vision_artifact_path.exists(), f"vision artifact missing: {vision_artifact_path}"
+    assert expected_manifest_path.exists(), f"vision feature manifest missing: {expected_manifest_path}"
+
+    vision_artifact = read_json(vision_artifact_path)
+    actual_manifest_path = Path(str(vision_artifact.get("feature_manifest_path", "")))
+    assert actual_manifest_path == expected_manifest_path, (
+        f"vision artifact manifest mismatch: expected {expected_manifest_path}, got {actual_manifest_path}"
+    )
+
+    artifact_mtime = vision_artifact_path.stat().st_mtime
+    manifest_mtime = expected_manifest_path.stat().st_mtime
+    assert artifact_mtime >= manifest_mtime, (
+        f"vision artifact is stale: {vision_artifact_path} is older than {expected_manifest_path}"
+    )
+
+    expected_dim = get_embed_dim(vision_model)
+    actual_dim = int(vision_artifact.get("embedding_dim", expected_dim))
+    assert actual_dim == expected_dim, f"vision artifact dim mismatch: expected {expected_dim}, got {actual_dim}"
+
+    return {
+        "vision_artifact_path": str(vision_artifact_path),
+        "vision_feature_manifest_path": str(expected_manifest_path),
+        "vision_artifact_mtime": artifact_mtime,
+        "vision_feature_manifest_mtime": manifest_mtime,
+        "vision_feature_manifest_sha256": _sha256_file(expected_manifest_path),
+        "vision_artifact_embedding_dim": actual_dim,
+        "vision_model": vision_model,
+    }
 
 
 def train_text_classifier(task_name: str, args: argparse.Namespace) -> Path:
@@ -295,12 +357,7 @@ def train_verifier(args: argparse.Namespace) -> Path:
     output_dir = Path(args.output_dir or settings.output_root / "verifier")
     output_dir.mkdir(parents=True, exist_ok=True)
     vision_model = str(settings.extras.get("vision", {}).get("default_model", "uni2"))
-    vision_artifact_path = settings.output_root / "vision" / "artifact.json"
-    if vision_artifact_path.exists():
-        vision_artifact = read_json(vision_artifact_path)
-        expected_dim = get_embed_dim(vision_model)
-        actual_dim = int(vision_artifact.get("embedding_dim", expected_dim))
-        assert actual_dim == expected_dim, f"vision artifact dim mismatch: expected {expected_dim}, got {actual_dim}"
+    vision_metadata = _vision_artifact_metadata(settings, vision_model)
     verifier_dataset_path = settings.processed_data_root / "verifier" / "dataset.jsonl"
     verifier_split_path = settings.split_root / "verifier_splits.json"
     crosswalk_candidates = [Path(args.crosswalk)] if args.crosswalk else []
@@ -350,6 +407,7 @@ def train_verifier(args: argparse.Namespace) -> Path:
         "device": args.device,
         "smoke_test": args.smoke_test,
         "prototypes": prototypes,
+        "vision_artifact_metadata": vision_metadata,
         "alignment_status": alignment_status,
         "aligned_sample_count": aligned_count,
         "metrics": {
