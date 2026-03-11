@@ -70,6 +70,14 @@ MODELS: dict[str, dict[str, Any]] = {
         "gated": True,
         "access_url": "https://huggingface.co/paige-ai/Virchow2",
     },
+    "virchow": {
+        "hub": "paige-ai/Virchow",
+        "embed_dim": 1280,
+        "architecture": "ViT-H",
+        "gated": True,
+        "access_url": "https://huggingface.co/paige-ai/Virchow",
+        "timm_model_name": "hf-hub:paige-ai/Virchow",
+    },
     "ctranspath": {
         "hub": "1aurent/swin_tiny_patch4_window7_224.CTransPath",
         "embed_dim": 768,
