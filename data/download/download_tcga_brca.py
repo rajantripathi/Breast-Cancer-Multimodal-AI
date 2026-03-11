@@ -7,9 +7,10 @@ import csv
 import json
 import shutil
 import subprocess
+import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import requests
 from requests import exceptions as requests_exceptions
@@ -20,6 +21,9 @@ from config import load_settings
 GDC_API = "https://api.gdc.cancer.gov"
 PROJECT_ID = "TCGA-BRCA"
 PAGE_SIZE = 200
+DOWNLOAD_TIMEOUT_SECONDS = 1800
+MAX_API_RETRIES = 4
+MAX_GDC_CLIENT_RETRIES = 3
 CLINICAL_COLUMNS = [
     "bcr_patient_barcode",
     "age_at_diagnosis",
@@ -190,11 +194,16 @@ def _target_path(target_dir: Path, patient_barcode: str, file_uuid: str, file_na
 def _download_via_api(file_uuid: str, target_path: Path) -> None:
     """Download one GDC file via the HTTP data endpoint with retry support."""
     partial_path = target_path.with_suffix(f"{target_path.suffix}.partial")
-    for attempt in range(1, 5):
+    for attempt in range(1, MAX_API_RETRIES + 1):
         existing_size = partial_path.stat().st_size if partial_path.exists() else 0
         headers = {"Range": f"bytes={existing_size}-"} if existing_size else {}
         try:
-            with requests.get(f"{GDC_API}/data/{file_uuid}", headers=headers, stream=True, timeout=3600) as response:
+            with requests.get(
+                f"{GDC_API}/data/{file_uuid}",
+                headers=headers,
+                stream=True,
+                timeout=(30, DOWNLOAD_TIMEOUT_SECONDS),
+            ) as response:
                 response.raise_for_status()
                 if existing_size and response.status_code != 206:
                     partial_path.unlink(missing_ok=True)
@@ -208,15 +217,16 @@ def _download_via_api(file_uuid: str, target_path: Path) -> None:
             return
         except (requests_exceptions.ChunkedEncodingError, requests_exceptions.ConnectionError, requests_exceptions.Timeout) as exc:
             print(f"retryable download failure for {file_uuid} on attempt {attempt}: {exc}")
-            if attempt == 4:
+            if attempt == MAX_API_RETRIES:
                 raise
+            time.sleep(min(30, attempt * 5))
         except requests_exceptions.RequestException:
             raise
 
 
 def _download_via_gdc_client(file_uuid: str, target_dir: Path) -> Path:
     """Download one GDC file via gdc-client into the target directory."""
-    for attempt in range(1, 4):
+    for attempt in range(1, MAX_GDC_CLIENT_RETRIES + 1):
         try:
             subprocess.run(
                 ["gdc-client", "download", file_uuid, "-d", str(target_dir)],
@@ -224,8 +234,9 @@ def _download_via_gdc_client(file_uuid: str, target_dir: Path) -> Path:
             )
             break
         except subprocess.CalledProcessError:
-            if attempt == 3:
+            if attempt == MAX_GDC_CLIENT_RETRIES:
                 raise
+            time.sleep(min(30, attempt * 5))
     download_dir = target_dir / file_uuid
     files = [path for path in download_dir.iterdir() if path.is_file()]
     if not files:
@@ -237,7 +248,7 @@ def _download_records(
     records: list[dict[str, Any]],
     target_dir: Path,
     progress_label: str,
-    on_update: callable | None = None,
+    on_update: Callable[[list[dict[str, str]]], None] | None = None,
 ) -> list[dict[str, str]]:
     """Download TCGA file records to a local directory.
 
@@ -252,6 +263,7 @@ def _download_records(
     target_dir.mkdir(parents=True, exist_ok=True)
     use_gdc_client = shutil.which("gdc-client") is not None
     rows: list[dict[str, str]] = []
+    skipped = 0
     for index, record in enumerate(records, start=1):
         file_uuid = str(record["file_id"])
         file_name = str(record["file_name"])
@@ -259,15 +271,22 @@ def _download_records(
         if not patient_barcode:
             continue
         destination = _target_path(target_dir, patient_barcode, file_uuid, file_name)
+        print(f"{progress_label}: starting {index} / {len(records)} patient={patient_barcode} uuid={file_uuid} file={file_name}")
         if not destination.exists():
-            if use_gdc_client:
-                downloaded = _download_via_gdc_client(file_uuid, target_dir)
-                downloaded.replace(destination)
-                download_dir = target_dir / file_uuid
-                if download_dir.exists():
-                    shutil.rmtree(download_dir)
-            else:
-                _download_via_api(file_uuid, destination)
+            try:
+                if use_gdc_client:
+                    downloaded = _download_via_gdc_client(file_uuid, target_dir)
+                    downloaded.replace(destination)
+                    download_dir = target_dir / file_uuid
+                    if download_dir.exists():
+                        shutil.rmtree(download_dir)
+                else:
+                    _download_via_api(file_uuid, destination)
+            except Exception as exc:
+                destination.with_suffix(f"{destination.suffix}.partial").unlink(missing_ok=True)
+                skipped += 1
+                print(f"{progress_label}: SKIP patient={patient_barcode} uuid={file_uuid} error={exc}")
+                continue
         rows.append(
             {
                 "patient_barcode": patient_barcode,
@@ -279,7 +298,8 @@ def _download_records(
         if on_update is not None:
             on_update(rows)
         if index % 10 == 0:
-            print(f"{progress_label}: downloaded {index} / {len(records)}")
+            print(f"{progress_label}: completed {len(rows)} files, skipped {skipped}, processed {index} / {len(records)}")
+    print(f"{progress_label}: finished with {len(rows)} downloaded and {skipped} skipped")
     return rows
 
 
