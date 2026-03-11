@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from config import load_settings
 
 BARCODE_PATTERN = re.compile(r"(TCGA-[A-Z0-9]{2}-[A-Z0-9]{4})", re.IGNORECASE)
 CLINICAL_BARCODE_COLUMNS = ("bcr_patient_barcode", "patient_id", "submitter_id")
@@ -117,15 +118,90 @@ def load_crosswalk(path: str | Path):
     return _pd().read_csv(path)
 
 
+def build_tcga_crosswalk(model: str = "uni2"):
+    """Build a TCGA-specific crosswalk from the downloaded manifest.
+
+    Args:
+        model: Vision embedding model key used for slide embeddings.
+
+    Returns:
+        Saved crosswalk DataFrame.
+    """
+    pd = _pd()
+    settings = load_settings()
+    manifest_path = settings.repo_root / "data" / "tcga_brca_manifest.csv"
+    clinical_csv = settings.repo_root / "data" / "tcga_brca_clinical.csv"
+    output_path = settings.repo_root / "data" / "tcga_crosswalk.csv"
+    report_path = settings.repo_root / "reports" / "tcga_alignment_report.txt"
+    clinical = pd.read_csv(clinical_csv).copy()
+    clinical["patient_barcode"] = clinical["bcr_patient_barcode"].astype(str).map(extract_patient_barcode)
+    clinical["clinical_row_idx"] = clinical.index.astype(int)
+
+    manifest = pd.read_csv(manifest_path).copy()
+    manifest["patient_barcode"] = manifest["patient_barcode"].astype(str).map(extract_patient_barcode)
+    vision_root = settings.project_root / "tcga-brca" / "embeddings" / model
+    genomics_root = settings.project_root / "tcga-brca" / "genomics"
+
+    aligned_rows: list[dict[str, Any]] = []
+    for row in manifest.itertuples(index=False):
+        if str(row.has_slide) != "True" or str(row.has_rnaseq) != "True" or str(row.has_clinical) != "True":
+            continue
+        patient_barcode = str(row.patient_barcode)
+        vision_path = vision_root / f"{patient_barcode}.pt"
+        genomics_path = genomics_root / f"{patient_barcode}.pt"
+        clinical_match = clinical.loc[clinical["patient_barcode"] == patient_barcode]
+        if not vision_path.exists() or not genomics_path.exists() or clinical_match.empty:
+            continue
+        clinical_row = clinical_match.iloc[0]
+        aligned_rows.append(
+            {
+                "patient_barcode": patient_barcode,
+                "vision_path": str(vision_path),
+                "genomics_path": str(genomics_path),
+                "clinical_row_idx": int(clinical_row["clinical_row_idx"]),
+                "vital_status": str(clinical_row.get("vital_status", "")),
+                "days_to_death": str(clinical_row.get("days_to_death", "")),
+                "days_to_last_followup": str(clinical_row.get("days_to_last_followup", "")),
+                "er_status": str(clinical_row.get("er_status_by_ihc", "")),
+                "her2_status": str(clinical_row.get("her2_status_by_ihc", "")),
+            }
+        )
+    crosswalk = pd.DataFrame(aligned_rows)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    crosswalk.to_csv(output_path, index=False)
+
+    total = len(manifest)
+    aligned = len(crosswalk)
+    fraction = (aligned / total * 100.0) if total else 0.0
+    report_lines = [
+        f"Total manifest patients: {total}",
+        f"Aligned patients: {aligned} of {total} total ({fraction:.2f}%)",
+        f"Vision root: {vision_root}",
+        f"Genomics root: {genomics_root}",
+        f"Clinical CSV: {clinical_csv}",
+    ]
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text("\n".join(report_lines) + "\n")
+    print(f"Aligned patients: {aligned} of {total} total ({fraction:.2f}%)")
+    return crosswalk
+
+
 def main() -> None:
     """CLI entrypoint for building patient-level crosswalks."""
     parser = argparse.ArgumentParser(description="Build aligned patient bundles from embedding directories and clinical CSV")
-    parser.add_argument("--vision-dir", required=True)
-    parser.add_argument("--genomics-dir", required=True)
-    parser.add_argument("--clinical-csv", required=True)
-    parser.add_argument("--output", required=True)
+    parser.add_argument("--vision-dir")
+    parser.add_argument("--genomics-dir")
+    parser.add_argument("--clinical-csv")
+    parser.add_argument("--output")
+    parser.add_argument("--tcga", action="store_true")
+    parser.add_argument("--model", default="uni2")
     args = parser.parse_args()
-    crosswalk = build_crosswalk(args.vision_dir, args.genomics_dir, args.clinical_csv, args.output)
+    if args.tcga:
+        crosswalk = build_tcga_crosswalk(model=args.model)
+    else:
+        if not all([args.vision_dir, args.genomics_dir, args.clinical_csv, args.output]):
+            raise SystemExit("--vision-dir, --genomics-dir, --clinical-csv, and --output are required unless --tcga is used")
+        crosswalk = build_crosswalk(args.vision_dir, args.genomics_dir, args.clinical_csv, args.output)
     print(crosswalk.head().to_csv(index=False).strip() if not crosswalk.empty else "crosswalk empty")
 
 

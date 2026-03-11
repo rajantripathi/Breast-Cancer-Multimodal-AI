@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=bcai-tcga-feat
+#SBATCH --account=u6ef
+#SBATCH --partition=gh200
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%j.out
+
+set -euo pipefail
+REPO_DIR="${REPO_DIR:-$PWD}"
+cd "$REPO_DIR"
+source "$REPO_DIR/scripts/isambard/slurm_env.sh"
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
+export HF_TOKEN="${HF_TOKEN:-}"
+python -m data.preprocess.extract_tcga_features --model uni2
