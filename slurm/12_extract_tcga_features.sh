@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bcai-tcga-feat
-#SBATCH --account=u6ef
-#SBATCH --partition=gh200
+#SBATCH --account=brics.u6ef
+#SBATCH --partition=workq
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G

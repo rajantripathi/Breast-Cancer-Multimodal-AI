@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bcai-tcga-crosswalk
-#SBATCH --account=u6ef
-#SBATCH --partition=gh200
+#SBATCH --account=brics.u6ef
+#SBATCH --partition=workq
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=16G
 #SBATCH --time=00:30:00

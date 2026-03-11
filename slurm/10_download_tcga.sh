@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bcai-tcga-download
-#SBATCH --account=u6ef
-#SBATCH --partition=gh200
+#SBATCH --account=brics.u6ef
+#SBATCH --partition=workq
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=24:00:00
