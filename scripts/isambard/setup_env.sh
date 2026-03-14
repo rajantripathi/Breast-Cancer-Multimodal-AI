@@ -20,6 +20,7 @@ python -m pip install -r "$REPO_DIR/requirements.txt"
 python -m pip install "timm>=1.0.3" "huggingface-hub>=0.23.0"
 python3 -c "import timm; print('timm OK:', timm.__version__)"
 python3 -c "import huggingface_hub; print('hf_hub OK:', huggingface_hub.__version__)"
+python3 -c "import openslide; from openslide import OpenSlide; print('openslide import OK')"
 
 mkdir -p "$DATA_ROOT/raw" "$DATA_ROOT/processed" "$MODEL_CACHE_DIR" "$RUN_ROOT" "$ARTIFACT_ROOT"
 mkdir -p "$DATA_ROOT/splits" "$PROJECT_ROOT/cache/huggingface"
