@@ -3,6 +3,7 @@ from __future__ import annotations
 """Tile TCGA WSI slides into tissue-rich patches."""
 
 import argparse
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,22 @@ def _openslide_module():
 def _patient_barcode_from_path(path: Path) -> str:
     """Extract the patient barcode from a normalized download path."""
     return path.name.split("__", 1)[0]
+
+
+def _canonical_slide_paths(slide_paths: list[Path]) -> list[Path]:
+    """Select one deterministic slide per patient barcode.
+
+    Args:
+        slide_paths: Candidate slide paths.
+
+    Returns:
+        One canonical slide path per patient barcode.
+    """
+    selected: OrderedDict[str, Path] = OrderedDict()
+    for slide_path in sorted(slide_paths):
+        patient_barcode = _patient_barcode_from_path(slide_path)
+        selected.setdefault(patient_barcode, slide_path)
+    return list(selected.values())
 
 
 def _slide_level(slide: Any, target_magnification: float = 20.0) -> int:
@@ -133,18 +150,29 @@ def main() -> None:
     parser.add_argument("--slides-dir", default=None)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--max-slides", type=int, default=None)
+    parser.add_argument("--task-index", type=int, default=0)
+    parser.add_argument("--task-count", type=int, default=1)
     args = parser.parse_args()
 
     settings = load_settings()
     slides_dir = Path(args.slides_dir) if args.slides_dir else settings.project_root / "tcga-brca" / "slides"
     output_dir = Path(args.output_dir) if args.output_dir else settings.project_root / "tcga-brca" / "tiles"
-    slide_paths = sorted(slides_dir.glob("*.svs"))
+    slide_paths = _canonical_slide_paths(list(slides_dir.glob("*.svs")))
     if args.max_slides:
         slide_paths = slide_paths[: args.max_slides]
+    if args.task_count < 1:
+        raise ValueError("--task-count must be >= 1")
+    if not 0 <= args.task_index < args.task_count:
+        raise ValueError("--task-index must be in [0, task-count)")
+    slide_paths = [path for index, path in enumerate(slide_paths) if index % args.task_count == args.task_index]
+    print(f"selected {len(slide_paths)} canonical slides for task {args.task_index + 1}/{args.task_count}")
 
     for index, slide_path in enumerate(slide_paths, start=1):
         patient_barcode = _patient_barcode_from_path(slide_path)
         output_path = output_dir / f"{patient_barcode}.h5"
+        if output_path.exists() and output_path.stat().st_size > 0:
+            print(f"[{index}/{len(slide_paths)}] {patient_barcode}: skip existing {output_path.name}")
+            continue
         tile_count = tile_slide(slide_path, output_path)
         print(f"[{index}/{len(slide_paths)}] {patient_barcode}: kept {tile_count} tiles")
 
