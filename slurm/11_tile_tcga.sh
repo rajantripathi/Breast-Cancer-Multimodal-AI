@@ -18,6 +18,8 @@ python3 -c "import openslide; from openslide import OpenSlide; print('OpenSlide 
   exit 1
 }
 export HDF5_USE_FILE_LOCKING=FALSE
-TASK_INDEX="${SLURM_ARRAY_TASK_ID:-0}"
+TASK_MIN="${SLURM_ARRAY_TASK_MIN:-0}"
+TASK_INDEX_RAW="${SLURM_ARRAY_TASK_ID:-0}"
+TASK_INDEX="$((TASK_INDEX_RAW - TASK_MIN))"
 TASK_COUNT="${SLURM_ARRAY_TASK_COUNT:-1}"
 python -m data.preprocess.tile_tcga --task-index "$TASK_INDEX" --task-count "$TASK_COUNT"
