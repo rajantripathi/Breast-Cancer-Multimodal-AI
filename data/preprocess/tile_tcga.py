@@ -119,8 +119,12 @@ def tile_slide(slide_path: Path, output_path: Path) -> int:
     level = _slide_level(slide)
     width, height = slide.level_dimensions[level]
     downsample = float(slide.level_downsamples[level])
-    handle, tiles_ds, coords_ds = _create_h5(output_path)
+    temp_output_path = output_path.with_suffix(f"{output_path.suffix}.partial")
+    if temp_output_path.exists():
+        temp_output_path.unlink()
+    handle, tiles_ds, coords_ds = _create_h5(temp_output_path)
     kept = 0
+    completed = False
     batch_tiles: list[np.ndarray] = []
     batch_coords: list[tuple[int, int]] = []
     try:
@@ -138,9 +142,12 @@ def tile_slide(slide_path: Path, output_path: Path) -> int:
                     batch_tiles.clear()
                     batch_coords.clear()
         _append_batch(tiles_ds, coords_ds, batch_tiles, batch_coords)
+        completed = True
     finally:
         handle.close()
         slide.close()
+    if completed:
+        temp_output_path.replace(output_path)
     return kept
 
 
@@ -167,14 +174,26 @@ def main() -> None:
     slide_paths = [path for index, path in enumerate(slide_paths) if index % args.task_count == args.task_index]
     print(f"selected {len(slide_paths)} canonical slides for task {args.task_index + 1}/{args.task_count}")
 
+    skipped = 0
     for index, slide_path in enumerate(slide_paths, start=1):
         patient_barcode = _patient_barcode_from_path(slide_path)
         output_path = output_dir / f"{patient_barcode}.h5"
         if output_path.exists() and output_path.stat().st_size > 0:
             print(f"[{index}/{len(slide_paths)}] {patient_barcode}: skip existing {output_path.name}")
             continue
-        tile_count = tile_slide(slide_path, output_path)
+        try:
+            tile_count = tile_slide(slide_path, output_path)
+        except Exception as exc:
+            partial_output_path = output_path.with_suffix(f"{output_path.suffix}.partial")
+            if partial_output_path.exists():
+                partial_output_path.unlink()
+            if output_path.exists() and output_path.stat().st_size == 0:
+                output_path.unlink()
+            skipped += 1
+            print(f"[{index}/{len(slide_paths)}] {patient_barcode}: skip failed slide {slide_path.name}: {type(exc).__name__}: {exc}")
+            continue
         print(f"[{index}/{len(slide_paths)}] {patient_barcode}: kept {tile_count} tiles")
+    print(f"finished task {args.task_index + 1}/{args.task_count}, processed={len(slide_paths)}, skipped={skipped}")
 
 
 if __name__ == "__main__":
