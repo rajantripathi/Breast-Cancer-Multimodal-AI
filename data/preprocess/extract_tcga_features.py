@@ -33,6 +33,8 @@ def _extract_one(tile_path: Path, model_key: str, model: torch.nn.Module, transf
             if not isinstance(outputs, torch.Tensor):
                 raise TypeError(f"{model_key} returned non-tensor outputs")
             patch_embeddings.append(outputs.detach().cpu())
+    if not patch_embeddings:
+        raise ValueError(f"{tile_path.name} contains no tiles")
     patch_tensor = torch.cat(patch_embeddings, dim=0)
     slide_embedding = patch_tensor.mean(dim=0)
     expected_dim = get_embed_dim(model_key)
@@ -66,18 +68,25 @@ def main() -> None:
     model = model.to(device)
     tile_paths = sorted(tiles_dir.glob("*.h5"))
     processed = 0
+    skipped = 0
     for tile_path in tile_paths:
         patient_barcode = tile_path.stem
         slide_output = output_dir / f"{patient_barcode}.pt"
         patch_output = patch_output_dir / f"{patient_barcode}.pt"
         if slide_output.exists() and patch_output.exists():
             continue
-        patch_tensor, slide_tensor = _extract_one(tile_path, args.model, model, transform, device, args.batch_size)
+        try:
+            patch_tensor, slide_tensor = _extract_one(tile_path, args.model, model, transform, device, args.batch_size)
+        except (OSError, KeyError, ValueError, TypeError, AssertionError) as exc:
+            skipped += 1
+            print(f"skip failed tile file {tile_path.name}: {type(exc).__name__}: {exc}")
+            continue
         torch.save(slide_tensor, slide_output)
         torch.save(patch_tensor, patch_output)
         processed += 1
         if processed % 50 == 0:
             print(f"processed {processed} slides with {args.model}")
+    print(f"finished extraction with {args.model}, processed={processed}, skipped={skipped}")
 
 
 if __name__ == "__main__":
