@@ -7,6 +7,8 @@
 #SBATCH --time=00:30:00
 #SBATCH --output=logs/%j.out
 
+# Submit with: sbatch --dependency=afterok:$ARRAY_JOB_ID slurm/14_build_tcga_crosswalk.sh
+
 set -euo pipefail
 REPO_DIR="${REPO_DIR:-$PWD}"
 cd "$REPO_DIR"

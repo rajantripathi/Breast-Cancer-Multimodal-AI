@@ -64,6 +64,8 @@ def main() -> None:
     parser.add_argument("--patch-output-dir", default=None)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--device", default=None)
+    parser.add_argument("--shard-index", type=int, default=None)
+    parser.add_argument("--num-shards", type=int, default=None)
     args = parser.parse_args()
 
     settings = load_settings()
@@ -85,10 +87,25 @@ def main() -> None:
         print(f"WARNING: model loading took {model_load_elapsed:.1f}s for {args.model}", flush=True)
     model = model.to(device)
     tile_paths = sorted(tiles_dir.glob("*.h5"))
+    total_tile_paths = len(tile_paths)
+    if args.shard_index is None and args.num_shards is None:
+        shard_index = 0
+        num_shards = 1
+    elif args.shard_index is not None and args.num_shards is not None:
+        shard_index = args.shard_index
+        num_shards = args.num_shards
+    else:
+        raise ValueError("--shard-index and --num-shards must be provided together")
+    if num_shards < 1:
+        raise ValueError("--num-shards must be >= 1")
+    if not 0 <= shard_index < num_shards:
+        raise ValueError("--shard-index must be in [0, num-shards)")
+    tile_paths = [path for index, path in enumerate(tile_paths) if index % num_shards == shard_index]
     print(f"Tiles directory: {tiles_dir}", flush=True)
     print(f"Slide embedding output directory: {output_dir}", flush=True)
     print(f"Patch embedding output directory: {patch_output_dir}", flush=True)
-    print(f"Found {len(tile_paths)} tile files to process", flush=True)
+    print(f"Found {total_tile_paths} tile files to process", flush=True)
+    print(f"Shard {shard_index}/{num_shards}: processing {len(tile_paths)} of {total_tile_paths} files", flush=True)
     processed = 0
     skipped = 0
     printed_h5_diagnostic = False
