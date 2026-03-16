@@ -18,4 +18,8 @@ if [ -f .env ]; then
   set +a
 fi
 export HF_TOKEN="${HF_TOKEN:-}"
-python -m data.preprocess.extract_tcga_features --model uni2
+export OPENBLAS_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
+export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
+export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
+export PYTHONUNBUFFERED=1
+python -u -m data.preprocess.extract_tcga_features --model uni2
