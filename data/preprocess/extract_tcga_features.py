@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import time
 
 import h5py
 import torch
@@ -20,9 +21,20 @@ def _device_from_arg(device_arg: str | None) -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def _extract_one(tile_path: Path, model_key: str, model: torch.nn.Module, transform, device: torch.device, batch_size: int) -> tuple[torch.Tensor, torch.Tensor]:
+def _extract_one(
+    tile_path: Path,
+    model_key: str,
+    model: torch.nn.Module,
+    transform,
+    device: torch.device,
+    batch_size: int,
+    print_h5_diagnostic: bool,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """Extract patch and slide embeddings from one tiled slide."""
     with h5py.File(tile_path, "r") as handle:
+        if print_h5_diagnostic:
+            tiles_shape = handle["tiles"].shape if "tiles" in handle else "<missing>"
+            print(f"H5 keys: {list(handle.keys())}, shape: {tiles_shape}", flush=True)
         tiles = handle["tiles"]
         patch_embeddings: list[torch.Tensor] = []
         for start in range(0, len(tiles), batch_size):
@@ -64,29 +76,52 @@ def main() -> None:
     patch_output_dir.mkdir(parents=True, exist_ok=True)
 
     device = _device_from_arg(args.device)
+    print(f"Loading model {args.model}...", flush=True)
+    model_load_start = time.monotonic()
     model, transform = load_model(args.model)
+    model_load_elapsed = time.monotonic() - model_load_start
+    print(f"Model loaded. Embed dim: {get_embed_dim(args.model)}. Load time: {model_load_elapsed:.1f}s", flush=True)
+    if model_load_elapsed > 600:
+        print(f"WARNING: model loading took {model_load_elapsed:.1f}s for {args.model}", flush=True)
     model = model.to(device)
     tile_paths = sorted(tiles_dir.glob("*.h5"))
+    print(f"Tiles directory: {tiles_dir}", flush=True)
+    print(f"Slide embedding output directory: {output_dir}", flush=True)
+    print(f"Patch embedding output directory: {patch_output_dir}", flush=True)
+    print(f"Found {len(tile_paths)} tile files to process", flush=True)
     processed = 0
     skipped = 0
-    for tile_path in tile_paths:
+    printed_h5_diagnostic = False
+    for index, tile_path in enumerate(tile_paths, start=1):
         patient_barcode = tile_path.stem
         slide_output = output_dir / f"{patient_barcode}.pt"
         patch_output = patch_output_dir / f"{patient_barcode}.pt"
+        print(f"Processing {index}/{len(tile_paths)}: {tile_path.name}", flush=True)
         if slide_output.exists() and patch_output.exists():
+            print(f"Skipping existing outputs for {tile_path.name}", flush=True)
             continue
         try:
-            patch_tensor, slide_tensor = _extract_one(tile_path, args.model, model, transform, device, args.batch_size)
+            patch_tensor, slide_tensor = _extract_one(
+                tile_path,
+                args.model,
+                model,
+                transform,
+                device,
+                args.batch_size,
+                print_h5_diagnostic=not printed_h5_diagnostic,
+            )
+            printed_h5_diagnostic = True
         except (OSError, KeyError, ValueError, TypeError, AssertionError) as exc:
             skipped += 1
-            print(f"skip failed tile file {tile_path.name}: {type(exc).__name__}: {exc}")
+            print(f"skip failed tile file {tile_path.name}: {type(exc).__name__}: {exc}", flush=True)
             continue
         torch.save(slide_tensor, slide_output)
         torch.save(patch_tensor, patch_output)
         processed += 1
+        print(f"Saved embeddings for {tile_path.name}: {slide_output.name}, {patch_output.name}", flush=True)
         if processed % 50 == 0:
-            print(f"processed {processed} slides with {args.model}")
-    print(f"finished extraction with {args.model}, processed={processed}, skipped={skipped}")
+            print(f"processed {processed} slides with {args.model}", flush=True)
+    print(f"finished extraction with {args.model}, processed={processed}, skipped={skipped}", flush=True)
 
 
 if __name__ == "__main__":
