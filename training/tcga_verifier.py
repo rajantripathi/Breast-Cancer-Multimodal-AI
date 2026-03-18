@@ -283,7 +283,17 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     val_loader = DataLoader(TCGAAlignedDataset(val_samples), batch_size=min(16, max(1, len(val_samples))), shuffle=False, collate_fn=_collate) if val_samples else None
     test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, max(1, len(test_samples))), shuffle=False, collate_fn=_collate) if test_samples else None
 
-    device = torch.device(args.device if args.device != "cpu" else ("cuda" if torch.cuda.is_available() else "cpu"))
+    requested_device = str(args.device).lower()
+    if requested_device.startswith("cuda"):
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        else:
+            print("WARNING: CUDA requested but unavailable; falling back to CPU", flush=True)
+            device = torch.device("cpu")
+    elif requested_device == "cpu":
+        device = torch.device("cpu")
+    else:
+        device = torch.device(requested_device)
     model = TCGAVerifier(vision_dim=1536, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
