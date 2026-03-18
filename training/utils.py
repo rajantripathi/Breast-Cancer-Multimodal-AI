@@ -25,6 +25,13 @@ def build_parser(task_name: str) -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--crosswalk", default=None, help="Optional patient-alignment crosswalk CSV")
+    parser.add_argument("--vision-dir", default=None, help="Optional vision embedding directory")
+    parser.add_argument("--genomics-dir", default=None, help="Optional genomics embedding directory")
+    parser.add_argument("--clinical-csv", default=None, help="Optional clinical CSV path")
+    parser.add_argument("--modalities", default="vision,clinical,genomics")
+    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--patience", type=int, default=20)
     parser.add_argument("--smoke-test", action="store_true")
     return parser
 
@@ -356,6 +363,12 @@ def train_verifier(args: argparse.Namespace) -> Path:
     settings = load_settings(args.config)
     output_dir = Path(args.output_dir or settings.output_root / "verifier")
     output_dir.mkdir(parents=True, exist_ok=True)
+    if args.crosswalk:
+        if args.clinical_csv is None:
+            args.clinical_csv = str(settings.repo_root / "data" / "tcga_brca_clinical.csv")
+        from training.tcga_verifier import train_tcga_verifier
+
+        return train_tcga_verifier(args, output_dir)
     vision_model = str(settings.extras.get("vision", {}).get("default_model", "uni2"))
     vision_metadata = _vision_artifact_metadata(settings, vision_model)
     verifier_dataset_path = settings.processed_data_root / "verifier" / "dataset.jsonl"
@@ -372,12 +385,12 @@ def train_verifier(args: argparse.Namespace) -> Path:
         rows = _build_aligned_verifier_rows(crosswalk_path, clinical_csv)
         alignment_status = "patient_aligned"
         aligned_count = len(rows)
-        print(f"Verifier training on {aligned_count} patient-aligned bundles")
+        print(f"Verifier training on {aligned_count} patient-aligned bundles", flush=True)
     elif verifier_dataset_path.exists():
-        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).")
+        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).", flush=True)
         rows = read_jsonl(verifier_dataset_path)
     else:
-        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).")
+        print("WARNING: No crosswalk found. Verifier training on unaligned bundles (not recommended).", flush=True)
         rows = build_verifier_dataset(settings.repo_root)
     if args.smoke_test:
         rows = rows[:2]

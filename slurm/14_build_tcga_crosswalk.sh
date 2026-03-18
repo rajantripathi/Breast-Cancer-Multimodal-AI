@@ -13,4 +13,4 @@ set -euo pipefail
 REPO_DIR="${REPO_DIR:-$PWD}"
 cd "$REPO_DIR"
 source "$REPO_DIR/scripts/isambard/slurm_env.sh"
-python -m data.preprocess.build_aligned_bundles --tcga --model uni2
+python -u -m data.preprocess.build_tcga_crosswalk

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Enterprise-style evaluation for verifier and sample-case outputs."""
 
+import argparse
 import json
 from pathlib import Path
 from typing import Any
@@ -19,9 +20,43 @@ def _alignment_summary(verifier_artifact: dict[str, Any] | None) -> str:
         return "Verifier alignment status unavailable"
     status = verifier_artifact.get("alignment_status", "unaligned_legacy")
     count = int(verifier_artifact.get("aligned_sample_count", 0))
-    if status == "patient_aligned":
+    if status in {"patient_aligned", "patient_aligned_tcga"}:
         return f"Verifier trained on {count} patient-aligned bundles"
     return "Verifier trained on unaligned bundles (legacy mode)"
+
+
+def _enrich_survival_from_clinical(
+    predictions: list[dict[str, Any]],
+    clinical_csv: str | Path | None,
+) -> list[dict[str, Any]]:
+    if not predictions or clinical_csv is None:
+        return predictions
+    if all("survival_time" in item and "event_observed" in item for item in predictions):
+        return predictions
+    clinical_path = Path(clinical_csv)
+    if not clinical_path.exists():
+        return predictions
+    import pandas as pd
+
+    frame = pd.read_csv(clinical_path).copy()
+    if "bcr_patient_barcode" not in frame.columns:
+        return predictions
+    frame["patient_barcode"] = frame["bcr_patient_barcode"].astype(str).str.upper().str.slice(0, 12)
+    lookup = frame.set_index("patient_barcode").to_dict(orient="index")
+    enriched: list[dict[str, Any]] = []
+    for item in predictions:
+        clone = dict(item)
+        sample_id = str(clone.get("sample_id", "")).upper()[:12]
+        row = lookup.get(sample_id)
+        if row is not None:
+            if "survival_time" not in clone:
+                survival_time = row.get("days_to_death") if pd.notna(row.get("days_to_death")) else row.get("days_to_last_followup")
+                clone["survival_time"] = float(survival_time) if pd.notna(survival_time) else 0.0
+            if "event_observed" not in clone:
+                vital_status = str(row.get("vital_status", "")).strip().lower()
+                clone["event_observed"] = int(vital_status in {"dead", "deceased", "1", "true", "yes"})
+        enriched.append(clone)
+    return enriched
 
 
 def _extract_prediction_arrays(predictions: list[dict[str, Any]]) -> tuple[list[str], list[int], list[int], list[list[float]], list[float]]:
@@ -168,13 +203,20 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     return {"c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4)}
 
 
-def evaluate_predictions(prediction_file: str | Path) -> dict[str, object]:
+def evaluate_predictions(
+    prediction_file: str | Path,
+    verifier_artifact_path: str | Path | None = None,
+    output_dir: str | Path | None = None,
+    clinical_csv: str | Path | None = None,
+) -> dict[str, object]:
     """Evaluate current outputs and write enterprise-style reports."""
     prediction_path = Path(prediction_file)
-    repo_root = prediction_path.resolve().parents[1]
+    repo_root = prediction_path.resolve().parents[1] if prediction_path.exists() else Path(__file__).resolve().parents[1]
     predictions = _load_json(prediction_path) or []
-    verifier_artifact = _load_json(repo_root / "outputs" / "verifier" / "artifact.json")
-    verifier_predictions = verifier_artifact.get("predictions", []) if verifier_artifact else []
+    artifact_path = Path(verifier_artifact_path) if verifier_artifact_path else (repo_root / "outputs" / "verifier" / "artifact.json")
+    verifier_artifact = _load_json(artifact_path)
+    verifier_predictions = predictions if predictions else (verifier_artifact.get("predictions", []) if verifier_artifact else [])
+    verifier_predictions = _enrich_survival_from_clinical(verifier_predictions, clinical_csv)
     fused_labels = [item.get("risk_classification", item.get("fused_label", "unknown")) for item in predictions]
     alignment_summary = _alignment_summary(verifier_artifact)
     classification_metrics = _classification_metrics(verifier_predictions)
@@ -188,7 +230,8 @@ def evaluate_predictions(prediction_file: str | Path) -> dict[str, object]:
     metrics.update({key: value for key, value in classification_metrics.items() if key not in {"classification_report", "confusion_matrix", "labels"}})
     metrics.update(survival_metrics)
 
-    outputs_root = prediction_path.parent
+    outputs_root = Path(output_dir) if output_dir else prediction_path.parent
+    outputs_root.mkdir(parents=True, exist_ok=True)
     labels = classification_metrics.get("labels", [])
     confusion = classification_metrics.get("confusion_matrix")
     if confusion and labels:
@@ -209,13 +252,31 @@ def evaluate_predictions(prediction_file: str | Path) -> dict[str, object]:
 
 def main() -> None:
     """CLI entrypoint for enterprise evaluation."""
-    sample_file = Path(__file__).resolve().parents[1] / "outputs" / "sample_case_results.json"
-    if not sample_file.exists():
-        sample_file = Path(__file__).resolve().parents[1] / "outputs" / "fused_predictions.json"
-    if not sample_file.exists():
-        sample_file.write_text("[]")
-    metrics = evaluate_predictions(sample_file)
-    print(json.dumps(metrics, indent=2))
+    parser = argparse.ArgumentParser(description="Evaluate verifier outputs")
+    parser.add_argument("--experiment-dir", default=None)
+    parser.add_argument("--clinical-csv", default=None)
+    parser.add_argument("--output-dir", default=None)
+    args = parser.parse_args()
+
+    if args.experiment_dir:
+        experiment_dir = Path(args.experiment_dir)
+        prediction_file = experiment_dir / "predictions.json"
+        artifact_file = experiment_dir / "artifact.json"
+        output_dir = Path(args.output_dir or experiment_dir)
+        metrics = evaluate_predictions(
+            prediction_file,
+            verifier_artifact_path=artifact_file,
+            output_dir=output_dir,
+            clinical_csv=args.clinical_csv,
+        )
+    else:
+        sample_file = Path(__file__).resolve().parents[1] / "outputs" / "sample_case_results.json"
+        if not sample_file.exists():
+            sample_file = Path(__file__).resolve().parents[1] / "outputs" / "fused_predictions.json"
+        if not sample_file.exists():
+            sample_file.write_text("[]")
+        metrics = evaluate_predictions(sample_file)
+    print(json.dumps(metrics, indent=2), flush=True)
 
 
 if __name__ == "__main__":
