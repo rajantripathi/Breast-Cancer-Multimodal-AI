@@ -200,7 +200,10 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     survival_times = [float(item["survival_time"]) for item in predictions]
     event_observed = [int(item["event_observed"]) for item in predictions]
     risk_scores = [max(item.get("probabilities", {}).values()) if item.get("probabilities") else 0.0 for item in predictions]
-    return {"c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4)}
+    try:
+        return {"c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4)}
+    except ZeroDivisionError:
+        return {"c_index_message": "Survival labels present but no admissible pairs; C-index skipped"}
 
 
 def evaluate_predictions(
