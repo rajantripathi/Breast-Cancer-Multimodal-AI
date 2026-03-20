@@ -25,6 +25,20 @@ CLINICAL_EXCLUDE = {
 }
 
 
+def cox_nll_loss(risk_scores: torch.Tensor, survival_times: torch.Tensor, events: torch.Tensor) -> torch.Tensor:
+    """Negative log partial likelihood for a Cox proportional hazards model."""
+    if risk_scores.numel() == 0:
+        return torch.zeros((), device=risk_scores.device, requires_grad=True)
+    order = torch.argsort(survival_times, descending=True)
+    risk = risk_scores[order]
+    event_tensor = events[order].float()
+    log_cumsum = torch.logcumsumexp(risk, dim=0)
+    loss = -torch.mean((risk - log_cumsum) * event_tensor)
+    if torch.isnan(loss):
+        return torch.zeros((), device=risk.device, requires_grad=True)
+    return loss
+
+
 def _load_tensor(path: str | Path) -> torch.Tensor:
     payload = torch.load(Path(path), map_location="cpu")
     if isinstance(payload, dict):
@@ -123,7 +137,19 @@ class TCGAVerifier(nn.Module):
         vision_token, genomics_token, clinical_token = self._project_modalities(vision, genomics, clinical)
         tokens = torch.stack([vision_token, genomics_token, clinical_token], dim=1)
         attn_out, _ = self.attn(tokens, tokens, tokens, need_weights=False)
-        gates = torch.softmax(self.gate(attn_out).squeeze(-1), dim=1)
+        masks = torch.stack(
+            [
+                (vision.abs().sum(dim=-1) > 0).float(),
+                (genomics.abs().sum(dim=-1) > 0).float(),
+                (clinical.abs().sum(dim=-1) > 0).float(),
+            ],
+            dim=1,
+        )
+        gate_logits = self.gate(attn_out).squeeze(-1)
+        gate_logits = gate_logits.masked_fill(masks == 0, float("-inf"))
+        all_missing = masks.sum(dim=1, keepdim=True) == 0
+        gate_logits = torch.where(all_missing, torch.zeros_like(gate_logits), gate_logits)
+        gates = torch.softmax(gate_logits, dim=1)
         fused = (attn_out * gates.unsqueeze(-1)).sum(dim=1)
         return self.classifier(fused).squeeze(-1)
 
@@ -157,8 +183,8 @@ def _collate(samples: list[TCGASample]) -> dict[str, Any]:
         "genomics": torch.stack([sample.genomics for sample in samples]),
         "clinical": torch.stack([sample.clinical for sample in samples]),
         "label": torch.tensor([sample.label for sample in samples], dtype=torch.float32),
-        "survival_time": [sample.survival_time for sample in samples],
-        "event_observed": [sample.event_observed for sample in samples],
+        "survival_time": torch.tensor([sample.survival_time for sample in samples], dtype=torch.float32),
+        "event_observed": torch.tensor([sample.event_observed for sample in samples], dtype=torch.float32),
     }
 
 
@@ -236,7 +262,6 @@ def _run_epoch(
     model: TCGAVerifier,
     loader: DataLoader,
     device: torch.device,
-    criterion: nn.Module,
     optimizer: torch.optim.Optimizer | None,
 ) -> float:
     total_loss = 0.0
@@ -247,15 +272,17 @@ def _run_epoch(
         vision = batch["vision"].to(device)
         genomics = batch["genomics"].to(device)
         clinical = batch["clinical"].to(device)
-        labels = batch["label"].to(device)
+        survival_time = batch["survival_time"].to(device)
+        event_observed = batch["event_observed"].to(device)
         logits = model(vision, genomics, clinical)
-        loss = criterion(logits, labels)
+        loss = cox_nll_loss(logits, survival_time, event_observed)
         if optimizer is not None:
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        total_loss += float(loss.detach().cpu()) * len(labels)
-        total_examples += len(labels)
+        batch_size = len(survival_time)
+        total_loss += float(loss.detach().cpu()) * batch_size
+        total_examples += batch_size
     return total_loss / total_examples if total_examples else 0.0
 
 
@@ -286,9 +313,10 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
                         "monitor": round(1.0 - float(score), 6),
                         "high_concern": round(float(score), 6),
                     },
+                    "risk_score": round(float(score), 6),
                     "modality_predictions": modality_predictions,
-                    "survival_time": float(batch["survival_time"][index]),
-                    "event_observed": int(batch["event_observed"][index]),
+                    "survival_time": float(batch["survival_time"][index].item()),
+                    "event_observed": int(batch["event_observed"][index].item()),
                 }
             )
     return predictions
@@ -328,15 +356,14 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     else:
         device = torch.device(requested_device)
     model = TCGAVerifier(vision_dim=1536, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
-    criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
 
     best_state = None
     best_val_loss = float("inf")
     stale_epochs = 0
     for epoch in range(1, int(args.epochs) + 1):
-        train_loss = _run_epoch(model, train_loader, device, criterion, optimizer)
-        val_loss = _run_epoch(model, val_loader, device, criterion, None) if val_loader is not None and val_samples else train_loss
+        train_loss = _run_epoch(model, train_loader, device, optimizer)
+        val_loss = _run_epoch(model, val_loader, device, None) if val_loader is not None and val_samples else train_loss
         print(f"epoch={epoch} train_loss={train_loss:.4f} val_loss={val_loss:.4f}", flush=True)
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -366,6 +393,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "device": str(device),
         "alignment_status": "patient_aligned_tcga",
         "aligned_sample_count": int(len(frame)),
+        "loss_function": "cox_nll",
+        "missing_modality_handling": "zero_mask_gate",
         "modalities": [item.strip() for item in str(args.modalities).split(",") if item.strip()],
         "crosswalk_path": str(crosswalk_path),
         "clinical_csv": str(clinical_csv),
@@ -384,6 +413,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "lr": float(args.lr),
             "patience": int(args.patience),
             "seed": int(args.seed),
+            "loss_function": "cox_nll",
+            "missing_modality_handling": "zero_mask_gate",
         },
         "predictions": predictions,
     }
