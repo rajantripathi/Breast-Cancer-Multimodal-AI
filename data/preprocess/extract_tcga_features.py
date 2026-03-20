@@ -5,17 +5,35 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import time
+from typing import TYPE_CHECKING, Any
 
-import h5py
-import torch
-from PIL import Image
+if TYPE_CHECKING:
+    import torch
 
-from agents.vision.foundation_models import get_embed_dim, load_model
-from config import load_settings
+
+def _resolve_tile_paths(tiles_dir: Path, tile_list_path: Path | None) -> list[Path]:
+    """Return the extraction target tile paths."""
+    if tile_list_path is None:
+        return sorted(tiles_dir.glob("*.h5"))
+    paths: list[Path] = []
+    for raw_line in tile_list_path.read_text().splitlines():
+        candidate_text = raw_line.strip()
+        if not candidate_text:
+            continue
+        candidate = Path(candidate_text)
+        if not candidate.is_absolute():
+            candidate = tiles_dir / candidate
+        candidate = candidate.resolve()
+        if not candidate.exists():
+            raise FileNotFoundError(f"Tile path from list does not exist: {candidate}")
+        paths.append(candidate)
+    return paths
 
 
 def _device_from_arg(device_arg: str | None) -> torch.device:
     """Resolve the extraction device."""
+    import torch
+
     if device_arg:
         return torch.device(device_arg)
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,13 +42,18 @@ def _device_from_arg(device_arg: str | None) -> torch.device:
 def _extract_one(
     tile_path: Path,
     model_key: str,
-    model: torch.nn.Module,
+    model: Any,
     transform,
-    device: torch.device,
+    device: Any,
     batch_size: int,
     print_h5_diagnostic: bool,
-) -> tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[Any, Any]:
     """Extract patch and slide embeddings from one tiled slide."""
+    import h5py
+    import torch
+    from PIL import Image
+    from agents.vision.foundation_models import get_embed_dim
+
     with h5py.File(tile_path, "r") as handle:
         if print_h5_diagnostic:
             tiles_shape = handle["tiles"].shape if "tiles" in handle else "<missing>"
@@ -66,7 +89,17 @@ def main() -> None:
     parser.add_argument("--device", default=None)
     parser.add_argument("--shard-index", type=int, default=None)
     parser.add_argument("--num-shards", type=int, default=None)
+    parser.add_argument(
+        "--tile-list",
+        default=None,
+        help="Optional newline-delimited file of .h5 tile paths or basenames to process",
+    )
     args = parser.parse_args()
+
+    import torch
+
+    from agents.vision.foundation_models import get_embed_dim, load_model
+    from config import load_settings
 
     settings = load_settings()
     tiles_dir = Path(args.tiles_dir) if args.tiles_dir else settings.project_root / "tcga-brca" / "tiles"
@@ -86,9 +119,15 @@ def main() -> None:
     if model_load_elapsed > 600:
         print(f"WARNING: model loading took {model_load_elapsed:.1f}s for {args.model}", flush=True)
     model = model.to(device)
-    tile_paths = sorted(tiles_dir.glob("*.h5"))
+    tile_list_path = Path(args.tile_list).resolve() if args.tile_list else None
+    tile_paths = _resolve_tile_paths(tiles_dir, tile_list_path)
     total_tile_paths = len(tile_paths)
-    if args.shard_index is None and args.num_shards is None:
+    if tile_list_path is not None:
+        if args.shard_index is not None or args.num_shards is not None:
+            raise ValueError("--tile-list cannot be combined with --shard-index/--num-shards")
+        shard_index = 0
+        num_shards = 1
+    elif args.shard_index is None and args.num_shards is None:
         shard_index = 0
         num_shards = 1
     elif args.shard_index is not None and args.num_shards is not None:
@@ -100,12 +139,18 @@ def main() -> None:
         raise ValueError("--num-shards must be >= 1")
     if not 0 <= shard_index < num_shards:
         raise ValueError("--shard-index must be in [0, num-shards)")
-    tile_paths = [path for index, path in enumerate(tile_paths) if index % num_shards == shard_index]
+    if tile_list_path is None:
+        tile_paths = [path for index, path in enumerate(tile_paths) if index % num_shards == shard_index]
     print(f"Tiles directory: {tiles_dir}", flush=True)
+    if tile_list_path is not None:
+        print(f"Tile list: {tile_list_path}", flush=True)
     print(f"Slide embedding output directory: {output_dir}", flush=True)
     print(f"Patch embedding output directory: {patch_output_dir}", flush=True)
     print(f"Found {total_tile_paths} tile files to process", flush=True)
-    print(f"Shard {shard_index}/{num_shards}: processing {len(tile_paths)} of {total_tile_paths} files", flush=True)
+    if tile_list_path is None:
+        print(f"Shard {shard_index}/{num_shards}: processing {len(tile_paths)} of {total_tile_paths} files", flush=True)
+    else:
+        print(f"Processing explicit tile list with {len(tile_paths)} files", flush=True)
     processed = 0
     skipped = 0
     printed_h5_diagnostic = False
