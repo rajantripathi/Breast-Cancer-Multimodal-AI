@@ -60,16 +60,31 @@ def _enrich_survival_from_clinical(
 
 
 def _extract_prediction_arrays(predictions: list[dict[str, Any]]) -> tuple[list[str], list[int], list[int], list[list[float]], list[float]]:
-    labels = sorted({item["true_label"] for item in predictions} | {item["predicted_label"] for item in predictions})
+    labels = []
+    for preferred in ("monitor", "high_concern"):
+        if any(item.get("true_label") == preferred or item.get("predicted_label") == preferred for item in predictions):
+            labels.append(preferred)
+    for candidate in sorted({item["true_label"] for item in predictions} | {item["predicted_label"] for item in predictions}):
+        if candidate not in labels:
+            labels.append(candidate)
     label_to_index = {label: index for index, label in enumerate(labels)}
     y_true = [label_to_index[item["true_label"]] for item in predictions]
-    y_pred = [label_to_index[item["predicted_label"]] for item in predictions]
+    y_pred = []
     y_score = []
     confidences = []
     for item in predictions:
-        probability_row = [float(item.get("probabilities", {}).get(label, 0.0)) for label in labels]
-        total = sum(probability_row)
-        probability_row = [value / total for value in probability_row] if total > 0 else [1.0 / len(labels)] * len(labels)
+        risk_score = item.get("risk_score")
+        if len(labels) == 2 and risk_score is not None and {"monitor", "high_concern"} <= set(labels):
+            risk_value = min(max(float(risk_score), 0.0), 1.0)
+            probability_map = {"monitor": 1.0 - risk_value, "high_concern": risk_value}
+            probability_row = [probability_map.get(label, 0.0) for label in labels]
+            predicted_label = "high_concern" if risk_value >= 0.5 else "monitor"
+        else:
+            probability_row = [float(item.get("probabilities", {}).get(label, 0.0)) for label in labels]
+            total = sum(probability_row)
+            probability_row = [value / total for value in probability_row] if total > 0 else [1.0 / len(labels)] * len(labels)
+            predicted_label = item["predicted_label"]
+        y_pred.append(label_to_index.get(predicted_label, label_to_index[item["predicted_label"]]))
         y_score.append(probability_row)
         confidences.append(max(probability_row))
     return labels, y_true, y_pred, y_score, confidences
@@ -171,11 +186,13 @@ def _classification_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]
         "labels": labels,
     }
     if num_labels == 2:
-        positive_scores = [row[1] for row in y_score]
+        positive_label = "high_concern" if "high_concern" in labels else labels[-1]
+        positive_index = labels.index(positive_label)
+        positive_scores = [row[positive_index] for row in y_score]
         metrics["auroc_macro"] = round(_binary_auroc(y_true, positive_scores), 4)
         metrics["auprc_macro"] = round(_binary_auprc(y_true, positive_scores), 4)
         metrics["brier_score"] = round(sum((true - score) ** 2 for true, score in zip(y_true, positive_scores)) / len(y_true), 4)
-        auroc_ci = bootstrap_metric(lambda yt, ys: _binary_auroc(yt, [row[1] for row in ys]), y_true, y_pred, y_score)
+        auroc_ci = bootstrap_metric(lambda yt, ys: _binary_auroc(yt, [row[positive_index] for row in ys]), y_true, y_pred, y_score)
     else:
         metrics["auroc_macro"] = 0.0
         metrics["auprc_macro"] = 0.0
@@ -199,11 +216,42 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
         return {"c_index_message": "Survival labels not available; C-index skipped"}
     survival_times = [float(item["survival_time"]) for item in predictions]
     event_observed = [int(item["event_observed"]) for item in predictions]
-    risk_scores = [max(item.get("probabilities", {}).values()) if item.get("probabilities") else 0.0 for item in predictions]
+    risk_scores = [float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0))) for item in predictions]
+    survival_min = min(survival_times) if survival_times else 0.0
+    survival_max = max(survival_times) if survival_times else 0.0
+    survival_unique = len(set(survival_times))
+    event_sum = sum(event_observed)
+    print(
+        f"Survival times: min={survival_min}, max={survival_max}, unique={survival_unique}",
+        flush=True,
+    )
+    print(f"Events: sum={event_sum}, total={len(event_observed)}", flush=True)
     try:
-        return {"c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4)}
+        return {
+            "c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4),
+            "survival_time_diagnostic": {
+                "min": survival_min,
+                "max": survival_max,
+                "unique": survival_unique,
+            },
+            "event_diagnostic": {
+                "sum": event_sum,
+                "total": len(event_observed),
+            },
+        }
     except ZeroDivisionError:
-        return {"c_index_message": "Survival labels present but no admissible pairs; C-index skipped"}
+        return {
+            "c_index_message": "Survival labels present but no admissible pairs; C-index skipped",
+            "survival_time_diagnostic": {
+                "min": survival_min,
+                "max": survival_max,
+                "unique": survival_unique,
+            },
+            "event_diagnostic": {
+                "sum": event_sum,
+                "total": len(event_observed),
+            },
+        }
 
 
 def evaluate_predictions(
@@ -220,7 +268,10 @@ def evaluate_predictions(
     verifier_artifact = _load_json(artifact_path)
     verifier_predictions = predictions if predictions else (verifier_artifact.get("predictions", []) if verifier_artifact else [])
     verifier_predictions = _enrich_survival_from_clinical(verifier_predictions, clinical_csv)
-    fused_labels = [item.get("risk_classification", item.get("fused_label", "unknown")) for item in predictions]
+    fused_labels = [
+        item.get("risk_classification", item.get("fused_label", item.get("predicted_label", "unknown")))
+        for item in verifier_predictions
+    ]
     alignment_summary = _alignment_summary(verifier_artifact)
     classification_metrics = _classification_metrics(verifier_predictions)
     survival_metrics = _survival_metrics(verifier_predictions)

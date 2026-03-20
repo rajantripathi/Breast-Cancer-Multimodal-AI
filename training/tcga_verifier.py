@@ -72,11 +72,16 @@ def _normalize_vital_status(value: Any) -> int:
 
 
 def _survival_time(row: pd.Series) -> float:
-    for key in ("days_to_death", "days_to_last_followup"):
+    for key in (
+        "days_to_death",
+        "days_to_last_followup",
+        "days_to_last_follow_up",
+        "days_to_last_followup.1",
+    ):
         value = row.get(key)
         if pd.notna(value):
             try:
-                return float(value)
+                return max(float(value), 0.0)
             except (TypeError, ValueError):
                 continue
     return 0.0
