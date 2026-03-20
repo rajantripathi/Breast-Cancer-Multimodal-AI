@@ -111,19 +111,43 @@ class TCGAVerifier(nn.Module):
             nn.Linear(hidden_dim // 2, 1),
         )
 
+    def _project_modalities(
+        self,
+        vision: torch.Tensor,
+        genomics: torch.Tensor,
+        clinical: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        return self.vision_proj(vision), self.genomics_proj(genomics), self.clinical_proj(clinical)
+
     def forward(self, vision: torch.Tensor, genomics: torch.Tensor, clinical: torch.Tensor) -> torch.Tensor:
-        tokens = torch.stack(
-            [
-                self.vision_proj(vision),
-                self.genomics_proj(genomics),
-                self.clinical_proj(clinical),
-            ],
-            dim=1,
-        )
+        vision_token, genomics_token, clinical_token = self._project_modalities(vision, genomics, clinical)
+        tokens = torch.stack([vision_token, genomics_token, clinical_token], dim=1)
         attn_out, _ = self.attn(tokens, tokens, tokens, need_weights=False)
         gates = torch.softmax(self.gate(attn_out).squeeze(-1), dim=1)
         fused = (attn_out * gates.unsqueeze(-1)).sum(dim=1)
         return self.classifier(fused).squeeze(-1)
+
+    def predict_per_modality(
+        self,
+        vision: torch.Tensor,
+        genomics: torch.Tensor,
+        clinical: torch.Tensor,
+    ) -> dict[str, torch.Tensor]:
+        vision_token, genomics_token, clinical_token = self._project_modalities(vision, genomics, clinical)
+        return {
+            "vision": torch.sigmoid(self.classifier(vision_token).squeeze(-1)),
+            "genomics": torch.sigmoid(self.classifier(genomics_token).squeeze(-1)),
+            "clinical": torch.sigmoid(self.classifier(clinical_token).squeeze(-1)),
+        }
+
+
+def _binary_modality_prediction(score: float) -> dict[str, float | str]:
+    predicted_label = "high_concern" if score >= 0.5 else "monitor"
+    confidence = score if score >= 0.5 else 1.0 - score
+    return {
+        "class": predicted_label,
+        "confidence": round(float(confidence), 4),
+    }
 
 
 def _collate(samples: list[TCGASample]) -> dict[str, Any]:
@@ -240,11 +264,19 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
     model.eval()
     predictions: list[dict[str, Any]] = []
     for batch in loader:
-        logits = model(batch["vision"].to(device), batch["genomics"].to(device), batch["clinical"].to(device))
+        vision = batch["vision"].to(device)
+        genomics = batch["genomics"].to(device)
+        clinical = batch["clinical"].to(device)
+        logits = model(vision, genomics, clinical)
+        modality_scores = model.predict_per_modality(vision, genomics, clinical)
         scores = torch.sigmoid(logits).detach().cpu().tolist()
         for index, score in enumerate(scores):
             predicted_label = "high_concern" if score >= 0.5 else "monitor"
             true_label = "high_concern" if int(batch["label"][index].item()) == 1 else "monitor"
+            modality_predictions = {
+                modality: _binary_modality_prediction(float(values[index].detach().cpu().item()))
+                for modality, values in modality_scores.items()
+            }
             predictions.append(
                 {
                     "sample_id": batch["sample_id"][index],
@@ -254,6 +286,7 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
                         "monitor": round(1.0 - float(score), 6),
                         "high_concern": round(float(score), 6),
                     },
+                    "modality_predictions": modality_predictions,
                     "survival_time": float(batch["survival_time"][index]),
                     "event_observed": int(batch["event_observed"][index]),
                 }
