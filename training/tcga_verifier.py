@@ -206,22 +206,47 @@ def _load_aligned_frame(crosswalk_path: Path, clinical_csv: Path) -> tuple[pd.Da
 
 
 def _split_frame(frame: pd.DataFrame, seed: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    if len(frame) < 3:
+    if frame["label"].nunique() < 2 or len(frame) < 10:
         return frame.copy(), frame.iloc[0:0].copy(), frame.iloc[0:0].copy()
-    stratify = frame["label"] if frame["label"].nunique() > 1 and frame["label"].value_counts().min() >= 2 else None
     try:
-        train_frame, temp_frame = train_test_split(frame, test_size=0.3, random_state=seed, stratify=stratify)
+        train_frame, temp_frame = train_test_split(
+            frame,
+            test_size=0.3,
+            random_state=seed,
+            stratify=frame["label"],
+        )
+        val_frame, test_frame = train_test_split(
+            temp_frame,
+            test_size=0.5,
+            random_state=seed,
+            stratify=temp_frame["label"],
+        )
     except ValueError:
-        train_frame, temp_frame = train_test_split(frame, test_size=0.3, random_state=seed, stratify=None)
-    temp_stratify = (
-        temp_frame["label"]
-        if temp_frame["label"].nunique() > 1 and temp_frame["label"].value_counts().min() >= 2
-        else None
-    )
-    try:
-        val_frame, test_frame = train_test_split(temp_frame, test_size=0.5, random_state=seed, stratify=temp_stratify)
-    except ValueError:
-        val_frame, test_frame = train_test_split(temp_frame, test_size=0.5, random_state=seed, stratify=None)
+        pos = frame[frame["label"] == 1].sample(frac=1.0, random_state=seed)
+        neg = frame[frame["label"] == 0].sample(frac=1.0, random_state=seed)
+
+        n_pos_train = max(1, int(len(pos) * 0.7))
+        n_pos_val = max(1, int(len(pos) * 0.15))
+        n_neg_train = max(1, int(len(neg) * 0.7))
+        n_neg_val = max(1, int(len(neg) * 0.15))
+
+        train_frame = pd.concat([pos.iloc[:n_pos_train], neg.iloc[:n_neg_train]])
+        val_frame = pd.concat(
+            [
+                pos.iloc[n_pos_train : n_pos_train + n_pos_val],
+                neg.iloc[n_neg_train : n_neg_train + n_neg_val],
+            ]
+        )
+        test_frame = pd.concat(
+            [
+                pos.iloc[n_pos_train + n_pos_val :],
+                neg.iloc[n_neg_train + n_neg_val :],
+            ]
+        )
+
+    print(f"Train: {train_frame['label'].value_counts().to_dict()}", flush=True)
+    print(f"Val: {val_frame['label'].value_counts().to_dict()}", flush=True)
+    print(f"Test: {test_frame['label'].value_counts().to_dict()}", flush=True)
     return train_frame.reset_index(drop=True), val_frame.reset_index(drop=True), test_frame.reset_index(drop=True)
 
 
@@ -350,12 +375,13 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, max(1, len(test_samples))), shuffle=False, collate_fn=_collate) if test_samples else None
 
     requested_device = str(args.device).lower()
-    if requested_device.startswith("cuda"):
+    if requested_device == "auto":
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    elif requested_device.startswith("cuda"):
         if torch.cuda.is_available():
             device = torch.device("cuda")
         else:
-            print("WARNING: CUDA requested but unavailable; falling back to CPU", flush=True)
-            device = torch.device("cpu")
+            raise RuntimeError("CUDA requested but unavailable")
     elif requested_device == "cpu":
         device = torch.device("cpu")
     else:

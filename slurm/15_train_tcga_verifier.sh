@@ -17,6 +17,7 @@ if [ -f .env ]; then
   source .env
   set +a
 fi
+python -u -c "import torch; assert torch.cuda.is_available(), 'CUDA not available'; print(f'GPU: {torch.cuda.get_device_name(0)}')"
 python -u -m training.verifier_trainer \
   --crosswalk data/tcga_crosswalk.csv \
   --vision-dir "$PROJECT_ROOT/tcga-brca/embeddings/uni2" \
@@ -26,5 +27,5 @@ python -u -m training.verifier_trainer \
   --epochs 100 \
   --lr 1e-4 \
   --patience 20 \
-  --device cuda \
+  --device auto \
   --output-dir outputs/tcga_verifier
