@@ -29,7 +29,7 @@ python3 -m orchestrator.run --all-sample-cases
   - `ece`: `0.0`
   - `c_index`: pending, skipped when admissible survival pairs are insufficient
 
-Current evaluation artifacts are being refreshed on the latest 556-patient TCGA alignment. See [`reports/tcga_results_summary.md`](/Users/rajantripathi/Projects/Breast-Cancer-Multimodal-AI/reports/tcga_results_summary.md) for the latest boardroom summary and caveats.
+The current enterprise evaluation artifact is synchronized to the latest 556-patient TCGA alignment. See [`reports/tcga_results_summary.md`](/Users/rajantripathi/Projects/Breast-Cancer-Multimodal-AI/reports/tcga_results_summary.md) for the full boardroom summary, architecture notes, and limitations.
 
 ## Architecture
 

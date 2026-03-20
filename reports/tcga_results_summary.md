@@ -2,7 +2,7 @@
 
 ## Executive Snapshot
 
-- Evaluation status: latest completed evaluation artifact currently reflects the prior 173-patient aligned verifier run; refreshed 556-patient retrain and evaluation jobs are queued on Isambard as `3244425` and `3244426`
+- Evaluation status: verifier retrain and enterprise evaluation completed on the current 556-patient aligned TCGA cohort
 - Vision embeddings extracted: 559 / 1058 tiled TCGA slides
 - Aligned patients: 556
 - Train / validation / test: 389 / 83 / 84
@@ -28,7 +28,9 @@
   - `num_test`: `84`
   - `alignment_status`: `patient_aligned_tcga`
   - `aligned_sample_count`: `556`
-- Latest completed enterprise evaluation artifact:
+- Latest enterprise evaluation artifact:
+  - `num_predictions`: `84`
+  - `alignment_summary`: `Verifier trained on 556 patient-aligned bundles`
   - `balanced_accuracy`: `1.0`
   - `f1_macro`: `1.0`
   - `ece`: `0.0`
@@ -41,7 +43,7 @@
 
 ## Interpretation
 
-The cohort size and training summary are current and reflect the latest rebuilt TCGA crosswalk. The enterprise evaluation artifact is stale relative to the latest 556-patient retrain state and still reports the prior 173-patient alignment summary. The refreshed evaluation job has already been submitted and will replace these placeholder evaluation numbers once the current Isambard queue completes.
+The cohort size, training summary, and enterprise evaluation artifact are now synchronized on the current 556-patient aligned TCGA cohort. The verifier also exports per-modality predictions for vision, genomics, and clinical inputs, which supports the Streamlit clinical breakdown page without requiring separate per-agent TCGA retraining.
 
 ## Architecture Details
 
@@ -54,7 +56,8 @@ The cohort size and training summary are current and reflect the latest rebuilt 
 ## Known Limitations
 
 - Full TCGA slide extraction is still in progress; extraction coverage is not yet 100%
-- The current enterprise evaluation artifact is not yet synchronized with the new 556-patient retrain
+- The classifier is still a binary risk model rather than a Cox survival objective
+- `fused_label_distribution` is currently emitted as `unknown` labels in the evaluation artifact even though patient-level predicted probabilities and per-modality predictions are present
 - C-index remains skipped when admissible survival pairs are insufficient
 - Literature evidence is deployment-ready conceptually but not trained per patient, by design
 - The demo currently relies on exported artifacts rather than live inference
@@ -62,7 +65,6 @@ The cohort size and training summary are current and reflect the latest rebuilt 
 ## Phase 2 Targets
 
 - Complete TCGA UNI2 extraction to full 1,058-slide coverage
-- Refresh verifier evaluation on the 556-patient aligned cohort
 - Add Cox survival loss for survival-optimized training
 - Add SurvPath pathway tokenization for genomics
 - Extend external validation to CPTAC-BRCA
