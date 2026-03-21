@@ -334,6 +334,12 @@ def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
         with col4:
             _card_start("📚 Literature")
             evidence = record.get("literature_evidence", {})
+            predicted_label = str(evidence.get("predicted_label", "interpretive_support")).replace("_", " ").title()
+            confidence = float(evidence.get("confidence", 0.0) or 0.0)
+            st.markdown(f"**Agent assessment:** {predicted_label}")
+            st.progress(confidence)
+            if evidence.get("query"):
+                st.caption(f"Query context: {evidence['query']}")
             for paper in evidence.get("papers", []):
                 with st.expander(paper.get("title", "Evidence paper")):
                     st.markdown(f"**{paper.get('title', 'Untitled')}**")
