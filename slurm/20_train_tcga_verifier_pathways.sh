@@ -18,12 +18,16 @@ if [ -f .env ]; then
   set +a
 fi
 python -u -c "import torch; assert torch.cuda.is_available(), 'CUDA not available'; print(f'GPU: {torch.cuda.get_device_name(0)}')"
+ENDPOINT="${ENDPOINT:-5yr_survival}"
+SURVIVAL_HORIZON_DAYS="${SURVIVAL_HORIZON_DAYS:-1825}"
 python -u -m training.verifier_trainer \
   --crosswalk data/tcga_crosswalk_pathways.csv \
   --vision-dir "$PROJECT_ROOT/tcga-brca/embeddings/uni2" \
   --genomics-dir "$PROJECT_ROOT/tcga-brca/genomics_pathways" \
   --clinical-csv data/tcga_brca_clinical.csv \
   --modalities vision,clinical,genomics \
+  --endpoint "$ENDPOINT" \
+  --survival-horizon-days "$SURVIVAL_HORIZON_DAYS" \
   --epochs 100 \
   --lr 1e-4 \
   --patience 20 \

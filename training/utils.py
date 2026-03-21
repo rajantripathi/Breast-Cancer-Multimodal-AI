@@ -30,6 +30,7 @@ def build_parser(task_name: str) -> argparse.ArgumentParser:
     parser.add_argument("--clinical-csv", default=None, help="Optional clinical CSV path")
     parser.add_argument("--modalities", default="vision,clinical,genomics")
     parser.add_argument("--endpoint", choices=["overall_survival", "5yr_survival"], default="5yr_survival")
+    parser.add_argument("--survival-horizon-days", type=float, default=1825.0)
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--patience", type=int, default=20)
