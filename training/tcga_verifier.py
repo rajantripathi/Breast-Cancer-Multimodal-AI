@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from data.common import write_json
+from data.common import read_json, write_json
 
 POSITIVE_VITAL_STATUS = {"dead", "deceased", "1", "true", "yes"}
 NEGATIVE_VITAL_STATUS = {"alive", "living", "0", "false", "no"}
@@ -288,6 +288,24 @@ def _build_samples(
     return samples
 
 
+def _genomics_metadata(frame: pd.DataFrame) -> dict[str, Any]:
+    if frame.empty:
+        return {"representation": "unknown", "feature_count": 0}
+    genomics_path = Path(str(frame.iloc[0]["genomics_path"]))
+    metadata_path = genomics_path.parent / "metadata.json"
+    if metadata_path.exists():
+        try:
+            payload = read_json(metadata_path)
+            return {
+                "representation": payload.get("representation", "unknown"),
+                "feature_count": int(payload.get("num_features", 0)),
+                "metadata_path": str(metadata_path),
+            }
+        except Exception:
+            pass
+    return {"representation": "flat_genes", "feature_count": int(_load_tensor(genomics_path).numel())}
+
+
 def _run_epoch(
     model: TCGAVerifier,
     loader: DataLoader,
@@ -357,6 +375,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     clinical_csv = Path(args.clinical_csv)
     frame, _clinical, feature_columns = _load_aligned_frame(crosswalk_path, clinical_csv)
     train_frame, val_frame, test_frame = _split_frame(frame, int(args.seed))
+    genomics_metadata = _genomics_metadata(frame)
 
     means, stds = _clinical_scaler(train_frame if not train_frame.empty else frame, feature_columns)
     if frame.empty:
@@ -426,6 +445,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "aligned_sample_count": int(len(frame)),
         "loss_function": "cox_nll",
         "missing_modality_handling": "zero_mask_gate",
+        "genomics_representation": genomics_metadata.get("representation", "unknown"),
+        "genomics_feature_count": genomics_metadata.get("feature_count", int(genomics_dim)),
         "modalities": [item.strip() for item in str(args.modalities).split(",") if item.strip()],
         "crosswalk_path": str(crosswalk_path),
         "clinical_csv": str(clinical_csv),
