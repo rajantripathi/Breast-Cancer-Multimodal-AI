@@ -24,6 +24,7 @@ CLINICAL_EXCLUDE = {
     "days_to_last_followup",
     "vital_status",
 }
+VALID_MODALITIES = {"vision", "genomics", "clinical"}
 
 
 def cox_nll_loss(risk_scores: torch.Tensor, survival_times: torch.Tensor, events: torch.Tensor) -> torch.Tensor:
@@ -118,6 +119,16 @@ def _survival_time(row: pd.Series) -> float:
 def _clinical_feature_columns(clinical: pd.DataFrame) -> list[str]:
     numeric_cols = clinical.select_dtypes(include=["number", "bool"]).columns.tolist()
     return [column for column in numeric_cols if column not in CLINICAL_EXCLUDE]
+
+
+def _parse_modalities(value: Any) -> set[str]:
+    requested = {item.strip().lower() for item in str(value).split(",") if item.strip()}
+    if not requested:
+        return set(VALID_MODALITIES)
+    invalid = requested - VALID_MODALITIES
+    if invalid:
+        raise ValueError(f"Unsupported modalities requested: {sorted(invalid)}")
+    return requested
 
 
 @dataclass
@@ -299,6 +310,7 @@ def _build_samples(
     means: pd.Series,
     stds: pd.Series,
     genomics_dim: int,
+    modalities: set[str],
 ) -> list[TCGASample]:
     samples: list[TCGASample] = []
     for row in frame.to_dict(orient="records"):
@@ -308,11 +320,19 @@ def _build_samples(
             clinical_tensor = torch.tensor(clinical_values.astype(float).to_numpy(), dtype=torch.float32)
         else:
             clinical_tensor = torch.tensor([0.0], dtype=torch.float32)
+        vision_tensor = _fixed_width(_load_tensor(str(row["vision_path"])), 1536)
+        genomics_tensor = _fixed_width(_load_tensor(str(row["genomics_path"])), genomics_dim)
+        if "vision" not in modalities:
+            vision_tensor = torch.zeros_like(vision_tensor)
+        if "genomics" not in modalities:
+            genomics_tensor = torch.zeros_like(genomics_tensor)
+        if "clinical" not in modalities:
+            clinical_tensor = torch.zeros_like(clinical_tensor)
         samples.append(
             TCGASample(
                 sample_id=str(row["patient_barcode"]),
-                vision=_fixed_width(_load_tensor(str(row["vision_path"])), 1536),
-                genomics=_fixed_width(_load_tensor(str(row["genomics_path"])), genomics_dim),
+                vision=vision_tensor,
+                genomics=genomics_tensor,
                 clinical=clinical_tensor,
                 label=int(row["label"]),
                 survival_time=float(row["survival_time"]),
@@ -412,6 +432,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     frame, _clinical, feature_columns = _load_aligned_frame(crosswalk_path, clinical_csv, endpoint, survival_horizon_days)
     train_frame, val_frame, test_frame = _split_frame(frame, int(args.seed))
     genomics_metadata = _genomics_metadata(frame)
+    modalities = _parse_modalities(getattr(args, "modalities", "vision,clinical,genomics"))
 
     means, stds = _clinical_scaler(train_frame if not train_frame.empty else frame, feature_columns)
     if frame.empty:
@@ -419,9 +440,9 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     first_genomics = _load_tensor(str(frame.iloc[0]["genomics_path"]))
     genomics_dim = min(max(128, int(first_genomics.numel())), 1024)
 
-    train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim)
-    val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim)
-    test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim)
+    train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim, modalities)
+    val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim, modalities)
+    test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim, modalities)
     if not train_samples:
         raise ValueError("No TCGA training samples available after splitting")
 
@@ -485,7 +506,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "survival_horizon_days": survival_horizon_days,
         "genomics_representation": genomics_metadata.get("representation", "unknown"),
         "genomics_feature_count": genomics_metadata.get("feature_count", int(genomics_dim)),
-        "modalities": [item.strip() for item in str(args.modalities).split(",") if item.strip()],
+        "modalities": sorted(modalities),
         "crosswalk_path": str(crosswalk_path),
         "clinical_csv": str(clinical_csv),
         "checkpoint_path": str(checkpoint_path),
