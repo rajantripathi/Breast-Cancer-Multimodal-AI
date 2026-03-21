@@ -1,0 +1,32 @@
+{
+  "num_predictions": 105,
+  "fused_label_distribution": {
+    "monitor": 82,
+    "high_concern": 23
+  },
+  "alignment_summary": "Verifier trained on 696 patient-aligned bundles",
+  "balanced_accuracy": 0.4628,
+  "f1_macro": 0.4636,
+  "ece": 0.1349,
+  "auroc_macro": 0.5125,
+  "auprc_macro": 0.1728,
+  "brier_score": 0.2207,
+  "auroc_ci_95": [
+    0.3459,
+    0.6865
+  ],
+  "balanced_accuracy_ci_95": [
+    0.3673,
+    0.5972
+  ],
+  "c_index": 0.474,
+  "survival_time_diagnostic": {
+    "min": 0.0,
+    "max": 7106.0,
+    "unique": 91
+  },
+  "event_diagnostic": {
+    "sum": 13,
+    "total": 105
+  }
+}

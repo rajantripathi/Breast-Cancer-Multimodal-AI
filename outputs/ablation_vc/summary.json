@@ -1,0 +1,9 @@
+{
+  "val_accuracy": 0.6571,
+  "num_samples": 696,
+  "num_train": 487,
+  "num_val": 104,
+  "num_test": 105,
+  "alignment_status": "patient_aligned_tcga",
+  "aligned_sample_count": 696
+}
