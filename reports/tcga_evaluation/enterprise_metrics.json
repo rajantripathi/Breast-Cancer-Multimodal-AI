@@ -19,7 +19,41 @@
     0.3673,
     0.5972
   ],
-  "c_index": 0.474,
+  "risk_group_summary": {
+    "low_risk": {
+      "count": 0,
+      "events": 0,
+      "mean_risk_score": 0.0,
+      "event_rate": 0.0
+    },
+    "intermediate_risk": {
+      "count": 105,
+      "events": 13,
+      "mean_risk_score": 0.4555,
+      "event_rate": 0.1238
+    },
+    "high_risk": {
+      "count": 0,
+      "events": 0,
+      "mean_risk_score": 0.0,
+      "event_rate": 0.0
+    }
+  },
+  "modality_agreement_summary": {
+    "vision": {
+      "agreement_with_fused": 0.5619,
+      "high_concern_rate": 0.4857
+    },
+    "clinical": {
+      "agreement_with_fused": 0.219,
+      "high_concern_rate": 0.9619
+    },
+    "genomics": {
+      "agreement_with_fused": 0.3048,
+      "high_concern_rate": 0.8381
+    }
+  },
+  "c_index": 0.526,
   "survival_time_diagnostic": {
     "min": 0.0,
     "max": 7106.0,

@@ -40,9 +40,14 @@
   - `brier_score`: `0.2207`
   - `auroc_ci_95`: `[0.3459, 0.6865]`
   - `balanced_accuracy_ci_95`: `[0.3673, 0.5972]`
-  - `c_index`: `0.474`
+  - `c_index`: `0.526`
   - `survival_time_diagnostic`: `min=0.0, max=7106.0, unique=91`
   - `event_diagnostic`: `sum=13, total=105`
+  - `risk_group_summary`: all `105` held-out patients fell into the current intermediate-risk band with mean `risk_score=0.4555` and event rate `0.1238`
+  - `modality_agreement_summary`:
+    - vision agreement with fused output: `0.5619`
+    - clinical agreement with fused output: `0.2190`
+    - genomics agreement with fused output: `0.3048`
 
 ## Ablation Summary
 
@@ -55,9 +60,11 @@
 
 - The clinical-label pipeline is now repaired end to end, and the final run uses a stratified split with both classes present in train, validation, and test.
 - The Isambard environment is now GPU-correct. The successful full-model log records `GPU: NVIDIA GH200 120GB`, and the project venv now uses `torch 2.10.0+cu126`.
-- The evaluator is correctly reading Cox-style `risk_score` outputs and reports a non-skipped `c_index` of `0.474`.
-- The final held-out metrics are modest, which should be presented honestly as a real multimodal TCGA baseline rather than a deployment-grade endpoint.
+- The evaluator is correctly reading Cox-style `risk_score` outputs and now computes `c_index` locally without depending on `lifelines`, which keeps the evaluation reproducible from the repo alone.
+- The final held-out metrics are modest, which should be presented honestly as a real multimodal TCGA survival-risk baseline rather than a deployment-grade endpoint.
 - The ablation trend now supports the core multimodal claim: adding clinical and genomics information improves over the vision-only baseline, and the full model is the strongest of the four final runs.
+- The current risk scores are under-dispersed on the held-out set: every test patient lands in the intermediate band. This means the model is producing usable continuous rankings, but not yet clinically sharp low/high risk separation.
+- The modality-agreement readout suggests the current clinical branch is the noisiest component in the fusion stack: it predicts `high_concern` for most held-out patients and agrees with the fused model least often.
 
 ## Artifact Readiness
 
@@ -73,12 +80,16 @@
 
 - Full TCGA slide extraction is still in progress; the final proposal freeze used `700` embedded vision patients in the crosswalk while `758` slide embeddings existed on disk at final collection time
 - AUROC, AUPRC, and C-index are now real and non-zero, but they remain modest and should be framed as a public-dataset baseline
+- Risk-group separation is not yet strong: the current fixed low/intermediate/high thresholds collapse the held-out set into the intermediate band
+- The clinical branch appears over-sensitive on this endpoint definition and needs feature-quality review, calibration work, or a lighter weighting strategy
 - Literature evidence remains a decision-support companion rather than a fused training modality
 
 ## Phase 2 Targets
 
 - Complete TCGA UNI2 extraction to full `1,058`-slide coverage and refresh the aligned cohort
 - Improve calibration and risk ranking quality beyond the current `c_index` and AUROC baseline
+- Tune risk-group thresholds from the survival distribution instead of reusing generic demo cutoffs
+- Audit and simplify the clinical feature set so the clinical branch stops saturating toward `high_concern`
 - Add SurvPath pathway tokenization for genomics
 - Extend external validation to CPTAC-BRCA
 - Profile inference on Lenovo and Intel-aligned deployment hardware

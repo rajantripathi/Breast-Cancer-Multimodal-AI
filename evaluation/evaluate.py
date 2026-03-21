@@ -207,12 +207,82 @@ def _classification_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]
     return metrics
 
 
+def _risk_group_summary(predictions: list[dict[str, Any]]) -> dict[str, Any]:
+    if not predictions:
+        return {}
+    groups = {
+        "low_risk": {"count": 0, "events": 0, "mean_risk_score": 0.0},
+        "intermediate_risk": {"count": 0, "events": 0, "mean_risk_score": 0.0},
+        "high_risk": {"count": 0, "events": 0, "mean_risk_score": 0.0},
+    }
+    for item in predictions:
+        score = float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0)))
+        if score >= 0.67:
+            bucket = "high_risk"
+        elif score >= 0.33:
+            bucket = "intermediate_risk"
+        else:
+            bucket = "low_risk"
+        groups[bucket]["count"] += 1
+        groups[bucket]["events"] += int(item.get("event_observed", 0))
+        groups[bucket]["mean_risk_score"] += score
+    for summary in groups.values():
+        count = summary["count"]
+        summary["mean_risk_score"] = round(summary["mean_risk_score"] / count, 4) if count else 0.0
+        summary["event_rate"] = round(summary["events"] / count, 4) if count else 0.0
+    return groups
+
+
+def _modality_agreement_summary(predictions: list[dict[str, Any]]) -> dict[str, Any]:
+    if not predictions:
+        return {}
+    summary: dict[str, Any] = {}
+    fused_labels = [str(item.get("predicted_label", "")) for item in predictions]
+    for modality in ("vision", "clinical", "genomics"):
+        modality_labels = [
+            str(item.get("modality_predictions", {}).get(modality, {}).get("class", ""))
+            for item in predictions
+        ]
+        matches = sum(1 for fused, modality_label in zip(fused_labels, modality_labels) if fused and fused == modality_label)
+        high_concern = sum(1 for label in modality_labels if label == "high_concern")
+        summary[modality] = {
+            "agreement_with_fused": round(matches / len(predictions), 4),
+            "high_concern_rate": round(high_concern / len(predictions), 4),
+        }
+    return summary
+
+
+def _harrell_c_index(survival_times: list[float], risk_scores: list[float], event_observed: list[int]) -> float:
+    concordant = 0.0
+    admissible = 0
+    total = len(survival_times)
+    for i in range(total):
+        for j in range(i + 1, total):
+            t_i, t_j = survival_times[i], survival_times[j]
+            e_i, e_j = event_observed[i], event_observed[j]
+            r_i, r_j = risk_scores[i], risk_scores[j]
+            if t_i == t_j and not (e_i or e_j):
+                continue
+            if t_i < t_j and e_i:
+                admissible += 1
+                if r_i > r_j:
+                    concordant += 1.0
+                elif r_i == r_j:
+                    concordant += 0.5
+            elif t_j < t_i and e_j:
+                admissible += 1
+                if r_j > r_i:
+                    concordant += 1.0
+                elif r_i == r_j:
+                    concordant += 0.5
+        # pairs with identical event time and both observed are intentionally skipped here
+    if admissible == 0:
+        raise ZeroDivisionError
+    return concordant / admissible
+
+
 def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     if not predictions or not all("survival_time" in item and "event_observed" in item for item in predictions):
-        return {"c_index_message": "Survival labels not available; C-index skipped"}
-    try:
-        from lifelines.utils import concordance_index
-    except ImportError:
         return {"c_index_message": "Survival labels not available; C-index skipped"}
     survival_times = [float(item["survival_time"]) for item in predictions]
     event_observed = [int(item["event_observed"]) for item in predictions]
@@ -227,8 +297,14 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     )
     print(f"Events: sum={event_sum}, total={len(event_observed)}", flush=True)
     try:
+        try:
+            from lifelines.utils import concordance_index
+
+            c_index = float(concordance_index(survival_times, risk_scores, event_observed))
+        except ImportError:
+            c_index = float(_harrell_c_index(survival_times, risk_scores, event_observed))
         return {
-            "c_index": round(float(concordance_index(survival_times, risk_scores, event_observed)), 4),
+            "c_index": round(c_index, 4),
             "survival_time_diagnostic": {
                 "min": survival_min,
                 "max": survival_max,
@@ -282,6 +358,8 @@ def evaluate_predictions(
         "alignment_summary": alignment_summary,
     }
     metrics.update({key: value for key, value in classification_metrics.items() if key not in {"classification_report", "confusion_matrix", "labels"}})
+    metrics["risk_group_summary"] = _risk_group_summary(verifier_predictions)
+    metrics["modality_agreement_summary"] = _modality_agreement_summary(verifier_predictions)
     metrics.update(survival_metrics)
 
     outputs_root = Path(output_dir) if output_dir else prediction_path.parent
