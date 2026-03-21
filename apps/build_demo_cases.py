@@ -15,11 +15,11 @@ try:
 except ImportError:  # pragma: no cover
     torch = None
 
-PREDICTIONS = Path("outputs/tcga_verifier/predictions.json")
-CLINICAL_CSV = Path("data/tcga_brca_clinical.csv")
-CROSSWALK_CSV = Path("data/tcga_crosswalk.csv")
-OUTPUT = Path("outputs/tcga_verifier/demo_cases.json")
-LITERATURE_ARTIFACT = Path("outputs/literature/artifact.json")
+PREDICTIONS = Path(os.getenv("BCAI_DEMO_PREDICTIONS", "outputs/tcga_verifier/predictions.json"))
+CLINICAL_CSV = Path(os.getenv("BCAI_DEMO_CLINICAL_CSV", "data/tcga_brca_clinical.csv"))
+CROSSWALK_CSV = Path(os.getenv("BCAI_DEMO_CROSSWALK_CSV", "data/tcga_crosswalk.csv"))
+OUTPUT = Path(os.getenv("BCAI_DEMO_OUTPUT", "outputs/tcga_verifier/demo_cases.json"))
+LITERATURE_ARTIFACT = Path(os.getenv("BCAI_DEMO_LITERATURE_ARTIFACT", "outputs/literature/artifact.json"))
 
 CLINICAL_FIELDS = [
     "age_at_diagnosis",

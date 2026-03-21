@@ -1,49 +1,71 @@
 # TCGA Ablation Results
 
-## Cohort
+## Current Scientific Readout
 
-- Aligned patients: `696`
-- Vision patients with embeddings in the frozen crosswalk: `700`
-- Genomics patients with tensors: `1094`
-- Clinical patients with rows: `1097`
-- Outcome distribution: `613 Alive`, `83 Dead`
-- Stratified proposal split:
-  - Train: `{0: 429, 1: 58}`
-  - Val: `{0: 92, 1: 12}`
-  - Test: `{0: 92, 1: 13}`
+- Current methodology under test:
+  - Hallmark pathway genomics (`50` features)
+  - Fixed-window survival endpoint at `1095` days (`3` years)
+  - Cox loss for training
+  - Survival-first evaluation
+- Current pathway-aligned cohort: `353`
+- Split: `247 / 53 / 53`
+- Class balance:
+  - Train: `{0: 212, 1: 35}`
+  - Val: `{0: 46, 1: 7}`
+  - Test: `{0: 45, 1: 8}`
 
-## Modality Comparison
+## Single-Run Ablation
 
-| Run | Modalities | Validation Accuracy | Num Samples | Train / Val / Test |
+| Run | Modalities | Validation Accuracy |
+| --- | --- | --- |
+| Full model | Vision + Clinical + Genomics | `0.4151` |
+| V only | Vision | `0.4528` |
+| V + C | Vision + Clinical | `0.6981` |
+| V + G | Vision + Genomics | `0.6038` |
+
+## Seed Stability Sweep
+
+| Seed | Full | V | V + C | V + G |
 | --- | --- | --- | --- | --- |
-| Full model | Vision + Clinical + Genomics | `0.6952` | `696` | `487 / 104 / 105` |
-| V only | Vision | `0.5048` | `696` | `487 / 104 / 105` |
-| V + C | Vision + Clinical | `0.6571` | `696` | `487 / 104 / 105` |
-| V + G | Vision + Genomics | `0.6857` | `696` | `487 / 104 / 105` |
+| `7` | `0.6038` | `0.7170` | `0.3962` | `0.6981` |
+| `13` | `0.4340` | `0.4151` | `0.3962` | `0.6415` |
+| `23` | `0.4906` | `0.4151` | `0.7170` | `0.4151` |
 
-## Readout
+## Stability Interpretation
 
-- This final ablation pass ran on the repaired CUDA environment and the full verifier log confirms `GPU: NVIDIA GH200 120GB`.
-- All four runs used the corrected clinical endpoint mapping and a stratified split with both classes represented in train, validation, and test.
-- The full multimodal model is now the strongest of the four on this final GPU-backed run.
-- Adding genomics improves substantially over vision only, and the clinical branch improves further when combined inside the full multimodal model.
-- Modality-agreement analysis from the final held-out predictions shows:
-  - vision agreement with fused prediction: `0.5619`
-  - clinical agreement with fused prediction: `0.2190`
-  - genomics agreement with fused prediction: `0.3048`
+- The current 3-year pathway setup is not stable across random seeds.
+- Modality rankings flip across seeds:
+  - `V` is strongest for seed `7`
+  - `V + G` is strongest for seed `13`
+  - `V + C` is strongest for seed `23`
+- The full fused model is never the strongest run in the current seed sweep.
+- This means the main issue is not only thresholding. Training variance is high enough that the fusion claim is not yet robust.
 
-## Interpretation
+## What The Results Still Support
 
-- The final proposal run now supports a clean multimodal value narrative on a real held-out split.
-- Vision alone is a weak baseline on this outcome definition.
-- Vision + Clinical improves over vision alone.
-- Vision + Genomics nearly matches the full model, which suggests genomics is the strongest complementary signal to pathology in the current setup.
-- The small gap between `V+G` and the full model means the clinical branch is currently contributing less stable value than genomics.
-- The held-out agreement profile suggests the clinical branch is over-calling `high_concern` and should be the first target for feature audit and calibration tuning.
+- The pathway-based genomics pipeline is operational and scientifically usable.
+- The fixed-window survival setup is more methodologically defensible than the older overall-survival label shortcut.
+- Survival-oriented metrics can now be computed consistently from the exported artifacts.
 
-## Follow-Up
+## What The Results Do Not Yet Support
 
-- Refresh the cohort again after the extraction tail finishes if the aligned set grows materially beyond `696`.
-- Analyze modality gate weights and per-modality confidence calibration for the clinical demo.
-- Revisit risk-group thresholds after the next retrain so low/intermediate/high groups are actually populated.
-- Extend the same evaluation pattern to CPTAC-BRCA external validation in the next phase.
+- A strong claim that `Vision + Clinical + Genomics` is reliably better than simpler baselines.
+- A claim that genomics is always the strongest complement to pathology.
+- A claim that current multimodal fusion is stable enough for publication-quality comparative conclusions.
+
+## Most Defensible Proposal Framing
+
+- Present the TCGA pathway-survival work as a promising but unstable multimodal research track.
+- Do not use the current full fused model as the headline scientific result.
+- Treat the seed sweep as an honest robustness audit showing that the present fusion objective is sensitive to initialization.
+
+## Next Scientific Step
+
+- Freeze the current finding:
+  - pathway genomics and fixed-window survival are viable
+  - fusion is unstable
+- Move the next experiment to repeated-run reporting for the simpler baselines:
+  - `V`
+  - `V + G`
+  - `V + C`
+- Report mean and standard deviation across seeds before making any comparative multimodal claim.
