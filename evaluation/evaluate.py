@@ -60,7 +60,10 @@ def _enrich_survival_from_clinical(
     return enriched
 
 
-def _extract_prediction_arrays(predictions: list[dict[str, Any]]) -> tuple[list[str], list[int], list[int], list[list[float]], list[float]]:
+def _extract_prediction_arrays(
+    predictions: list[dict[str, Any]],
+    classification_threshold: float = 0.5,
+) -> tuple[list[str], list[int], list[int], list[list[float]], list[float]]:
     labels = []
     for preferred in ("monitor", "high_concern"):
         if any(item.get("true_label") == preferred or item.get("predicted_label") == preferred for item in predictions):
@@ -79,7 +82,8 @@ def _extract_prediction_arrays(predictions: list[dict[str, Any]]) -> tuple[list[
             risk_value = min(max(float(risk_score), 0.0), 1.0)
             probability_map = {"monitor": 1.0 - risk_value, "high_concern": risk_value}
             probability_row = [probability_map.get(label, 0.0) for label in labels]
-            predicted_label = "high_concern" if risk_value >= 0.5 else "monitor"
+            threshold = float(item.get("classification_threshold", classification_threshold))
+            predicted_label = "high_concern" if risk_value >= threshold else "monitor"
         else:
             probability_row = [float(item.get("probabilities", {}).get(label, 0.0)) for label in labels]
             total = sum(probability_row)
@@ -172,10 +176,10 @@ def _classification_report(labels: list[str], matrix: list[list[int]]) -> str:
     return "\n".join(lines)
 
 
-def _classification_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
+def _classification_metrics(predictions: list[dict[str, Any]], classification_threshold: float = 0.5) -> dict[str, Any]:
     if not predictions:
         return {}
-    labels, y_true, y_pred, y_score, confidences = _extract_prediction_arrays(predictions)
+    labels, y_true, y_pred, y_score, confidences = _extract_prediction_arrays(predictions, classification_threshold)
     num_labels = len(labels)
     matrix = _confusion_matrix(y_true, y_pred, num_labels)
     metrics: dict[str, Any] = {
@@ -490,18 +494,27 @@ def evaluate_predictions(
     verifier_artifact = _load_json(artifact_path)
     verifier_predictions = predictions if predictions else (verifier_artifact.get("predictions", []) if verifier_artifact else [])
     verifier_predictions = _enrich_survival_from_clinical(verifier_predictions, clinical_csv)
+    classification_threshold = 0.5
+    if verifier_artifact:
+        classification_threshold = float(
+            verifier_artifact.get(
+                "classification_threshold",
+                verifier_artifact.get("hyperparameters", {}).get("classification_threshold", 0.5),
+            )
+        )
     fused_labels = [
         item.get("risk_classification", item.get("fused_label", item.get("predicted_label", "unknown")))
         for item in verifier_predictions
     ]
     alignment_summary = _alignment_summary(verifier_artifact)
-    classification_metrics = _classification_metrics(verifier_predictions)
+    classification_metrics = _classification_metrics(verifier_predictions, classification_threshold)
     survival_metrics = _survival_metrics(verifier_predictions)
 
     metrics: dict[str, object] = {
         "num_predictions": len(predictions),
         "fused_label_distribution": label_distribution(fused_labels),
         "alignment_summary": alignment_summary,
+        "classification_threshold": round(float(classification_threshold), 6),
     }
     secondary_metrics = {key: value for key, value in classification_metrics.items() if key not in {"classification_report", "confusion_matrix", "labels"}}
     metrics["binary_classification_secondary"] = {

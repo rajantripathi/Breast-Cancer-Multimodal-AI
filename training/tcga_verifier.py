@@ -220,6 +220,50 @@ def _binary_modality_prediction(score: float) -> dict[str, float | str]:
     }
 
 
+def _binary_prediction(score: float, threshold: float) -> tuple[str, float]:
+    predicted_label = "high_concern" if score >= threshold else "monitor"
+    confidence = score if predicted_label == "high_concern" else 1.0 - score
+    return predicted_label, float(confidence)
+
+
+def _balanced_accuracy_from_scores(labels: list[int], scores: list[float], threshold: float) -> float:
+    positives = [index for index, label in enumerate(labels) if label == 1]
+    negatives = [index for index, label in enumerate(labels) if label == 0]
+    if not positives or not negatives:
+        return 0.0
+    predictions = [1 if score >= threshold else 0 for score in scores]
+    tpr = sum(predictions[index] == 1 for index in positives) / len(positives)
+    tnr = sum(predictions[index] == 0 for index in negatives) / len(negatives)
+    return (tpr + tnr) / 2.0
+
+
+@torch.no_grad()
+def _select_classification_threshold(model: TCGAVerifier, loader: DataLoader | None, device: torch.device) -> float:
+    if loader is None:
+        return 0.5
+    model.eval()
+    scores: list[float] = []
+    labels: list[int] = []
+    for batch in loader:
+        vision = batch["vision"].to(device)
+        genomics = batch["genomics"].to(device)
+        clinical = batch["clinical"].to(device)
+        batch_scores = torch.sigmoid(model(vision, genomics, clinical)).detach().cpu().tolist()
+        scores.extend(float(score) for score in batch_scores)
+        labels.extend(int(item) for item in batch["label"].detach().cpu().tolist())
+    if len(set(labels)) < 2 or not scores:
+        return 0.5
+    candidates = sorted({round(float(score), 6) for score in scores} | {0.5})
+    best_threshold = 0.5
+    best_score = -1.0
+    for threshold in candidates:
+        bal_acc = _balanced_accuracy_from_scores(labels, scores, threshold)
+        if bal_acc > best_score or (bal_acc == best_score and abs(threshold - 0.5) < abs(best_threshold - 0.5)):
+            best_score = bal_acc
+            best_threshold = threshold
+    return float(best_threshold)
+
+
 def _collate(samples: list[TCGASample]) -> dict[str, Any]:
     return {
         "sample_id": [sample.sample_id for sample in samples],
@@ -389,7 +433,7 @@ def _run_epoch(
 
 
 @torch.no_grad()
-def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> list[dict[str, Any]]:
+def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device, threshold: float = 0.5) -> list[dict[str, Any]]:
     model.eval()
     predictions: list[dict[str, Any]] = []
     for batch in loader:
@@ -400,7 +444,7 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
         modality_scores = model.predict_per_modality(vision, genomics, clinical)
         scores = torch.sigmoid(logits).detach().cpu().tolist()
         for index, score in enumerate(scores):
-            predicted_label = "high_concern" if score >= 0.5 else "monitor"
+            predicted_label, confidence = _binary_prediction(float(score), threshold)
             true_label = "high_concern" if int(batch["label"][index].item()) == 1 else "monitor"
             modality_predictions = {
                 modality: _binary_modality_prediction(float(values[index].detach().cpu().item()))
@@ -416,6 +460,8 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
                         "high_concern": round(float(score), 6),
                     },
                     "risk_score": round(float(score), 6),
+                    "classification_threshold": round(float(threshold), 6),
+                    "prediction_confidence": round(float(confidence), 6),
                     "modality_predictions": modality_predictions,
                     "survival_time": float(batch["survival_time"][index].item()),
                     "event_observed": int(batch["event_observed"][index].item()),
@@ -485,7 +531,18 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     if best_state is not None:
         model.load_state_dict(best_state)
 
-    predictions = _predict(model, test_loader if test_loader is not None and test_samples else train_loader, device)
+    classification_threshold = _select_classification_threshold(model, val_loader if val_loader is not None and val_samples else None, device)
+    predictions = _predict(
+        model,
+        test_loader if test_loader is not None and test_samples else train_loader,
+        device,
+        threshold=classification_threshold,
+    )
+    val_predictions = (
+        _predict(model, val_loader, device, threshold=classification_threshold)
+        if val_loader is not None and val_samples
+        else []
+    )
     accuracy = (
         sum(int(item["true_label"] == item["predicted_label"]) for item in predictions) / len(predictions)
         if predictions
@@ -504,6 +561,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "missing_modality_handling": "zero_mask_gate",
         "endpoint": endpoint,
         "survival_horizon_days": survival_horizon_days,
+        "classification_threshold": round(float(classification_threshold), 6),
         "genomics_representation": genomics_metadata.get("representation", "unknown"),
         "genomics_feature_count": genomics_metadata.get("feature_count", int(genomics_dim)),
         "modalities": sorted(modalities),
@@ -528,7 +586,9 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "survival_horizon_days": survival_horizon_days,
             "loss_function": "cox_nll",
             "missing_modality_handling": "zero_mask_gate",
+            "classification_threshold": round(float(classification_threshold), 6),
         },
+        "validation_predictions": val_predictions,
         "predictions": predictions,
     }
     write_json(output_dir / "artifact.json", artifact)
