@@ -494,6 +494,33 @@ def evaluate_predictions(
     verifier_artifact = _load_json(artifact_path)
     verifier_predictions = predictions if predictions else (verifier_artifact.get("predictions", []) if verifier_artifact else [])
     verifier_predictions = _enrich_survival_from_clinical(verifier_predictions, clinical_csv)
+    if verifier_artifact and verifier_artifact.get("fold_metrics"):
+        fold_metrics = verifier_artifact.get("fold_metrics", [])
+        summary_metrics = verifier_artifact.get("metrics", {})
+        metrics: dict[str, object] = {
+            "num_predictions": len(verifier_predictions),
+            "alignment_summary": _alignment_summary(verifier_artifact),
+            "endpoint": verifier_artifact.get("endpoint"),
+            "cv_folds": len(fold_metrics),
+            "fold_metrics": fold_metrics,
+            "c_index_mean": summary_metrics.get("c_index_mean"),
+            "c_index_std": summary_metrics.get("c_index_std"),
+            "auroc_mean": summary_metrics.get("auroc_mean"),
+            "auroc_std": summary_metrics.get("auroc_std"),
+            "primary_results": {
+                "c_index_mean": summary_metrics.get("c_index_mean"),
+                "c_index_std": summary_metrics.get("c_index_std"),
+                "auroc_mean": summary_metrics.get("auroc_mean"),
+                "auroc_std": summary_metrics.get("auroc_std"),
+            },
+        }
+        outputs_root = Path(output_dir) if output_dir else prediction_path.parent
+        outputs_root.mkdir(parents=True, exist_ok=True)
+        summary_json = outputs_root / "enterprise_metrics.json"
+        summary_json.write_text(json.dumps(metrics, indent=2))
+        report_path = outputs_root / "evaluation_report.txt"
+        report_path.write_text(render_text_report(metrics))
+        return metrics
     classification_threshold = 0.5
     if verifier_artifact:
         classification_threshold = float(

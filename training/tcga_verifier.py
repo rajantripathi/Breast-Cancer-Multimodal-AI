@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
@@ -18,6 +18,8 @@ from data.common import read_json, write_json
 POSITIVE_VITAL_STATUS = {"dead", "deceased", "1", "true", "yes"}
 NEGATIVE_VITAL_STATUS = {"alive", "living", "0", "false", "no"}
 DEFAULT_SURVIVAL_HORIZON_DAYS = 1825.0
+DEFAULT_CDR_CSV_PATH = Path(__file__).resolve().parents[1] / "data" / "reference" / "tcga_cdr.csv"
+DEFAULT_CDR_XLSX_PATH = Path(__file__).resolve().parents[1] / "data" / "reference" / "tcga_cdr.xlsx"
 CLINICAL_EXCLUDE = {
     "clinical_row_idx",
     "days_to_death",
@@ -73,6 +75,49 @@ def _normalize_vital_status(value: Any) -> int:
     return 0
 
 
+def _binary_auroc(labels: list[int], scores: list[float]) -> float:
+    positives = [score for score, label in zip(scores, labels) if label == 1]
+    negatives = [score for score, label in zip(scores, labels) if label == 0]
+    if not positives or not negatives:
+        return 0.0
+    concordant = 0.0
+    total = 0
+    for pos_score in positives:
+        for neg_score in negatives:
+            total += 1
+            if pos_score > neg_score:
+                concordant += 1.0
+            elif pos_score == neg_score:
+                concordant += 0.5
+    return concordant / total if total else 0.0
+
+
+def _harrell_c_index(survival_times: list[float], risk_scores: list[float], event_observed: list[int]) -> float:
+    concordant = 0.0
+    admissible = 0
+    total = len(survival_times)
+    for i in range(total):
+        for j in range(i + 1, total):
+            t_i, t_j = survival_times[i], survival_times[j]
+            e_i, e_j = event_observed[i], event_observed[j]
+            r_i, r_j = risk_scores[i], risk_scores[j]
+            if t_i == t_j and not (e_i or e_j):
+                continue
+            if t_i < t_j and e_i:
+                admissible += 1
+                if r_i > r_j:
+                    concordant += 1.0
+                elif r_i == r_j:
+                    concordant += 0.5
+            elif t_j < t_i and e_j:
+                admissible += 1
+                if r_j > r_i:
+                    concordant += 1.0
+                elif r_i == r_j:
+                    concordant += 0.5
+    return concordant / admissible if admissible else 0.0
+
+
 def _binary_endpoint_label(row: pd.Series, endpoint: str, survival_horizon_days: float) -> int:
     vital_status = str(row.get("vital_status", "")).strip().lower()
     days_to_death = row.get("days_to_death")
@@ -101,6 +146,11 @@ def _binary_endpoint_label(row: pd.Series, endpoint: str, survival_horizon_days:
 
 
 def _survival_time(row: pd.Series) -> float:
+    if pd.notna(row.get("survival_time")):
+        try:
+            return max(float(row.get("survival_time")), 0.0)
+        except (TypeError, ValueError):
+            pass
     for key in (
         "days_to_death",
         "days_to_last_followup",
@@ -287,9 +337,30 @@ def _load_aligned_frame(
     clinical["clinical_row_idx"] = clinical.index.astype(int)
     feature_columns = _clinical_feature_columns(clinical)
     merged = crosswalk.merge(clinical, on="clinical_row_idx", how="inner", suffixes=("", "_clinical"))
-    merged["label"] = merged.apply(lambda row: _binary_endpoint_label(row, endpoint, survival_horizon_days), axis=1).astype(int)
-    merged["survival_time"] = merged.apply(_survival_time, axis=1)
-    merged["event_observed"] = merged["vital_status"].map(_normalize_vital_status).astype(int)
+    if endpoint == "pfi":
+        if DEFAULT_CDR_CSV_PATH.exists():
+            cdr = pd.read_csv(DEFAULT_CDR_CSV_PATH)
+        elif DEFAULT_CDR_XLSX_PATH.exists():
+            cdr = pd.read_excel(DEFAULT_CDR_XLSX_PATH)
+        else:
+            raise FileNotFoundError(f"Missing TCGA-CDR file: {DEFAULT_CDR_CSV_PATH} or {DEFAULT_CDR_XLSX_PATH}")
+        cdr = cdr[cdr["type"] == "BRCA"].copy()
+        cdr["bcr_patient_barcode"] = cdr["bcr_patient_barcode"].astype(str).str.upper().str.slice(0, 12)
+        cdr = cdr[["bcr_patient_barcode", "PFI", "PFI.time"]].rename(
+            columns={"bcr_patient_barcode": "patient_barcode", "PFI": "event_observed", "PFI.time": "survival_time"}
+        )
+        cdr["event_observed"] = pd.to_numeric(cdr["event_observed"], errors="coerce")
+        cdr["survival_time"] = pd.to_numeric(cdr["survival_time"], errors="coerce")
+        merged["patient_barcode"] = merged["patient_barcode"].astype(str).str.upper().str.slice(0, 12)
+        merged = merged.merge(cdr, on="patient_barcode", how="inner")
+        merged = merged[merged["event_observed"].notna() & merged["survival_time"].notna()].reset_index(drop=True)
+        merged["label"] = merged["event_observed"].astype(int)
+        merged["event_observed"] = merged["event_observed"].astype(int)
+        merged["survival_time"] = merged["survival_time"].astype(float).clip(lower=0.0)
+    else:
+        merged["label"] = merged.apply(lambda row: _binary_endpoint_label(row, endpoint, survival_horizon_days), axis=1).astype(int)
+        merged["survival_time"] = merged.apply(_survival_time, axis=1)
+        merged["event_observed"] = merged["vital_status"].map(_normalize_vital_status).astype(int)
     merged = merged[merged["label"] >= 0].reset_index(drop=True)
     return merged, clinical, feature_columns
 
@@ -404,6 +475,27 @@ def _genomics_metadata(frame: pd.DataFrame) -> dict[str, Any]:
     return {"representation": "flat_genes", "feature_count": int(_load_tensor(genomics_path).numel())}
 
 
+def _mean_std(values: list[float]) -> tuple[float, float]:
+    if not values:
+        return 0.0, 0.0
+    mean = float(sum(values) / len(values))
+    variance = sum((value - mean) ** 2 for value in values) / len(values)
+    return mean, float(variance ** 0.5)
+
+
+def _fold_metrics(predictions: list[dict[str, Any]]) -> dict[str, float]:
+    scores = [float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0))) for item in predictions]
+    labels = [1 if item.get("true_label") == "high_concern" else 0 for item in predictions]
+    survival_times = [float(item.get("survival_time", 0.0)) for item in predictions]
+    event_observed = [int(item.get("event_observed", 0)) for item in predictions]
+    return {
+        "c_index": round(_harrell_c_index(survival_times, scores, event_observed), 4),
+        "auroc": round(_binary_auroc(labels, scores), 4),
+        "num_predictions": len(predictions),
+        "num_events": int(sum(event_observed)),
+    }
+
+
 def _run_epoch(
     model: TCGAVerifier,
     loader: DataLoader,
@@ -473,29 +565,16 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device, thre
 def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     crosswalk_path = Path(args.crosswalk)
     clinical_csv = Path(args.clinical_csv)
-    endpoint = str(getattr(args, "endpoint", "5yr_survival"))
+    endpoint = str(getattr(args, "endpoint", "pfi"))
     survival_horizon_days = float(getattr(args, "survival_horizon_days", DEFAULT_SURVIVAL_HORIZON_DAYS))
     frame, _clinical, feature_columns = _load_aligned_frame(crosswalk_path, clinical_csv, endpoint, survival_horizon_days)
-    train_frame, val_frame, test_frame = _split_frame(frame, int(args.seed))
     genomics_metadata = _genomics_metadata(frame)
     modalities = _parse_modalities(getattr(args, "modalities", "vision,clinical,genomics"))
 
-    means, stds = _clinical_scaler(train_frame if not train_frame.empty else frame, feature_columns)
     if frame.empty:
         raise ValueError("TCGA crosswalk produced no aligned samples")
     first_genomics = _load_tensor(str(frame.iloc[0]["genomics_path"]))
     genomics_dim = min(max(128, int(first_genomics.numel())), 1024)
-
-    train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim, modalities)
-    val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim, modalities)
-    test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim, modalities)
-    if not train_samples:
-        raise ValueError("No TCGA training samples available after splitting")
-
-    train_loader = DataLoader(TCGAAlignedDataset(train_samples), batch_size=min(16, len(train_samples)), shuffle=True, collate_fn=_collate)
-    val_loader = DataLoader(TCGAAlignedDataset(val_samples), batch_size=min(16, max(1, len(val_samples))), shuffle=False, collate_fn=_collate) if val_samples else None
-    test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, max(1, len(test_samples))), shuffle=False, collate_fn=_collate) if test_samples else None
-
     requested_device = str(args.device).lower()
     if requested_device == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -508,49 +587,85 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         device = torch.device("cpu")
     else:
         device = torch.device(requested_device)
-    model = TCGAVerifier(vision_dim=1536, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
-
-    best_state = None
-    best_val_loss = float("inf")
-    stale_epochs = 0
-    for epoch in range(1, int(args.epochs) + 1):
-        train_loss = _run_epoch(model, train_loader, device, optimizer)
-        val_loss = _run_epoch(model, val_loader, device, None) if val_loader is not None and val_samples else train_loss
-        print(f"epoch={epoch} train_loss={train_loss:.4f} val_loss={val_loss:.4f}", flush=True)
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
-            stale_epochs = 0
+    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=int(args.seed))
+    fold_predictions: list[dict[str, Any]] = []
+    fold_metrics: list[dict[str, Any]] = []
+    final_state = None
+    final_threshold = 0.5
+    final_train = final_val = final_test = 0
+    for fold_index, (dev_idx, test_idx) in enumerate(splitter.split(frame, frame["label"]), start=1):
+        dev_frame = frame.iloc[dev_idx].reset_index(drop=True)
+        test_frame = frame.iloc[test_idx].reset_index(drop=True)
+        if dev_frame["label"].nunique() < 2:
+            train_frame = dev_frame.copy()
+            val_frame = dev_frame.iloc[0:0].copy()
         else:
-            stale_epochs += 1
-            if stale_epochs >= int(args.patience):
-                print(f"early stopping at epoch={epoch}", flush=True)
-                break
+            train_frame, val_frame = train_test_split(
+                dev_frame,
+                test_size=max(0.1, min(0.2, 32 / max(len(dev_frame), 1))),
+                random_state=int(args.seed) + fold_index,
+                stratify=dev_frame["label"],
+            )
+            train_frame = train_frame.reset_index(drop=True)
+            val_frame = val_frame.reset_index(drop=True)
+        print(f"Fold {fold_index}", flush=True)
+        print(f"Train: {train_frame['label'].value_counts().to_dict()}", flush=True)
+        print(f"Val: {val_frame['label'].value_counts().to_dict()}", flush=True)
+        print(f"Test: {test_frame['label'].value_counts().to_dict()}", flush=True)
 
-    if best_state is not None:
-        model.load_state_dict(best_state)
+        means, stds = _clinical_scaler(train_frame if not train_frame.empty else dev_frame, feature_columns)
+        train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim, modalities)
+        val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim, modalities)
+        test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim, modalities)
+        if not train_samples:
+            raise ValueError(f"No TCGA training samples available for fold {fold_index}")
 
-    classification_threshold = _select_classification_threshold(model, val_loader if val_loader is not None and val_samples else None, device)
-    predictions = _predict(
-        model,
-        test_loader if test_loader is not None and test_samples else train_loader,
-        device,
-        threshold=classification_threshold,
-    )
-    val_predictions = (
-        _predict(model, val_loader, device, threshold=classification_threshold)
-        if val_loader is not None and val_samples
-        else []
-    )
-    accuracy = (
-        sum(int(item["true_label"] == item["predicted_label"]) for item in predictions) / len(predictions)
-        if predictions
-        else 0.0
-    )
+        train_loader = DataLoader(TCGAAlignedDataset(train_samples), batch_size=min(16, len(train_samples)), shuffle=True, collate_fn=_collate)
+        val_loader = DataLoader(TCGAAlignedDataset(val_samples), batch_size=min(16, max(1, len(val_samples))), shuffle=False, collate_fn=_collate) if val_samples else None
+        test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, max(1, len(test_samples))), shuffle=False, collate_fn=_collate)
+
+        model = TCGAVerifier(vision_dim=1536, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
+        best_state = None
+        best_val_loss = float("inf")
+        stale_epochs = 0
+        for epoch in range(1, int(args.epochs) + 1):
+            train_loss = _run_epoch(model, train_loader, device, optimizer)
+            val_loss = _run_epoch(model, val_loader, device, None) if val_loader is not None and val_samples else train_loss
+            print(f"fold={fold_index} epoch={epoch} train_loss={train_loss:.4f} val_loss={val_loss:.4f}", flush=True)
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+                stale_epochs = 0
+            else:
+                stale_epochs += 1
+                if stale_epochs >= int(args.patience):
+                    print(f"fold={fold_index} early stopping at epoch={epoch}", flush=True)
+                    break
+        if best_state is not None:
+            model.load_state_dict(best_state)
+
+        classification_threshold = _select_classification_threshold(model, val_loader if val_loader is not None and val_samples else None, device)
+        predictions = _predict(model, test_loader, device, threshold=classification_threshold)
+        for item in predictions:
+            item["fold"] = fold_index
+        metrics = _fold_metrics(predictions)
+        metrics["fold"] = fold_index
+        metrics["classification_threshold"] = round(float(classification_threshold), 6)
+        fold_metrics.append(metrics)
+        fold_predictions.extend(predictions)
+        final_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+        final_threshold = classification_threshold
+        final_train = len(train_samples)
+        final_val = len(val_samples)
+        final_test = len(test_samples)
+
+    c_index_mean, c_index_std = _mean_std([float(item["c_index"]) for item in fold_metrics])
+    auroc_mean, auroc_std = _mean_std([float(item["auroc"]) for item in fold_metrics])
 
     checkpoint_path = output_dir / "model.pt"
-    torch.save(model.state_dict(), checkpoint_path)
+    if final_state is not None:
+        torch.save(final_state, checkpoint_path)
     artifact = {
         "task": "verifier",
         "model_name": "tcga_aligned_cross_attention_verifier",
@@ -569,11 +684,15 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "clinical_csv": str(clinical_csv),
         "checkpoint_path": str(checkpoint_path),
         "metrics": {
-            "val_accuracy": round(float(accuracy), 4),
+            "c_index_mean": round(c_index_mean, 4),
+            "c_index_std": round(c_index_std, 4),
+            "auroc_mean": round(auroc_mean, 4),
+            "auroc_std": round(auroc_std, 4),
             "num_samples": int(len(frame)),
-            "num_train": int(len(train_samples)),
-            "num_val": int(len(val_samples)),
-            "num_test": int(len(test_samples)),
+            "num_folds": 5,
+            "num_train_last_fold": int(final_train),
+            "num_val_last_fold": int(final_val),
+            "num_test_last_fold": int(final_test),
             "alignment_status": "patient_aligned_tcga",
             "aligned_sample_count": int(len(frame)),
         },
@@ -586,10 +705,11 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "survival_horizon_days": survival_horizon_days,
             "loss_function": "cox_nll",
             "missing_modality_handling": "zero_mask_gate",
-            "classification_threshold": round(float(classification_threshold), 6),
+            "classification_threshold": round(float(final_threshold), 6),
+            "cv_folds": 5,
         },
-        "validation_predictions": val_predictions,
-        "predictions": predictions,
+        "fold_metrics": fold_metrics,
+        "predictions": fold_predictions,
     }
     write_json(output_dir / "artifact.json", artifact)
     write_json(output_dir / "summary.json", artifact["metrics"])

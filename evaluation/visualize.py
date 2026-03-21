@@ -5,6 +5,22 @@ def render_text_report(metrics: dict[str, object]) -> str:
     lines = ["Evaluation Report"]
     primary = metrics.get("primary_results", {}) if isinstance(metrics.get("primary_results"), dict) else {}
     if primary:
+        if "c_index_mean" in primary:
+            lines.extend(
+                [
+                    "Primary Survival Metrics",
+                    f"- C-index mean: {primary.get('c_index_mean')}",
+                    f"- C-index std: {primary.get('c_index_std')}",
+                    f"- AUROC mean: {primary.get('auroc_mean')}",
+                    f"- AUROC std: {primary.get('auroc_std')}",
+                    "",
+                ]
+            )
+            for key, value in metrics.items():
+                if key == "primary_results":
+                    continue
+                lines.append(f"- {key}: {value}")
+            return "\n".join(lines)
         risk_sep = primary.get("risk_group_separation", {}) if isinstance(primary.get("risk_group_separation"), dict) else {}
         lines.extend(
             [

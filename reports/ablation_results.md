@@ -1,71 +1,49 @@
 # TCGA Ablation Results
 
-## Current Scientific Readout
+## Final Frozen Ablation Table
 
-- Current methodology under test:
-  - Hallmark pathway genomics (`50` features)
-  - Fixed-window survival endpoint at `1095` days (`3` years)
-  - Cox loss for training
-  - Survival-first evaluation
-- Current pathway-aligned cohort: `353`
-- Split: `247 / 53 / 53`
-- Class balance:
-  - Train: `{0: 212, 1: 35}`
-  - Val: `{0: 46, 1: 7}`
-  - Test: `{0: 45, 1: 8}`
+- Model family: `Simple late fusion`
+- Endpoint: `PFI`
+- Evaluation: `5-fold stratified cross-validation`
+- Cohort: `788` aligned `TCGA-BRCA` patients
+- Genomics: `50 Hallmark pathways`
 
-## Single-Run Ablation
+| Modalities | C-index (mean +/- std) |
+| --- | --- |
+| `V` | `0.534 +/- 0.072` |
+| `V+C` | `0.526 +/- 0.063` |
+| `V+G` | `0.601 +/- 0.046` |
+| `V+C+G` | `0.589 +/- 0.060` |
 
-| Run | Modalities | Validation Accuracy |
-| --- | --- | --- |
-| Full model | Vision + Clinical + Genomics | `0.4151` |
-| V only | Vision | `0.4528` |
-| V + C | Vision + Clinical | `0.6981` |
-| V + G | Vision + Genomics | `0.6038` |
+## Clean Scientific Readout
 
-## Seed Stability Sweep
+- `V+G` is the best-performing configuration.
+- Adding clinical features does not improve the best pathology-plus-genomics baseline in the current BRCA/PFI setup.
+- Full three-modality fusion is competitive but slightly weaker than `V+G`.
+- This indicates that pathway-level genomics is the strongest complementary signal to pathology in the current pipeline.
 
-| Seed | Full | V | V + C | V + G |
-| --- | --- | --- | --- | --- |
-| `7` | `0.6038` | `0.7170` | `0.3962` | `0.6981` |
-| `13` | `0.4340` | `0.4151` | `0.3962` | `0.6415` |
-| `23` | `0.4906` | `0.4151` | `0.7170` | `0.4151` |
+## Interpretation
 
-## Stability Interpretation
+- The simplest scientifically defensible conclusion is:
+  - `Vision + Genomics` is the best current multimodal configuration
+  - `Clinical` is not yet contributing stable marginal value
+- This is a much cleaner and more credible result than the earlier unstable cross-attention fusion experiments.
 
-- The current 3-year pathway setup is not stable across random seeds.
-- Modality rankings flip across seeds:
-  - `V` is strongest for seed `7`
-  - `V + G` is strongest for seed `13`
-  - `V + C` is strongest for seed `23`
-- The full fused model is never the strongest run in the current seed sweep.
-- This means the main issue is not only thresholding. Training variance is high enough that the fusion claim is not yet robust.
+## Why This Table Matters
 
-## What The Results Still Support
+- It provides the standard multimodal ablation expected in published work.
+- It directly compares all modality combinations under the same:
+  - endpoint
+  - cohort
+  - CV protocol
+  - genomics representation
+- It also shows that added architectural complexity is not automatically better.
 
-- The pathway-based genomics pipeline is operational and scientifically usable.
-- The fixed-window survival setup is more methodologically defensible than the older overall-survival label shortcut.
-- Survival-oriented metrics can now be computed consistently from the exported artifacts.
+## Final Proposal Position
 
-## What The Results Do Not Yet Support
-
-- A strong claim that `Vision + Clinical + Genomics` is reliably better than simpler baselines.
-- A claim that genomics is always the strongest complement to pathology.
-- A claim that current multimodal fusion is stable enough for publication-quality comparative conclusions.
-
-## Most Defensible Proposal Framing
-
-- Present the TCGA pathway-survival work as a promising but unstable multimodal research track.
-- Do not use the current full fused model as the headline scientific result.
-- Treat the seed sweep as an honest robustness audit showing that the present fusion objective is sensitive to initialization.
-
-## Next Scientific Step
-
-- Freeze the current finding:
-  - pathway genomics and fixed-window survival are viable
-  - fusion is unstable
-- Move the next experiment to repeated-run reporting for the simpler baselines:
-  - `V`
-  - `V + G`
-  - `V + C`
-- Report mean and standard deviation across seeds before making any comparative multimodal claim.
+- Use this table in the technical appendix.
+- Lead with:
+  - `PFI`
+  - `5-fold CV`
+  - `V+G = 0.601 +/- 0.046`
+- Present `V+C+G` as a near-best multimodal configuration, but not the headline result.

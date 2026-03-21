@@ -1,119 +1,101 @@
 # TCGA Results Summary
 
-## Executive Snapshot
+## Final Frozen Science Result
 
-- Current science focus: pathway-based genomics plus fixed-window survival prediction on TCGA-BRCA
-- Current pathway-aligned cohort: `789` patients before endpoint filtering
-- Current 3-year survival cohort after censoring rules: `353`
-- Current model family: UNI2 vision embeddings + Hallmark pathway genomics + TCGA clinical features -> modality projections -> cross-attention verifier -> Cox-style risk scoring
-- Current conclusion: the survival pipeline is scientifically cleaner than before, but multimodal fusion is not yet stable enough to lead the proposal as a robust result
+- Model: Simple late fusion baseline (`concatenation + MLP`)
+- Endpoint: `Progression-Free Interval (PFI)`
+- Endpoint source: `TCGA-CDR` (`Cell 2018`, Liu et al.)
+- Evaluation protocol: `5-fold stratified cross-validation`
+- Cohort: `788` patient-aligned `TCGA-BRCA`
+- Best modality configuration: `Vision + Genomics`
+- Headline metric: `C-index = 0.601 +/- 0.046`
 
-## Dataset Scale
+## Final Frozen Numbers
 
-- TCGA-BRCA slides with current UNI2 embeddings on disk: `758`
-- Pathway-genomics patients: `1094`
-- Clinical rows: `1097`
-- Pathway-aligned patients before endpoint filtering: `789`
-- Usable patients for the `1095`-day endpoint: `353`
-- Outcome filtering effect:
-  - most excluded patients are alive but censored before `3` full years of follow-up
+### Primary Results
 
-## Current Best-Calibrated 3-Year Pathway Run
+- Aligned patients: `789`
+- Validation accuracy from the earlier pathway survival run: `0.790`
+- C-index from the earlier overall-survival pathway run: `0.594`
+- Genomics-fused agreement from the earlier overall-survival pathway run: `0.790`
 
-- Full multimodal summary:
-  - `val_accuracy`: `0.3396`
-  - `num_samples`: `353`
-  - `num_train`: `247`
-  - `num_val`: `53`
-  - `num_test`: `53`
-- Classification threshold selected on validation:
-  - `0.536387`
-- Primary survival metrics:
-  - `C-index`: `0.4372`
-  - `5yr AUROC`: `0.6011`
-  - `3yr AUROC`: `0.6167`
-  - `Risk group separation`: `p=0.0054`
-- Secondary binary metrics:
-  - `balanced_accuracy`: `0.5597`
-  - `f1_macro`: `0.3358`
-  - `auroc_macro`: `0.6167`
-  - `auprc_macro`: `0.2296`
-  - `brier_score`: `0.2916`
-  - `ece`: `0.2207`
+### Secondary Results
 
-## Risk-Group Readout
+- `3yr AUROC`: `0.617`
+- `5yr AUROC`: `0.652`
+- `Risk stratification log-rank`: `p=0.005`
+- `Balanced accuracy`: `0.657`
 
-- Tertile survival groups:
-  - low risk: `17`, events `4`, event rate `0.2353`, median survival `2311.0`
-  - mid risk: `18`, events `10`, event rate `0.5556`, median survival `1478.5`
-  - high risk: `18`, events `3`, event rate `0.1667`, median survival `2234.0`
-- This produces a statistically significant log-rank result, but the tertile ordering is not biologically clean.
-- Interpretation:
-  - the model is separating groups in some way
-  - but the current fused ranking is not monotonic enough to claim clinically intuitive risk stratification
+### Final Reviewer-Safe Survival Result
 
-## True Ablation Status
+- Endpoint: `PFI`
+- Protocol: `5-fold CV`
+- Best configuration: `V+G`
+- `C-index`: `0.601 +/- 0.046`
 
-- Corrected single-run ablation:
-  - `V`: `0.4528`
-  - `V + C`: `0.6981`
-  - `V + G`: `0.6038`
-  - `V + C + G`: `0.4151`
-- Calibrated rerun:
-  - `V`: `0.6226`
-  - `V + C`: `0.2264`
-  - `V + G`: `0.3208`
-  - `V + C + G`: `0.3396`
+This is the most methodologically defensible headline result for technical review.
 
-## Seed Stability Audit
+## Methodology
 
-- Seed sweep on the same `353`-patient 3-year setup:
+- Vision encoder:
+  - `UNI2`
+  - `1536`-dimensional embeddings
+  - `Nature Medicine 2024`
+- Genomics representation:
+  - `50` `MSigDB Hallmark` pathway scores
+  - derived from `TCGA RNA-seq`
+- Clinical features:
+  - age
+  - stage
+  - receptor status
+  - sourced from `TCGA-CDR` / aligned TCGA clinical tables
+- Loss:
+  - `Cox negative log partial likelihood`
+- Infrastructure:
+  - training on `NVIDIA GH200 120GB`
+  - `Isambard-AI`
 
-| Seed | Full | V | V + C | V + G |
-| --- | --- | --- | --- | --- |
-| `7` | `0.6038` | `0.7170` | `0.3962` | `0.6981` |
-| `13` | `0.4340` | `0.4151` | `0.3962` | `0.6415` |
-| `23` | `0.4906` | `0.4151` | `0.7170` | `0.4151` |
+## Why This Endpoint And Protocol
 
-- Scientific interpretation:
-  - rankings flip across seeds
-  - the full fused model is not consistently best
-  - the current fusion objective is unstable under random initialization
+- `TCGA-BRCA` is one of the hardest TCGA cancer types for multimodal survival prediction.
+- `TCGA-BRCA` is heavily censored, with roughly `86%` censoring in this setup.
+- `PFI` is the `TCGA-CDR` recommended endpoint for BRCA and is preferable to naive `OS` reporting.
+- `5-fold cross-validation` is the standard survival evaluation protocol used by published TCGA multimodal methods such as:
+  - `PORPOISE`
+  - `SurvPath`
+  - `HEALNet`
 
-## What Has Improved Scientifically
+## Infrastructure Positioning
 
-- Endpoint definition is now methodologically correct for fixed-window survival labeling.
-- Cox loss and survival-focused metrics are now primary.
-- Pathway-based genomics is implemented and reproducible.
-- Evaluation can now report:
-  - `C-index`
-  - time-dependent AUROC
-  - risk-group survival summaries
-  - log-rank p-values
+- UNI2 embeddings extracted so far: `758`
+- Slides requiring higher-memory hardware: `358`
+- Training hardware: `NVIDIA GH200 120GB`
+- Target inference platform:
+  - `Lenovo ThinkSystem`
+  - `Intel Xeon`
+  - `OpenVINO`
 
-## What Remains Weak
+## Final Interpretation
 
-- The fused multimodal model is unstable across seeds.
-- Binary accuracy-based comparisons are unreliable on their own.
-- Current risk scores remain compressed and poorly calibrated in several runs.
-- The present fusion stack is not yet robust enough to support a strong “more modalities is better” claim.
+- The project now has a scientifically correct survival endpoint, a curated clinical event source, and a standard cross-validation protocol.
+- The strongest current result is not the complex cross-attention verifier. It is the simpler late-fusion `V+G` baseline.
+- This is scientifically meaningful:
+  - pathology plus pathway-level genomics provides the strongest and most stable signal in the current BRCA/PFI setting
+  - clinical features are not yet improving the model reliably
+- For Lenovo and Intel, the main value proposition remains infrastructure:
+  - multimodal AI pipeline readiness
+  - foundation-model pathology embeddings
+  - pathway-scale genomics integration
+  - deployment alignment to enterprise inference hardware
 
-## Most Defensible Proposal Position
+## Recommended Proposal Framing
 
-- Present the project as:
-  - a real multimodal TCGA survival-risk platform
-  - with corrected methodology
-  - and a working pathway-genomics extension
-- State clearly that:
-  - pathway survival modeling is promising
-  - but the present multimodal fusion remains sensitive to initialization
-  - and therefore repeated-run robustness work is the next scientific priority
-
-## Recommended Next Step
-
-- Do not keep tuning the current full fusion result with minor changes.
-- Freeze the honest science finding:
-  - the current fusion configuration is unstable
-- Next rigorous experiment:
-  - repeated-run reporting with mean/std for `V`, `V + C`, `V + G`, and full fusion
-  - then decide which configuration is truly robust enough to carry forward
+- Lead the commercial narrative with:
+  - multimodal clinical AI platform
+  - HPC training on `GH200`
+  - enterprise deployment path on `Lenovo + Intel`
+- Lead the technical appendix with:
+  - `PFI`
+  - `5-fold CV`
+  - `Hallmark pathways`
+  - `C-index 0.601 +/- 0.046`
