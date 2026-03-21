@@ -17,6 +17,7 @@ from data.common import read_json, write_json
 
 POSITIVE_VITAL_STATUS = {"dead", "deceased", "1", "true", "yes"}
 NEGATIVE_VITAL_STATUS = {"alive", "living", "0", "false", "no"}
+FIVE_YEAR_DAYS = 1825.0
 CLINICAL_EXCLUDE = {
     "clinical_row_idx",
     "days_to_death",
@@ -69,6 +70,33 @@ def _normalize_vital_status(value: Any) -> int:
     if text in NEGATIVE_VITAL_STATUS:
         return 0
     return 0
+
+
+def _binary_endpoint_label(row: pd.Series, endpoint: str) -> int:
+    vital_status = str(row.get("vital_status", "")).strip().lower()
+    days_to_death = row.get("days_to_death")
+    days_to_last_followup = row.get("days_to_last_followup")
+
+    if endpoint == "overall_survival":
+        return _normalize_vital_status(vital_status)
+
+    if vital_status in POSITIVE_VITAL_STATUS:
+        if pd.notna(days_to_death):
+            try:
+                return 1 if float(days_to_death) <= FIVE_YEAR_DAYS else 0
+            except (TypeError, ValueError):
+                return -1
+        return -1
+
+    if vital_status in NEGATIVE_VITAL_STATUS:
+        if pd.notna(days_to_last_followup):
+            try:
+                return 0 if float(days_to_last_followup) >= FIVE_YEAR_DAYS else -1
+            except (TypeError, ValueError):
+                return -1
+        return -1
+
+    return -1
 
 
 def _survival_time(row: pd.Series) -> float:
@@ -193,15 +221,16 @@ def _collate(samples: list[TCGASample]) -> dict[str, Any]:
     }
 
 
-def _load_aligned_frame(crosswalk_path: Path, clinical_csv: Path) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
+def _load_aligned_frame(crosswalk_path: Path, clinical_csv: Path, endpoint: str) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
     crosswalk = pd.read_csv(crosswalk_path)
     clinical = pd.read_csv(clinical_csv).copy()
     clinical["clinical_row_idx"] = clinical.index.astype(int)
     feature_columns = _clinical_feature_columns(clinical)
     merged = crosswalk.merge(clinical, on="clinical_row_idx", how="inner", suffixes=("", "_clinical"))
-    merged["label"] = merged["vital_status"].map(_normalize_vital_status).astype(int)
+    merged["label"] = merged.apply(lambda row: _binary_endpoint_label(row, endpoint), axis=1).astype(int)
     merged["survival_time"] = merged.apply(_survival_time, axis=1)
-    merged["event_observed"] = merged["label"].astype(int)
+    merged["event_observed"] = merged["vital_status"].map(_normalize_vital_status).astype(int)
+    merged = merged[merged["label"] >= 0].reset_index(drop=True)
     return merged, clinical, feature_columns
 
 
@@ -373,7 +402,8 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device) -> l
 def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     crosswalk_path = Path(args.crosswalk)
     clinical_csv = Path(args.clinical_csv)
-    frame, _clinical, feature_columns = _load_aligned_frame(crosswalk_path, clinical_csv)
+    endpoint = str(getattr(args, "endpoint", "5yr_survival"))
+    frame, _clinical, feature_columns = _load_aligned_frame(crosswalk_path, clinical_csv, endpoint)
     train_frame, val_frame, test_frame = _split_frame(frame, int(args.seed))
     genomics_metadata = _genomics_metadata(frame)
 
@@ -445,6 +475,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "aligned_sample_count": int(len(frame)),
         "loss_function": "cox_nll",
         "missing_modality_handling": "zero_mask_gate",
+        "endpoint": endpoint,
         "genomics_representation": genomics_metadata.get("representation", "unknown"),
         "genomics_feature_count": genomics_metadata.get("feature_count", int(genomics_dim)),
         "modalities": [item.strip() for item in str(args.modalities).split(",") if item.strip()],
@@ -465,6 +496,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "lr": float(args.lr),
             "patience": int(args.patience),
             "seed": int(args.seed),
+            "endpoint": endpoint,
             "loss_function": "cox_nll",
             "missing_modality_handling": "zero_mask_gate",
         },

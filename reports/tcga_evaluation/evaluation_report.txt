@@ -1,4 +1,20 @@
 Evaluation Report
+Primary Survival Metrics
+- C-index: 0.526
+- 5yr AUROC: 0.6333
+- 3yr AUROC: 0.553
+- Risk group separation: p=None
+
+Binary Classification (secondary)
+- balanced_accuracy: 0.4628
+- f1_macro: 0.4636
+- ece: 0.1349
+- auroc_macro: 0.5125
+- auprc_macro: 0.1728
+- brier_score: 0.2207
+- auroc_ci_95: [0.3459, 0.6865]
+- balanced_accuracy_ci_95: [0.3673, 0.5972]
+
 - num_predictions: 105
 - fused_label_distribution: {'monitor': 82, 'high_concern': 23}
 - alignment_summary: Verifier trained on 696 patient-aligned bundles
@@ -13,5 +29,9 @@ Evaluation Report
 - risk_group_summary: {'low_risk': {'count': 0, 'events': 0, 'mean_risk_score': 0.0, 'event_rate': 0.0}, 'intermediate_risk': {'count': 105, 'events': 13, 'mean_risk_score': 0.4555, 'event_rate': 0.1238}, 'high_risk': {'count': 0, 'events': 0, 'mean_risk_score': 0.0, 'event_rate': 0.0}}
 - modality_agreement_summary: {'vision': {'agreement_with_fused': 0.5619, 'high_concern_rate': 0.4857}, 'clinical': {'agreement_with_fused': 0.219, 'high_concern_rate': 0.9619}, 'genomics': {'agreement_with_fused': 0.3048, 'high_concern_rate': 0.8381}}
 - c_index: 0.526
+- time_dependent_auroc_3yr: {'auroc': 0.553, 'num_eligible': 41, 'num_events': 8}
+- time_dependent_auroc_5yr: {'auroc': 0.6333, 'num_eligible': 31, 'num_events': 10}
+- risk_group_tertiles: {'low_risk': {'n': 35, 'events': 3, 'median_survival_time': 728.0, 'event_rate': 0.0857, 'mean_risk_score': 0.4055}, 'mid_risk': {'n': 35, 'events': 7, 'median_survival_time': 651.0, 'event_rate': 0.2, 'mean_risk_score': 0.4444}, 'high_risk': {'n': 35, 'events': 3, 'median_survival_time': 791.0, 'event_rate': 0.0857, 'mean_risk_score': 0.5165}}
+- risk_group_separation: {'logrank_p_value': None, 'groups': ['low_risk', 'mid_risk', 'high_risk']}
 - survival_time_diagnostic: {'min': 0.0, 'max': 7106.0, 'unique': 91}
 - event_diagnostic: {'sum': 13, 'total': 105}

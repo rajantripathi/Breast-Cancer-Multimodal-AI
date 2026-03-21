@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -207,7 +208,7 @@ def _classification_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]
     return metrics
 
 
-def _risk_group_summary(predictions: list[dict[str, Any]]) -> dict[str, Any]:
+def _fixed_threshold_risk_group_summary(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     if not predictions:
         return {}
     groups = {
@@ -281,6 +282,133 @@ def _harrell_c_index(survival_times: list[float], risk_scores: list[float], even
     return concordant / admissible
 
 
+def _time_dependent_auroc(predictions: list[dict[str, Any]], horizon_days: float) -> dict[str, Any]:
+    eligible: list[tuple[int, float]] = []
+    for item in predictions:
+        survival_time = float(item.get("survival_time", 0.0))
+        event_observed = int(item.get("event_observed", 0))
+        risk_score = float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0)))
+        if survival_time < horizon_days and event_observed == 0:
+            continue
+        label = 1 if (event_observed == 1 and survival_time <= horizon_days) else 0
+        eligible.append((label, risk_score))
+    if len(eligible) < 2:
+        return {"auroc": 0.0, "num_eligible": len(eligible), "num_events": 0}
+    y_true = [label for label, _ in eligible]
+    positive_scores = [score for _, score in eligible]
+    return {
+        "auroc": round(_binary_auroc(y_true, positive_scores), 4),
+        "num_eligible": len(eligible),
+        "num_events": int(sum(y_true)),
+    }
+
+
+def _median_survival_time(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        return float(ordered[mid])
+    return float((ordered[mid - 1] + ordered[mid]) / 2.0)
+
+
+def _risk_group_tertiles(predictions: list[dict[str, Any]]) -> tuple[dict[str, Any], list[tuple[str, float, int]]]:
+    if not predictions:
+        return {}, []
+    ranked = sorted(
+        [
+            (
+                str(item.get("sample_id", "")),
+                float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0))),
+                float(item.get("survival_time", 0.0)),
+                int(item.get("event_observed", 0)),
+            )
+            for item in predictions
+        ],
+        key=lambda item: item[1],
+    )
+    total = len(ranked)
+    cut1 = total // 3
+    cut2 = (2 * total) // 3
+    assignments = {
+        "low_risk": ranked[:cut1],
+        "mid_risk": ranked[cut1:cut2],
+        "high_risk": ranked[cut2:],
+    }
+    summaries: dict[str, Any] = {}
+    flat_assignments: list[tuple[str, float, int]] = []
+    group_code = {"low_risk": 0, "mid_risk": 1, "high_risk": 2}
+    for group_name, rows in assignments.items():
+        survival_times = [row[2] for row in rows]
+        events = [row[3] for row in rows]
+        risk_scores = [row[1] for row in rows]
+        summaries[group_name] = {
+            "n": len(rows),
+            "events": int(sum(events)),
+            "median_survival_time": round(_median_survival_time(survival_times), 1) if rows else 0.0,
+            "event_rate": round(sum(events) / len(rows), 4) if rows else 0.0,
+            "mean_risk_score": round(sum(risk_scores) / len(rows), 4) if rows else 0.0,
+        }
+        flat_assignments.extend((row[0], row[2], row[3], group_code[group_name]) for row in rows)
+    return summaries, flat_assignments
+
+
+def _logrank_p_value(assignments: list[tuple[str, float, int, int]]) -> float | None:
+    if len(assignments) < 3:
+        return None
+    try:
+        from scipy.stats import chi2  # type: ignore
+    except ImportError:
+        chi2 = None
+
+    groups = sorted({group for _, _, _, group in assignments})
+    if len(groups) < 2:
+        return None
+    event_times = sorted({time for _, time, event, _ in assignments if event == 1})
+    if not event_times:
+        return None
+
+    observed = {group: 0.0 for group in groups}
+    expected = {group: 0.0 for group in groups}
+    variances = {group: 0.0 for group in groups}
+
+    for event_time in event_times:
+        at_risk = {group: 0 for group in groups}
+        events = {group: 0 for group in groups}
+        for _, time, event, group in assignments:
+            if time >= event_time:
+                at_risk[group] += 1
+            if event == 1 and time == event_time:
+                events[group] += 1
+        total_at_risk = sum(at_risk.values())
+        total_events = sum(events.values())
+        if total_at_risk <= 1 or total_events == 0:
+            continue
+        for group in groups:
+            observed[group] += events[group]
+            expected[group] += total_events * (at_risk[group] / total_at_risk)
+            variances[group] += (
+                (at_risk[group] / total_at_risk)
+                * (1.0 - (at_risk[group] / total_at_risk))
+                * total_events
+                * (total_at_risk - total_events)
+                / (total_at_risk - 1)
+            )
+
+    chi_square = 0.0
+    for group in groups[:-1]:
+        variance = variances[group]
+        if variance > 0:
+            chi_square += ((observed[group] - expected[group]) ** 2) / variance
+    degrees = max(1, len(groups) - 1)
+    if chi2 is not None:
+        return round(float(chi2.sf(chi_square, degrees)), 4)
+    if degrees == 1:
+        return round(math.erfc(math.sqrt(max(chi_square, 0.0) / 2.0)), 4)
+    return None
+
+
 def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     if not predictions or not all("survival_time" in item and "event_observed" in item for item in predictions):
         return {"c_index_message": "Survival labels not available; C-index skipped"}
@@ -303,8 +431,19 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
             c_index = float(concordance_index(survival_times, risk_scores, event_observed))
         except ImportError:
             c_index = float(_harrell_c_index(survival_times, risk_scores, event_observed))
+        tertile_summary, assignments = _risk_group_tertiles(predictions)
+        logrank_p = _logrank_p_value(assignments)
+        auc_3yr = _time_dependent_auroc(predictions, 1095.0)
+        auc_5yr = _time_dependent_auroc(predictions, 1825.0)
         return {
             "c_index": round(c_index, 4),
+            "time_dependent_auroc_3yr": auc_3yr,
+            "time_dependent_auroc_5yr": auc_5yr,
+            "risk_group_tertiles": tertile_summary,
+            "risk_group_separation": {
+                "logrank_p_value": logrank_p,
+                "groups": list(tertile_summary.keys()),
+            },
             "survival_time_diagnostic": {
                 "min": survival_min,
                 "max": survival_max,
@@ -318,6 +457,13 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     except ZeroDivisionError:
         return {
             "c_index_message": "Survival labels present but no admissible pairs; C-index skipped",
+            "time_dependent_auroc_3yr": _time_dependent_auroc(predictions, 1095.0),
+            "time_dependent_auroc_5yr": _time_dependent_auroc(predictions, 1825.0),
+            "risk_group_tertiles": _risk_group_tertiles(predictions)[0],
+            "risk_group_separation": {
+                "logrank_p_value": _logrank_p_value(_risk_group_tertiles(predictions)[1]),
+                "groups": ["low_risk", "mid_risk", "high_risk"],
+            },
             "survival_time_diagnostic": {
                 "min": survival_min,
                 "max": survival_max,
@@ -357,10 +503,29 @@ def evaluate_predictions(
         "fused_label_distribution": label_distribution(fused_labels),
         "alignment_summary": alignment_summary,
     }
-    metrics.update({key: value for key, value in classification_metrics.items() if key not in {"classification_report", "confusion_matrix", "labels"}})
-    metrics["risk_group_summary"] = _risk_group_summary(verifier_predictions)
+    secondary_metrics = {key: value for key, value in classification_metrics.items() if key not in {"classification_report", "confusion_matrix", "labels"}}
+    metrics["binary_classification_secondary"] = {
+        "balanced_accuracy": secondary_metrics.get("balanced_accuracy"),
+        "f1_macro": secondary_metrics.get("f1_macro"),
+        "ece": secondary_metrics.get("ece"),
+        "auroc_macro": secondary_metrics.get("auroc_macro"),
+        "auprc_macro": secondary_metrics.get("auprc_macro"),
+        "brier_score": secondary_metrics.get("brier_score"),
+        "auroc_ci_95": secondary_metrics.get("auroc_ci_95"),
+        "balanced_accuracy_ci_95": secondary_metrics.get("balanced_accuracy_ci_95"),
+    }
+    metrics.update(secondary_metrics)
+    metrics["risk_group_summary"] = _fixed_threshold_risk_group_summary(verifier_predictions)
     metrics["modality_agreement_summary"] = _modality_agreement_summary(verifier_predictions)
     metrics.update(survival_metrics)
+    metrics["primary_results"] = {
+        "c_index": metrics.get("c_index", metrics.get("c_index_message")),
+        "5yr_auroc": (metrics.get("time_dependent_auroc_5yr") or {}).get("auroc"),
+        "3yr_auroc": (metrics.get("time_dependent_auroc_3yr") or {}).get("auroc"),
+        "risk_group_separation": {
+            "logrank_p_value": (metrics.get("risk_group_separation") or {}).get("logrank_p_value"),
+        },
+    }
 
     outputs_root = Path(output_dir) if output_dir else prediction_path.parent
     outputs_root.mkdir(parents=True, exist_ok=True)
