@@ -5,7 +5,10 @@ from pathlib import Path
 
 import streamlit as st
 
-from apps.utils import load_sample_cases
+try:
+    from apps.utils import load_sample_cases
+except ModuleNotFoundError:
+    from utils import load_sample_cases
 from orchestrator.run import run_case
 
 
@@ -25,4 +28,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

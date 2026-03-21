@@ -42,8 +42,12 @@ def discover_tcga_assets(repo_root: str | Path) -> dict[str, Any]:
     summary_root = root / "reports"
     asset_paths = {
         "verifier_artifact": verifier_root / "artifact.json",
+        "demo_cases": verifier_root / "demo_cases.json",
         "verifier_predictions": verifier_root / "predictions.json",
         "verifier_summary": verifier_root / "summary.json",
+        "ablation_v_only": root / "outputs" / "ablation_v_only" / "summary.json",
+        "ablation_vc": root / "outputs" / "ablation_vc" / "summary.json",
+        "ablation_vg": root / "outputs" / "ablation_vg" / "summary.json",
         "enterprise_metrics": first_existing_path(
             [
                 evaluation_root / "enterprise_metrics.json",
@@ -75,8 +79,12 @@ def discover_tcga_assets(repo_root: str | Path) -> dict[str, Any]:
     return {
         "paths": asset_paths,
         "verifier_artifact": load_json_if_exists(asset_paths["verifier_artifact"]),
+        "demo_cases": load_json_if_exists(asset_paths["demo_cases"]) or [],
         "verifier_predictions": load_json_if_exists(asset_paths["verifier_predictions"]) or [],
         "verifier_summary": load_json_if_exists(asset_paths["verifier_summary"]),
+        "ablation_v_only": load_json_if_exists(asset_paths["ablation_v_only"]),
+        "ablation_vc": load_json_if_exists(asset_paths["ablation_vc"]),
+        "ablation_vg": load_json_if_exists(asset_paths["ablation_vg"]),
         "enterprise_metrics": load_json_if_exists(asset_paths["enterprise_metrics"]) if asset_paths["enterprise_metrics"] else None,
         "evaluation_report": load_text_if_exists(asset_paths["evaluation_report"]) if asset_paths["evaluation_report"] else None,
         "classification_report": load_text_if_exists(asset_paths["classification_report"]) if asset_paths["classification_report"] else None,
