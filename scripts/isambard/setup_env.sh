@@ -17,7 +17,9 @@ python3 -m venv "$VENV_DIR"
 source "$VENV_DIR/bin/activate"
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r "$REPO_DIR/requirements.txt"
+python -m pip install --upgrade --force-reinstall --index-url https://download.pytorch.org/whl/cu126 torch torchvision
 python -m pip install "timm>=1.0.3" "huggingface-hub>=0.23.0"
+python3 -c "import torch; print('torch OK:', torch.__version__); print('cuda built:', torch.backends.cuda.is_built())"
 python3 -c "import timm; print('timm OK:', timm.__version__)"
 python3 -c "import huggingface_hub; print('hf_hub OK:', huggingface_hub.__version__)"
 python3 -c "import openslide; from openslide import OpenSlide; print('openslide import OK')"

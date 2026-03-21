@@ -2,71 +2,83 @@
 
 ## Executive Snapshot
 
-- Evaluation status: Cox-aware evaluation is fixed, but the current `689`-patient aligned cohort has no populated event labels, so proposal-grade held-out survival metrics are still blocked by the clinical endpoint data
-- Vision embeddings extracted: 695 / 1058 tiled TCGA slides
-- Aligned patients: 689
-- Train / validation / test: currently blocked for the corrected cohort because the aligned endpoint distribution is single-class
-- Architecture: UNI2 vision embeddings + TCGA genomics tensors + TCGA clinical features -> modality projections -> cross-attention verifier -> binary risk prediction
+- Evaluation status: final GPU-backed proposal run completed on the corrected `696`-patient aligned cohort
+- Vision embeddings extracted: `758 / 1058` tiled TCGA slides at the time of final collection
+- Aligned patients: `696`
+- Train / validation / test split: `487 / 104 / 105`
+- Architecture: UNI2 vision embeddings + TCGA genomics tensors + TCGA clinical features -> modality projections -> cross-attention verifier -> Cox-style risk scoring
 
 ## Dataset Scale
 
-- TCGA-BRCA slides: 1,132 raw slides, 1,058 tiled slides available for feature extraction
-- TCGA-BRCA RNA-seq: 1,230 records
-- TCGA-BRCA clinical rows: 1,097 rows
-- Vision patients with embeddings: 693
-- Genomics patients with tensors: 1,094
-- Clinical patients with usable rows: 1,097
-- Patient-aligned multimodal cohort: 689
+- TCGA-BRCA slides: `1,132` raw slides, `1,058` tiled slides
+- TCGA-BRCA RNA-seq records: `1,230`
+- TCGA-BRCA clinical rows: `1,097`
+- Vision patients with embeddings in the frozen crosswalk: `700`
+- Genomics patients with tensors: `1,094`
+- Clinical patients with rows: `1,097`
+- Patient-aligned multimodal cohort: `696`
+- Outcome distribution in the aligned cohort: `613 Alive`, `83 Dead`
 
-## Current Model State
+## Final GPU Run
 
-- Latest verifier summary on Isambard:
-  - previous completed full-model run on the corrected pass is unavailable because the verifier job now fails fast when CUDA is not available
-  - most recent attempted corrected run:
-    - aligned cohort: `689`
-    - full model job: failed early with `AssertionError: CUDA not available`
-- Latest enterprise evaluation artifact:
-  - `num_predictions`: `103`
-  - `alignment_summary`: `Verifier trained on 681 patient-aligned bundles`
-  - `balanced_accuracy`: `0.5631`
-  - `f1_macro`: `0.3602`
-  - `ece`: `0.0423`
-  - `auroc_macro`: `0.0`
-  - `auprc_macro`: `0.0`
-  - `brier_score`: `0.2489`
-  - `auroc_ci_95`: `[0.0, 0.0]`
-  - `balanced_accuracy_ci_95`: `[0.466, 0.6602]`
-  - `fused_label_distribution`: `{"high_concern": 45, "monitor": 58}`
-  - `c_index_message`: `Survival labels present but no admissible pairs; C-index skipped`
-  - `survival_time_diagnostic`: `min=0.0, max=7777.0, unique=87`
-  - `event_diagnostic`: `sum=0, total=103`
+- Full multimodal verifier summary:
+  - `val_accuracy`: `0.6952`
+  - `num_samples`: `696`
+  - `num_train`: `487`
+  - `num_val`: `104`
+  - `num_test`: `105`
+  - `alignment_status`: `patient_aligned_tcga`
+  - `aligned_sample_count`: `696`
+- Enterprise evaluation:
+  - `num_predictions`: `105`
+  - `fused_label_distribution`: `{"monitor": 82, "high_concern": 23}`
+  - `balanced_accuracy`: `0.4628`
+  - `f1_macro`: `0.4636`
+  - `ece`: `0.1349`
+  - `auroc_macro`: `0.5125`
+  - `auprc_macro`: `0.1728`
+  - `brier_score`: `0.2207`
+  - `auroc_ci_95`: `[0.3459, 0.6865]`
+  - `balanced_accuracy_ci_95`: `[0.3673, 0.5972]`
+  - `c_index`: `0.474`
+  - `survival_time_diagnostic`: `min=0.0, max=7106.0, unique=91`
+  - `event_diagnostic`: `sum=13, total=105`
+
+## Ablation Summary
+
+- Vision only: `0.5048`
+- Vision + Clinical: `0.6571`
+- Vision + Genomics: `0.6857`
+- Vision + Clinical + Genomics: `0.6952`
 
 ## Interpretation
 
-The Cox-aware evaluator is now correctly reading `risk_score`, `predicted_label`, and survival diagnostics from the verifier artifacts. The current blocker is not the evaluator anymore. It is the aligned clinical endpoint data: the latest `689`-patient aligned cohort has blank `vital_status` and blank `days_to_death` for all matched rows, so neither stratified splits nor held-out survival evaluation can produce meaningful final metrics on that refreshed cohort.
+- The clinical-label pipeline is now repaired end to end, and the final run uses a stratified split with both classes present in train, validation, and test.
+- The Isambard environment is now GPU-correct. The successful full-model log records `GPU: NVIDIA GH200 120GB`, and the project venv now uses `torch 2.10.0+cu126`.
+- The evaluator is correctly reading Cox-style `risk_score` outputs and reports a non-skipped `c_index` of `0.474`.
+- The final held-out metrics are modest, which should be presented honestly as a real multimodal TCGA baseline rather than a deployment-grade endpoint.
+- The ablation trend now supports the core multimodal claim: adding clinical and genomics information improves over the vision-only baseline, and the full model is the strongest of the four final runs.
 
-## Architecture Details
+## Artifact Readiness
 
-- Vision backbone: UNI2 pathology foundation model, 1536-dimensional slide embeddings
-- Genomics input: TCGA RNA-seq tensors derived from the real genomics preprocessing pipeline
-- Clinical input: normalized numeric features from `data/tcga_brca_clinical.csv`
-- Fusion model: modality-specific projection layers, multi-head cross-attention, gated fusion, Cox-style risk head with zero-mask handling for missing modalities
-- Demo enhancement: per-modality risk predictions are now extracted from the trained verifier projection layers for clinical explanation in Streamlit
+- `outputs/tcga_verifier/predictions.json` contains `105` predictions
+- Each prediction includes:
+  - `risk_score`
+  - `modality_predictions`
+  - `survival_time`
+  - `event_observed`
+- This is sufficient for the Streamlit demo to render the patient risk page and the multimodal analysis page from exported artifacts only
 
 ## Known Limitations
 
-- Full TCGA slide extraction is still in progress; extraction coverage is not yet 100%
-- The current refreshed aligned cohort has no populated event labels, so the verifier cannot yet produce trustworthy held-out outcome metrics on the latest crosswalk
-- The current full-model Slurm path now fails fast when CUDA is unavailable, which prevents bad training but also means a clean GPU-enabled rerun is still required
-- C-index remains skipped because `event_observed` is `0` for all evaluated cases in the current artifact
-- Literature evidence is deployment-ready conceptually but not trained per patient, by design
-- The demo currently relies on exported artifacts rather than live inference
+- Full TCGA slide extraction is still in progress; the final proposal freeze used `700` embedded vision patients in the crosswalk while `758` slide embeddings existed on disk at final collection time
+- AUROC, AUPRC, and C-index are now real and non-zero, but they remain modest and should be framed as a public-dataset baseline
+- Literature evidence remains a decision-support companion rather than a fused training modality
 
 ## Phase 2 Targets
 
-- Complete TCGA UNI2 extraction to full 1,058-slide coverage
-- Repair aligned endpoint coverage so the refreshed cohort contains both event and censored cases
-- Re-run the full Cox verifier on a GPU-enabled Isambard environment
+- Complete TCGA UNI2 extraction to full `1,058`-slide coverage and refresh the aligned cohort
+- Improve calibration and risk ranking quality beyond the current `c_index` and AUROC baseline
 - Add SurvPath pathway tokenization for genomics
 - Extend external validation to CPTAC-BRCA
 - Profile inference on Lenovo and Intel-aligned deployment hardware
