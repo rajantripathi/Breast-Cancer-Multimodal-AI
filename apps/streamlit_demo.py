@@ -396,7 +396,8 @@ def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
 def _render_cohort_performance(assets: dict[str, Any]) -> None:
     frozen = FROZEN_SCIENCE
     st.header("Cohort Performance")
-    st.caption("Frozen Final Science Metrics")
+    st.caption("Frozen Final Science Metrics | PFI Endpoint | 5-Fold Stratified Cross-Validation")
+    st.info("This page presents the frozen final science results for the proposal recording. It is intentionally pinned to the validated PFI cross-validation summary rather than a live training artifact path.")
 
     top = st.columns(3)
     top[0].metric("C-index", f"{frozen['c_index_mean']:.3f} +/- {frozen['c_index_std']:.3f}")
