@@ -17,7 +17,8 @@ except ImportError:  # pragma: no cover
 
 PREDICTIONS = Path(os.getenv("BCAI_DEMO_PREDICTIONS", "outputs/tcga_verifier/predictions.json"))
 CLINICAL_CSV = Path(os.getenv("BCAI_DEMO_CLINICAL_CSV", "data/tcga_brca_clinical.csv"))
-CROSSWALK_CSV = Path(os.getenv("BCAI_DEMO_CROSSWALK_CSV", "data/tcga_crosswalk.csv"))
+_default_crosswalk = "data/tcga_crosswalk_pathways.csv" if Path("data/tcga_crosswalk_pathways.csv").exists() else "data/tcga_crosswalk.csv"
+CROSSWALK_CSV = Path(os.getenv("BCAI_DEMO_CROSSWALK_CSV", _default_crosswalk))
 OUTPUT = Path(os.getenv("BCAI_DEMO_OUTPUT", "outputs/tcga_verifier/demo_cases.json"))
 LITERATURE_ARTIFACT = Path(os.getenv("BCAI_DEMO_LITERATURE_ARTIFACT", "outputs/literature/artifact.json"))
 
@@ -193,8 +194,8 @@ def _genomics_summary_fallback(sample_id: str, risk: float) -> dict[str, Any]:
         "molecular_subtype": subtype,
         "pam50_status": "Heuristic",
         "top_pathways": values,
-        "gene_count": 550,
-        "note": "Deterministic fallback summary derived from patient-level prediction context",
+        "gene_count": 50,
+        "note": "Deterministic fallback summary aligned to the Hallmark pathway representation",
     }
 
 

@@ -1,9 +1,11 @@
 {
-  "val_accuracy": 0.6952,
-  "num_samples": 696,
-  "num_train": 487,
-  "num_val": 104,
-  "num_test": 105,
+  "val_accuracy": 0.7899,
+  "num_samples": 789,
+  "num_train": 552,
+  "num_val": 118,
+  "num_test": 119,
   "alignment_status": "patient_aligned_tcga",
-  "aligned_sample_count": 696
+  "aligned_sample_count": 789,
+  "endpoint": "pfi",
+  "evaluation_protocol": "5-fold_stratified_cv"
 }
