@@ -13,7 +13,22 @@ set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-$PWD}"
 cd "$REPO_DIR"
-source "$REPO_DIR/scripts/isambard/slurm_env.sh"
+
+export PROJECT_ROOT="${PROJECT_ROOT:-${SCRATCH:-$HOME}/breast-cancer-multimodal-ai}"
+export DATA_ROOT="${DATA_ROOT:-$PROJECT_ROOT/data}"
+export MODEL_CACHE_DIR="${MODEL_CACHE_DIR:-$PROJECT_ROOT/cache/models}"
+export RUN_ROOT="${RUN_ROOT:-$PROJECT_ROOT/runs}"
+export ARTIFACT_ROOT="${ARTIFACT_ROOT:-$PROJECT_ROOT/artifacts}"
+export VENV_DIR="${VENV_DIR:-$HOME/.venvs/breast-cancer-multimodal-ai}"
+export HF_HOME="${HF_HOME:-$PROJECT_ROOT/cache/huggingface}"
+export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$MODEL_CACHE_DIR}"
+export PYTHONPATH="$REPO_DIR:${PYTHONPATH:-}"
+
+module purge || true
+module load cray-python/3.11.7 2>/dev/null || true
+module load cudatoolkit/24.11_12.6 2>/dev/null || true
+
+source "$VENV_DIR/bin/activate"
 if [ -f .env ]; then
   set -a
   source .env
@@ -40,7 +55,9 @@ fi
 
 BATCH_SIZE="${BATCH_SIZE:-1}"
 
-python -u -m data.preprocess.extract_tcga_features \
+"$VENV_DIR/bin/python" -u -c "import timm, huggingface_hub, conch; print('bootstrap_ok')" >/dev/null
+
+"$VENV_DIR/bin/python" -u -m data.preprocess.extract_tcga_features \
   --model conch \
   --batch-size "$BATCH_SIZE" \
   --tile-list "$TILE_LIST" \
