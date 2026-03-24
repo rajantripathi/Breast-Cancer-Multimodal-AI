@@ -185,6 +185,37 @@ def _load_from_timm(spec: VisionModelSpec) -> Any:
         return timm.create_model(target, **retry_kwargs)
 
 
+def _load_conch(spec: VisionModelSpec) -> tuple[Any, Any]:
+    """Load CONCH with its custom open_clip loader.
+
+    Args:
+        spec: Selected model specification.
+
+    Returns:
+        Tuple of `(model, transform)`.
+    """
+    import os
+
+    try:
+        from conch.open_clip_custom import create_model_from_pretrained
+    except ImportError as exc:
+        raise RuntimeError(
+            "CONCH extraction requires the MahmoodLab CONCH package. "
+            "Install: pip install git+https://github.com/Mahmoodlab/CONCH.git"
+        ) from exc
+
+    token = os.environ.get("CONCH_HF_TOKEN") or os.environ.get("HF_TOKEN")
+    if not token:
+        raise RuntimeError("CONCH extraction requires CONCH_HF_TOKEN or HF_TOKEN to be set")
+    hub_ref = spec.hub if spec.hub != "MahmoodLab/CONCH" else "MahmoodLab/conch"
+    model, transform = create_model_from_pretrained(
+        "conch_ViT-B-16",
+        f"hf_hub:{hub_ref}",
+        hf_auth_token=token,
+    )
+    return model, transform
+
+
 def _resolve_timm_kwargs(spec: VisionModelSpec) -> dict[str, Any]:
     """Return timm creation kwargs for a registered model.
 
@@ -325,6 +356,9 @@ def load_model(name: str) -> tuple[Any, Any]:
             "Install: pip install timm>=1.0.3 huggingface-hub>=0.23.0"
         ) from exc
     try:
+        if spec.name == "conch":
+            model, transform = _load_conch(spec)
+            return _freeze_encoder(model), transform
         model = _load_from_timm(spec)
         return _freeze_encoder(model), _build_transform(model)
     except Exception as exc:

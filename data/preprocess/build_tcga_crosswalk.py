@@ -41,12 +41,13 @@ def build_tcga_crosswalk() -> pd.DataFrame:
 
 
 def build_tcga_crosswalk_with_roots(
+    vision_root: Path | None = None,
     genomics_root: Path | None = None,
     output_csv: Path | None = None,
     report_path: Path | None = None,
 ) -> pd.DataFrame:
     settings = load_settings()
-    vision_root = settings.project_root / "tcga-brca" / "embeddings" / "uni2"
+    vision_root = vision_root or (settings.project_root / "tcga-brca" / "embeddings" / "uni2")
     genomics_root = genomics_root or (settings.project_root / "tcga-brca" / "genomics")
     clinical_csv = settings.repo_root / "data" / "tcga_brca_clinical.csv"
     output_csv = output_csv or (settings.repo_root / "data" / "tcga_crosswalk.csv")
@@ -110,14 +111,21 @@ def build_tcga_crosswalk_with_roots(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build a TCGA patient crosswalk from available embeddings")
+    parser.add_argument("--vision-root", default=None, help="Override the vision embedding root for alternative encoders")
     parser.add_argument("--genomics-root", default=None, help="Override the genomics tensor root for alternative representations")
     parser.add_argument("--output-csv", default=None, help="Override the output CSV path")
     parser.add_argument("--report-path", default=None, help="Override the alignment report path")
     args = parser.parse_args()
+    vision_root = Path(args.vision_root) if args.vision_root else None
     genomics_root = Path(args.genomics_root) if args.genomics_root else None
     output_csv = Path(args.output_csv) if args.output_csv else None
     report_path = Path(args.report_path) if args.report_path else None
-    build_tcga_crosswalk_with_roots(genomics_root=genomics_root, output_csv=output_csv, report_path=report_path)
+    build_tcga_crosswalk_with_roots(
+        vision_root=vision_root,
+        genomics_root=genomics_root,
+        output_csv=output_csv,
+        report_path=report_path,
+    )
 
 
 if __name__ == "__main__":

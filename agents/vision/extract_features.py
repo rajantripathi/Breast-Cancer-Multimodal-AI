@@ -150,7 +150,10 @@ def _extract_tensor_embedding(model: Any, image_path: Path, transform: Any) -> l
     model = model.to(device)
     batch = batch.to(device)
     with torch.no_grad():
-        outputs = model(batch)
+        if hasattr(model, "encode_image"):
+            outputs = model.encode_image(batch)
+        else:
+            outputs = model(batch)
     if isinstance(outputs, (tuple, list)):
         outputs = outputs[0]
     return outputs.detach().cpu().reshape(-1).tolist()

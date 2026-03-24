@@ -64,9 +64,15 @@ def _extract_one(
             batch = [transform(Image.fromarray(tile)) for tile in tiles[start : start + batch_size]]
             inputs = torch.stack(batch, dim=0).to(device)
             with torch.no_grad():
-                outputs = model(inputs)
+                if hasattr(model, "encode_image"):
+                    outputs = model.encode_image(inputs)
+                else:
+                    outputs = model(inputs)
             if not isinstance(outputs, torch.Tensor):
-                raise TypeError(f"{model_key} returned non-tensor outputs")
+                if isinstance(outputs, (tuple, list)) and outputs and isinstance(outputs[0], torch.Tensor):
+                    outputs = outputs[0]
+                else:
+                    raise TypeError(f"{model_key} returned non-tensor outputs")
             patch_embeddings.append(outputs.detach().cpu())
     if not patch_embeddings:
         raise ValueError(f"{tile_path.name} contains no tiles")
@@ -81,7 +87,7 @@ def _extract_one(
 def main() -> None:
     """CLI entrypoint for TCGA slide feature extraction."""
     parser = argparse.ArgumentParser(description="Extract TCGA slide embeddings from tiled HDF5 files")
-    parser.add_argument("--model", default="uni2", choices=["uni2", "ctranspath", "virchow"])
+    parser.add_argument("--model", default="uni2", choices=["uni2", "conch", "ctranspath", "virchow"])
     parser.add_argument("--tiles-dir", default=None)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--patch-output-dir", default=None)
