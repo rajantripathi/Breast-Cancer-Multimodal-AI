@@ -424,6 +424,7 @@ def _build_samples(
     feature_columns: list[str],
     means: pd.Series,
     stds: pd.Series,
+    vision_dim: int,
     genomics_dim: int,
     modalities: set[str],
 ) -> list[TCGASample]:
@@ -435,7 +436,7 @@ def _build_samples(
             clinical_tensor = torch.tensor(clinical_values.astype(float).to_numpy(), dtype=torch.float32)
         else:
             clinical_tensor = torch.tensor([0.0], dtype=torch.float32)
-        vision_tensor = _fixed_width(_load_tensor(str(row["vision_path"])), 1536)
+        vision_tensor = _fixed_width(_load_tensor(str(row["vision_path"])), vision_dim)
         genomics_tensor = _fixed_width(_load_tensor(str(row["genomics_path"])), genomics_dim)
         if "vision" not in modalities:
             vision_tensor = torch.zeros_like(vision_tensor)
@@ -573,6 +574,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
 
     if frame.empty:
         raise ValueError("TCGA crosswalk produced no aligned samples")
+    first_vision = _load_tensor(str(frame.iloc[0]["vision_path"]))
+    vision_dim = int(first_vision.numel())
     first_genomics = _load_tensor(str(frame.iloc[0]["genomics_path"]))
     genomics_dim = min(max(128, int(first_genomics.numel())), 1024)
     requested_device = str(args.device).lower()
@@ -614,9 +617,9 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         print(f"Test: {test_frame['label'].value_counts().to_dict()}", flush=True)
 
         means, stds = _clinical_scaler(train_frame if not train_frame.empty else dev_frame, feature_columns)
-        train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim, modalities)
-        val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim, modalities)
-        test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim, modalities)
+        train_samples = _build_samples(train_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
+        val_samples = _build_samples(val_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
+        test_samples = _build_samples(test_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
         if not train_samples:
             raise ValueError(f"No TCGA training samples available for fold {fold_index}")
 
@@ -624,7 +627,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         val_loader = DataLoader(TCGAAlignedDataset(val_samples), batch_size=min(16, max(1, len(val_samples))), shuffle=False, collate_fn=_collate) if val_samples else None
         test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, max(1, len(test_samples))), shuffle=False, collate_fn=_collate)
 
-        model = TCGAVerifier(vision_dim=1536, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
+        model = TCGAVerifier(vision_dim=vision_dim, genomics_dim=genomics_dim, clinical_dim=len(feature_columns) or 1).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
         best_state = None
         best_val_loss = float("inf")
@@ -679,6 +682,7 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
         "classification_threshold": round(float(classification_threshold), 6),
         "genomics_representation": genomics_metadata.get("representation", "unknown"),
         "genomics_feature_count": genomics_metadata.get("feature_count", int(genomics_dim)),
+        "vision_feature_count": int(vision_dim),
         "modalities": sorted(modalities),
         "crosswalk_path": str(crosswalk_path),
         "clinical_csv": str(clinical_csv),

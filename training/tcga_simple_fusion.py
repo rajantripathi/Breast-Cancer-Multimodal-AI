@@ -109,6 +109,8 @@ def train_simple_fusion(args: argparse.Namespace, output_dir: Path) -> Path:
         raise ValueError("TCGA crosswalk produced no aligned samples")
     modalities = _parse_modalities(args.modalities)
     genomics_metadata = _genomics_metadata(frame)
+    first_vision = _load_tensor(str(frame.iloc[0]["vision_path"]))
+    vision_dim = int(first_vision.numel())
     first_genomics = _load_tensor(str(frame.iloc[0]["genomics_path"]))
     genomics_dim = int(first_genomics.numel())
     splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=int(args.seed))
@@ -148,15 +150,15 @@ def train_simple_fusion(args: argparse.Namespace, output_dir: Path) -> Path:
         print(f"Test: {test_frame['label'].value_counts().to_dict()}", flush=True)
 
         means, stds = _clinical_scaler(train_frame, feature_columns)
-        train_samples = _build_samples(train_frame, feature_columns, means, stds, genomics_dim, modalities)
-        val_samples = _build_samples(val_frame, feature_columns, means, stds, genomics_dim, modalities)
-        test_samples = _build_samples(test_frame, feature_columns, means, stds, genomics_dim, modalities)
+        train_samples = _build_samples(train_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
+        val_samples = _build_samples(val_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
+        test_samples = _build_samples(test_frame, feature_columns, means, stds, vision_dim, genomics_dim, modalities)
 
         train_loader = DataLoader(TCGAAlignedDataset(train_samples), batch_size=min(16, len(train_samples)), shuffle=True, collate_fn=_collate)
         val_loader = DataLoader(TCGAAlignedDataset(val_samples), batch_size=min(16, len(val_samples)), shuffle=False, collate_fn=_collate)
         test_loader = DataLoader(TCGAAlignedDataset(test_samples), batch_size=min(16, len(test_samples)), shuffle=False, collate_fn=_collate)
 
-        model = TCGASimpleFusion(1536, genomics_dim, len(feature_columns) or 1).to(device)
+        model = TCGASimpleFusion(vision_dim, genomics_dim, len(feature_columns) or 1).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr), weight_decay=float(args.weight_decay))
 
         best_state = None
@@ -206,6 +208,7 @@ def train_simple_fusion(args: argparse.Namespace, output_dir: Path) -> Path:
         'survival_horizon_days': float(args.survival_horizon_days),
         'genomics_representation': genomics_metadata.get('representation', 'unknown'),
         'genomics_feature_count': genomics_metadata.get('feature_count', int(genomics_dim)),
+        'vision_feature_count': int(vision_dim),
         'modalities': sorted(modalities),
         'metrics': {
             'c_index_mean': round(c_index_mean, 4),
