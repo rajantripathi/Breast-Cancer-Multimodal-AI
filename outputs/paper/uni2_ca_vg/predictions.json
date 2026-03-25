@@ -1,0 +1,6063 @@
+[
+  {
+    "sample_id": "TCGA-A1-A0SB",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.548977,
+      "high_concern": 0.451023
+    },
+    "risk_score": 0.451023,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.548977,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5456
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5439
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 259.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A1-A0SH",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.497907,
+      "high_concern": 0.502093
+    },
+    "risk_score": 0.502093,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.497907,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5553
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5842
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1437.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A1-A0SJ",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.561882,
+      "high_concern": 0.438118
+    },
+    "risk_score": 0.438118,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.561882,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5596
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5163
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 416.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A1-A0SM",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.580037,
+      "high_concern": 0.419963
+    },
+    "risk_score": 0.419963,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.580037,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5435
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.528
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 242.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A04Q",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.510156,
+      "high_concern": 0.489844
+    },
+    "risk_score": 0.489844,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.510156,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5436
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5801
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2385.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0CK",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.405119,
+      "high_concern": 0.594881
+    },
+    "risk_score": 0.594881,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.594881,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5006
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5186
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1364.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0CL",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.55023,
+      "high_concern": 0.44977
+    },
+    "risk_score": 0.44977,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.55023,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5364
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5497
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3015.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0CM",
+    "true_label": "high_concern",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.491208,
+      "high_concern": 0.508792
+    },
+    "risk_score": 0.508792,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.491208,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5712
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5413
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 382.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0CW",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.431301,
+      "high_concern": 0.568699
+    },
+    "risk_score": 0.568699,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.568699,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5615
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5136
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3283.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0CY",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.48207,
+      "high_concern": 0.51793
+    },
+    "risk_score": 0.51793,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.51793,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5431
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5178
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1673.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0ES",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.467156,
+      "high_concern": 0.532844
+    },
+    "risk_score": 0.532844,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.532844,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5872
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5368
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2190.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0EU",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.446468,
+      "high_concern": 0.553532
+    },
+    "risk_score": 0.553532,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.553532,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5596
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.501
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1043.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0SW",
+    "true_label": "high_concern",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.573658,
+      "high_concern": 0.426342
+    },
+    "risk_score": 0.426342,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.573658,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5293
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5643
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 653.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0SX",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.468372,
+      "high_concern": 0.531628
+    },
+    "risk_score": 0.531628,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.531628,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5035
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5545
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1239.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0SY",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.532744,
+      "high_concern": 0.467256
+    },
+    "risk_score": 0.467256,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.532744,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5732
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5174
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1347.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0T0",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.44556,
+      "high_concern": 0.55444
+    },
+    "risk_score": 0.55444,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.55444,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5108
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5123
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 533.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0T6",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.438702,
+      "high_concern": 0.561298
+    },
+    "risk_score": 0.561298,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.561298,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5308
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5148
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 575.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A0YD",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.467118,
+      "high_concern": 0.532882
+    },
+    "risk_score": 0.532882,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.532882,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5709
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5071
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 769.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A1FV",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.434489,
+      "high_concern": 0.565511
+    },
+    "risk_score": 0.565511,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.565511,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5654
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5097
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 714.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A1FX",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.455178,
+      "high_concern": 0.544822
+    },
+    "risk_score": 0.544822,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.544822,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5857
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5398
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1847.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A1G0",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.536356,
+      "high_concern": 0.463644
+    },
+    "risk_score": 0.463644,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.536356,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5626
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5074
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 616.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A1G6",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.469624,
+      "high_concern": 0.530376
+    },
+    "risk_score": 0.530376,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.530376,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5191
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5187
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 501.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A25D",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.417755,
+      "high_concern": 0.582245
+    },
+    "risk_score": 0.582245,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.582245,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5798
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5095
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 552.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A2-A3XV",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.316954,
+      "high_concern": 0.683046
+    },
+    "risk_score": 0.683046,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.683046,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.502
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5513
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 996.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A0DA",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.513241,
+      "high_concern": 0.486759
+    },
+    "risk_score": 0.486759,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.513241,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5629
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5053
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1085.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A26E",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.385227,
+      "high_concern": 0.614773
+    },
+    "risk_score": 0.614773,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.614773,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5524
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5621
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 954.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A3J1",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.533118,
+      "high_concern": 0.466882
+    },
+    "risk_score": 0.466882,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.533118,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.577
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5099
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 343.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A425",
+    "true_label": "high_concern",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.489109,
+      "high_concern": 0.510891
+    },
+    "risk_score": 0.510891,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.489109,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5692
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5197
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 419.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A426",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.450605,
+      "high_concern": 0.549395
+    },
+    "risk_score": 0.549395,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.549395,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5007
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5083
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 364.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A7-A4SF",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.394518,
+      "high_concern": 0.605482
+    },
+    "risk_score": 0.605482,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.605482,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5668
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5081
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 545.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A06Q",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.427901,
+      "high_concern": 0.572099
+    },
+    "risk_score": 0.572099,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.572099,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.542
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5125
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 31.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A07F",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.450934,
+      "high_concern": 0.549066
+    },
+    "risk_score": 0.549066,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.549066,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5444
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5144
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 577.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A07S",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.426472,
+      "high_concern": 0.573528
+    },
+    "risk_score": 0.573528,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.573528,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5766
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.524
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 243.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A07W",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.458851,
+      "high_concern": 0.541149
+    },
+    "risk_score": 0.541149,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.541149,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5514
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5061
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 304.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A07Z",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.3407,
+      "high_concern": 0.6593
+    },
+    "risk_score": 0.6593,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.6593,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5064
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5083
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1371.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A083",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.349269,
+      "high_concern": 0.650731
+    },
+    "risk_score": 0.650731,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.650731,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5044
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.52
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 0.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A085",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.35923,
+      "high_concern": 0.64077
+    },
+    "risk_score": 0.64077,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.64077,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5253
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5128
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1124.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A08G",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.322116,
+      "high_concern": 0.677884
+    },
+    "risk_score": 0.677884,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.677884,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5077
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5339
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 607.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A096",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.389849,
+      "high_concern": 0.610151
+    },
+    "risk_score": 0.610151,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.610151,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5125
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5076
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 0.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A099",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.542821,
+      "high_concern": 0.457179
+    },
+    "risk_score": 0.457179,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.542821,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.6331
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5377
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 304.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09A",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.336121,
+      "high_concern": 0.663879
+    },
+    "risk_score": 0.663879,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.663879,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5408
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5229
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 304.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09D",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.309722,
+      "high_concern": 0.690278
+    },
+    "risk_score": 0.690278,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.690278,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5054
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5282
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1522.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09K",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.440816,
+      "high_concern": 0.559184
+    },
+    "risk_score": 0.559184,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.559184,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5896
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5132
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 912.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09M",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.335797,
+      "high_concern": 0.664203
+    },
+    "risk_score": 0.664203,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.664203,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5064
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5023
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1006.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09Q",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.515272,
+      "high_concern": 0.484728
+    },
+    "risk_score": 0.484728,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.515272,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.6005
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5297
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 761.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-A8-A09T",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.337779,
+      "high_concern": 0.662221
+    },
+    "risk_score": 0.662221,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.662221,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5093
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5046
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 579.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A23C",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.412172,
+      "high_concern": 0.587828
+    },
+    "risk_score": 0.587828,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.587828,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5163
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.51
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 585.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A2FB",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.494026,
+      "high_concern": 0.505974
+    },
+    "risk_score": 0.505974,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.494026,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.535
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5181
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1234.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A3EH",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.400088,
+      "high_concern": 0.599912
+    },
+    "risk_score": 0.599912,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.599912,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.574
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5036
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 197.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A3HN",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.525976,
+      "high_concern": 0.474024
+    },
+    "risk_score": 0.474024,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.525976,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5615
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5173
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 496.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A3TN",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.496767,
+      "high_concern": 0.503233
+    },
+    "risk_score": 0.503233,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.496767,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5092
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5336
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 456.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A3YI",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.41412,
+      "high_concern": 0.58588
+    },
+    "risk_score": 0.58588,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.58588,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5302
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5217
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 707.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A3YJ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.347233,
+      "high_concern": 0.652767
+    },
+    "risk_score": 0.652767,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.652767,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5079
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5533
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 754.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A4ZE",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.483672,
+      "high_concern": 0.516328
+    },
+    "risk_score": 0.516328,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.483672,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5556
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5202
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 890.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AC-A8OS",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.470551,
+      "high_concern": 0.529449
+    },
+    "risk_score": 0.529449,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.529449,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5583
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5575
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 70.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A03Y",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.528386,
+      "high_concern": 0.471614
+    },
+    "risk_score": 0.471614,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.528386,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5973
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5046
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 10.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A0AL",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.433852,
+      "high_concern": 0.566148
+    },
+    "risk_score": 0.566148,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.566148,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5211
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5155
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 227.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A0FD",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.445519,
+      "high_concern": 0.554481
+    },
+    "risk_score": 0.554481,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.554481,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5562
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.506
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 196.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A0FJ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.329826,
+      "high_concern": 0.670174
+    },
+    "risk_score": 0.670174,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.670174,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5096
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5308
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 242.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A0FK",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.395994,
+      "high_concern": 0.604006
+    },
+    "risk_score": 0.604006,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.604006,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5135
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5791
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 213.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AN-A0FT",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.405905,
+      "high_concern": 0.594095
+    },
+    "risk_score": 0.594095,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.594095,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5455
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5364
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 214.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A0J3",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.466034,
+      "high_concern": 0.533966
+    },
+    "risk_score": 0.533966,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.533966,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6175
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5005
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 651.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A0JA",
+    "true_label": "high_concern",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.509557,
+      "high_concern": 0.490443
+    },
+    "risk_score": 0.490443,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.509557,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5307
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5214
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 143.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A0JC",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.571331,
+      "high_concern": 0.428669
+    },
+    "risk_score": 0.428669,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.571331,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5098
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5174
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1547.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A0JE",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.516975,
+      "high_concern": 0.483025
+    },
+    "risk_score": 0.483025,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.516975,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5435
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5482
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2335.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A124",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.389785,
+      "high_concern": 0.610215
+    },
+    "risk_score": 0.610215,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.610215,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5494
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5837
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3506.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A125",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.447156,
+      "high_concern": 0.552844
+    },
+    "risk_score": 0.552844,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.552844,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5227
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5154
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3456.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A129",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.499504,
+      "high_concern": 0.500496
+    },
+    "risk_score": 0.500496,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.499504,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5029
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5347
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3286.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A12B",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.37385,
+      "high_concern": 0.62615
+    },
+    "risk_score": 0.62615,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.62615,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5494
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5211
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2989.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AO-A1KT",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.486418,
+      "high_concern": 0.513582
+    },
+    "risk_score": 0.513582,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.486418,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5744
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5097
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 541.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AQ-A04J",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.457289,
+      "high_concern": 0.542711
+    },
+    "risk_score": 0.542711,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.542711,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5413
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5012
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 819.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AQ-A0Y5",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.453421,
+      "high_concern": 0.546579
+    },
+    "risk_score": 0.546579,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.546579,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5034
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5405
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 172.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AQ-A54N",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.354499,
+      "high_concern": 0.645501
+    },
+    "risk_score": 0.645501,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.645501,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5239
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5077
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 78.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AQ-A7U7",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.514137,
+      "high_concern": 0.485863
+    },
+    "risk_score": 0.485863,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.514137,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5825
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5133
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 584.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A0TQ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.450704,
+      "high_concern": 0.549296
+    },
+    "risk_score": 0.549296,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.549296,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5444
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5126
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2991.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A0TV",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.424298,
+      "high_concern": 0.575702
+    },
+    "risk_score": 0.575702,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.575702,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5577
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5193
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2288.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A0TY",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.430061,
+      "high_concern": 0.569939
+    },
+    "risk_score": 0.569939,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.569939,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5603
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5009
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 544.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A0U2",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.441884,
+      "high_concern": 0.558116
+    },
+    "risk_score": 0.558116,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.558116,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5797
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5043
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1609.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A1AK",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.462392,
+      "high_concern": 0.537608
+    },
+    "risk_score": 0.537608,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.537608,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5858
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5175
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3159.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A1AO",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.494546,
+      "high_concern": 0.505454
+    },
+    "risk_score": 0.505454,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.494546,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5853
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5241
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2618.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A24Z",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.380653,
+      "high_concern": 0.619347
+    },
+    "risk_score": 0.619347,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.619347,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5051
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5432
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3001.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A250",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.421183,
+      "high_concern": 0.578817
+    },
+    "risk_score": 0.578817,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.578817,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5396
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5101
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2707.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A254",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.390654,
+      "high_concern": 0.609346
+    },
+    "risk_score": 0.609346,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.609346,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5094
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5131
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2605.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A2LK",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.45648,
+      "high_concern": 0.54352
+    },
+    "risk_score": 0.54352,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.54352,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5563
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5107
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1304.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-AR-A2LM",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.466545,
+      "high_concern": 0.533455
+    },
+    "risk_score": 0.533455,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.533455,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5516
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.504
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1935.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0I9",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.44713,
+      "high_concern": 0.55287
+    },
+    "risk_score": 0.55287,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.55287,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5419
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5115
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 362.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0IB",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.455974,
+      "high_concern": 0.544026
+    },
+    "risk_score": 0.544026,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.544026,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5253
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5318
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2717.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0IJ",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.490628,
+      "high_concern": 0.509372
+    },
+    "risk_score": 0.509372,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.490628,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5566
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5544
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 7106.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0IO",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.438651,
+      "high_concern": 0.561349
+    },
+    "risk_score": 0.561349,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.561349,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5761
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5011
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 5042.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0IQ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.414631,
+      "high_concern": 0.585369
+    },
+    "risk_score": 0.585369,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.585369,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5059
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5329
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 4285.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0RG",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.373165,
+      "high_concern": 0.626835
+    },
+    "risk_score": 0.626835,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.626835,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.51
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5143
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2082.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0WV",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.405979,
+      "high_concern": 0.594021
+    },
+    "risk_score": 0.594021,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.594021,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5499
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5031
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2417.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0WW",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.427176,
+      "high_concern": 0.572824
+    },
+    "risk_score": 0.572824,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.572824,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6069
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5142
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 447.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A0WY",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.434125,
+      "high_concern": 0.565875
+    },
+    "risk_score": 0.565875,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.565875,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5699
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.513
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2011.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-B6-A1KF",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.430907,
+      "high_concern": 0.569093
+    },
+    "risk_score": 0.569093,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.569093,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5974
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5184
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3088.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0AW",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.473904,
+      "high_concern": 0.526096
+    },
+    "risk_score": 0.526096,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.526096,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5534
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5017
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 622.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0B6",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.541614,
+      "high_concern": 0.458386
+    },
+    "risk_score": 0.458386,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.541614,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5396
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.557
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2483.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BM",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.511661,
+      "high_concern": 0.488339
+    },
+    "risk_score": 0.488339,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.511661,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5523
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.548
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1876.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BO",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.48492,
+      "high_concern": 0.51508
+    },
+    "risk_score": 0.51508,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.48492,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5807
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5086
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2197.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BQ",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.455517,
+      "high_concern": 0.544483
+    },
+    "risk_score": 0.544483,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.544483,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5306
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5023
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1709.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BV",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.526353,
+      "high_concern": 0.473647
+    },
+    "risk_score": 0.473647,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.526353,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5453
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5398
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1519.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BW",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.524804,
+      "high_concern": 0.475196
+    },
+    "risk_score": 0.475196,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.524804,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5173
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.542
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2371.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0BZ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.477886,
+      "high_concern": 0.522114
+    },
+    "risk_score": 0.522114,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.522114,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.568
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5308
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2255.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0C3",
+    "true_label": "high_concern",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.580603,
+      "high_concern": 0.419397
+    },
+    "risk_score": 0.419397,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.580603,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5498
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5108
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2674.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0DD",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.43863,
+      "high_concern": 0.56137
+    },
+    "risk_score": 0.56137,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.56137,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5402
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.518
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2486.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0DI",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.457819,
+      "high_concern": 0.542181
+    },
+    "risk_score": 0.542181,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.542181,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5087
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5079
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 912.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0DX",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.468599,
+      "high_concern": 0.531401
+    },
+    "risk_score": 0.531401,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.531401,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5421
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.507
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2156.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0EB",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.505409,
+      "high_concern": 0.494591
+    },
+    "risk_score": 0.494591,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.505409,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5375
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5496
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 745.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0H0",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.511811,
+      "high_concern": 0.488189
+    },
+    "risk_score": 0.488189,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.511811,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5471
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5341
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 461.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0HK",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.47874,
+      "high_concern": 0.52126
+    },
+    "risk_score": 0.52126,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.52126,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5631
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5141
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 178.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0RX",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.469869,
+      "high_concern": 0.530131
+    },
+    "risk_score": 0.530131,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.530131,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5148
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5406
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 170.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0W3",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.445865,
+      "high_concern": 0.554135
+    },
+    "risk_score": 0.554135,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.554135,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5153
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5222
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 728.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A0WA",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.41914,
+      "high_concern": 0.58086
+    },
+    "risk_score": 0.58086,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.58086,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5079
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5339
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 701.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A18I",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.470615,
+      "high_concern": 0.529385
+    },
+    "risk_score": 0.529385,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.529385,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5366
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5087
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1093.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A18N",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.427836,
+      "high_concern": 0.572164
+    },
+    "risk_score": 0.572164,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.572164,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5083
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5054
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1148.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1ES",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.369247,
+      "high_concern": 0.630753
+    },
+    "risk_score": 0.630753,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.630753,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5379
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5877
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3462.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1ET",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.551151,
+      "high_concern": 0.448849
+    },
+    "risk_score": 0.448849,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.551151,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6193
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5704
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2520.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1EV",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.40518,
+      "high_concern": 0.59482
+    },
+    "risk_score": 0.59482,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.59482,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.558
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5347
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 365.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1FE",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.473434,
+      "high_concern": 0.526566
+    },
+    "risk_score": 0.526566,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.526566,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5451
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5072
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2273.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1FH",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.474418,
+      "high_concern": 0.525582
+    },
+    "risk_score": 0.525582,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.525582,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5807
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5116
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1034.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A1FU",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.460613,
+      "high_concern": 0.539387
+    },
+    "risk_score": 0.539387,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.539387,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5369
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5188
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1688.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A204",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.443454,
+      "high_concern": 0.556546
+    },
+    "risk_score": 0.556546,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.556546,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5836
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5235
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2534.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A28Q",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.454213,
+      "high_concern": 0.545787
+    },
+    "risk_score": 0.545787,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.545787,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5549
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5209
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1119.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A42T",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.435416,
+      "high_concern": 0.564584
+    },
+    "risk_score": 0.564584,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.564584,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5705
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5095
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 320.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A42V",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.429278,
+      "high_concern": 0.570722
+    },
+    "risk_score": 0.570722,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.570722,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5041
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5162
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 635.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-BH-A5J0",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.410468,
+      "high_concern": 0.589532
+    },
+    "risk_score": 0.589532,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.589532,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5046
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5226
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 715.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A12L",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.317246,
+      "high_concern": 0.682754
+    },
+    "risk_score": 0.682754,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.682754,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5446
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5004
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 363.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A12N",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.46306,
+      "high_concern": 0.53694
+    },
+    "risk_score": 0.53694,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.53694,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5141
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5103
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 358.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A12W",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.538758,
+      "high_concern": 0.461242
+    },
+    "risk_score": 0.461242,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.538758,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6071
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5553
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 385.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A131",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.36495,
+      "high_concern": 0.63505
+    },
+    "risk_score": 0.63505,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.63505,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5385
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5005
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 411.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A273",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.349688,
+      "high_concern": 0.650312
+    },
+    "risk_score": 0.650312,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.650312,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5548
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5397
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 513.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A27B",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.456342,
+      "high_concern": 0.543658
+    },
+    "risk_score": 0.543658,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.543658,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5193
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5504
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 439.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-C8-A8HQ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.454457,
+      "high_concern": 0.545543
+    },
+    "risk_score": 0.545543,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.545543,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5463
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5225
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 380.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A13Y",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.339321,
+      "high_concern": 0.660679
+    },
+    "risk_score": 0.660679,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.660679,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5533
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.51
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1728.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A141",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.497535,
+      "high_concern": 0.502465
+    },
+    "risk_score": 0.502465,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.497535,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5635
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5096
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 626.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A147",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.317079,
+      "high_concern": 0.682921
+    },
+    "risk_score": 0.682921,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.682921,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5247
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.519
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 584.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1JA",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.45474,
+      "high_concern": 0.54526
+    },
+    "risk_score": 0.54526,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.54526,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5755
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5076
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 431.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1JP",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.530171,
+      "high_concern": 0.469829
+    },
+    "risk_score": 0.469829,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.530171,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5921
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5162
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 639.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1X9",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.413682,
+      "high_concern": 0.586318
+    },
+    "risk_score": 0.586318,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.586318,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5607
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5105
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 727.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1XT",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.455503,
+      "high_concern": 0.544497
+    },
+    "risk_score": 0.544497,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.544497,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5955
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5173
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 506.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1XU",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.518478,
+      "high_concern": 0.481522
+    },
+    "risk_score": 0.481522,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.518478,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.607
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5185
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 395.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1Y0",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.494905,
+      "high_concern": 0.505095
+    },
+    "risk_score": 0.505095,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.494905,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5959
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.518
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 472.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A1Y1",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.425014,
+      "high_concern": 0.574986
+    },
+    "risk_score": 0.574986,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.574986,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5365
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5035
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 302.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A27E",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.502788,
+      "high_concern": 0.497212
+    },
+    "risk_score": 0.497212,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.502788,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.61
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5129
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 530.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A27H",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.537724,
+      "high_concern": 0.462276
+    },
+    "risk_score": 0.462276,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.537724,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6001
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5079
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 397.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A3Z5",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.520693,
+      "high_concern": 0.479307
+    },
+    "risk_score": 0.479307,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.520693,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5673
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5196
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1015.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-D8-A3Z6",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.408934,
+      "high_concern": 0.591066
+    },
+    "risk_score": 0.591066,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.591066,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5381
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5133
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 563.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A108",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.522444,
+      "high_concern": 0.477556
+    },
+    "risk_score": 0.477556,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.522444,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5213
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5217
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 837.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A109",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.436759,
+      "high_concern": 0.563241
+    },
+    "risk_score": 0.563241,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.563241,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.555
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5091
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1417.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A10A",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.40404,
+      "high_concern": 0.59596
+    },
+    "risk_score": 0.59596,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.59596,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5519
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.503
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 75.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A10C",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.440211,
+      "high_concern": 0.559789
+    },
+    "risk_score": 0.559789,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.559789,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5225
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.525
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1220.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A10F",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.500293,
+      "high_concern": 0.499707
+    },
+    "risk_score": 0.499707,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.500293,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5267
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5123
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 878.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A14U",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.45604,
+      "high_concern": 0.54396
+    },
+    "risk_score": 0.54396,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.54396,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5339
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5005
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1318.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A14V",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.381523,
+      "high_concern": 0.618477
+    },
+    "risk_score": 0.618477,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.618477,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5471
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5159
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1042.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A14Y",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.299747,
+      "high_concern": 0.700253
+    },
+    "risk_score": 0.700253,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.700253,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5148
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5095
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2109.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A150",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.347092,
+      "high_concern": 0.652908
+    },
+    "risk_score": 0.652908,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.652908,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5555
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5141
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1935.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A153",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.437441,
+      "high_concern": 0.562559
+    },
+    "risk_score": 0.562559,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.562559,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5453
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.53
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 707.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A156",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.387352,
+      "high_concern": 0.612648
+    },
+    "risk_score": 0.612648,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.612648,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5726
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5295
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 726.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A158",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.50785,
+      "high_concern": 0.49215
+    },
+    "risk_score": 0.49215,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.50785,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6281
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.533
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 450.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A15P",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.408053,
+      "high_concern": 0.591947
+    },
+    "risk_score": 0.591947,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.591947,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5389
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5262
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 595.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A15R",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.477787,
+      "high_concern": 0.522213
+    },
+    "risk_score": 0.522213,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.522213,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5544
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5024
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1732.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A1B4",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.506358,
+      "high_concern": 0.493642
+    },
+    "risk_score": 0.493642,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.506358,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5305
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5458
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1004.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A1BD",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.400105,
+      "high_concern": 0.599895
+    },
+    "risk_score": 0.599895,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.599895,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5753
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5227
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1133.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A1L8",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.405251,
+      "high_concern": 0.594749
+    },
+    "risk_score": 0.594749,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.594749,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5339
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5164
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2240.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A1LK",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.326191,
+      "high_concern": 0.673809
+    },
+    "risk_score": 0.673809,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.673809,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5154
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5097
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 155.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A1LL",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.259216,
+      "high_concern": 0.740784
+    },
+    "risk_score": 0.740784,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.740784,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5171
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5392
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1303.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A3DX",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.520735,
+      "high_concern": 0.479265
+    },
+    "risk_score": 0.479265,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.520735,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5466
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5438
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1325.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A56Z",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.420289,
+      "high_concern": 0.579711
+    },
+    "risk_score": 0.579711,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.579711,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.563
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5117
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 252.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A572",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.413101,
+      "high_concern": 0.586899
+    },
+    "risk_score": 0.586899,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.586899,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.554
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5559
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1208.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A574",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.340236,
+      "high_concern": 0.659764
+    },
+    "risk_score": 0.659764,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.659764,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5037
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5678
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1179.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A576",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.515496,
+      "high_concern": 0.484504
+    },
+    "risk_score": 0.484504,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.515496,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6101
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5574
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1043.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E2-A9RU",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.334035,
+      "high_concern": 0.665965
+    },
+    "risk_score": 0.665965,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.665965,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5248
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5664
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 538.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A1ND",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.399103,
+      "high_concern": 0.600897
+    },
+    "risk_score": 0.600897,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.600897,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5643
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5621
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1266.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A1NE",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.513183,
+      "high_concern": 0.486817
+    },
+    "risk_score": 0.486817,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.513183,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5766
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5096
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1088.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A1R0",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.451023,
+      "high_concern": 0.548977
+    },
+    "risk_score": 0.548977,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.548977,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5422
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5012
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 860.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A1R5",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.472314,
+      "high_concern": 0.527686
+    },
+    "risk_score": 0.527686,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.527686,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5286
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5163
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 92.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A1RI",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.499945,
+      "high_concern": 0.500055
+    },
+    "risk_score": 0.500055,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.499945,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5547
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5193
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1449.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A227",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.438429,
+      "high_concern": 0.561571
+    },
+    "risk_score": 0.561571,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.561571,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5196
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5172
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 975.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A249",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.39839,
+      "high_concern": 0.60161
+    },
+    "risk_score": 0.60161,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.60161,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5447
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5224
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 217.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A295",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.446603,
+      "high_concern": 0.553397
+    },
+    "risk_score": 0.553397,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.553397,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6008
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5143
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 375.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A2JS",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.366686,
+      "high_concern": 0.633314
+    },
+    "risk_score": 0.633314,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.633314,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5508
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5161
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 524.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A54X",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.490242,
+      "high_concern": 0.509758
+    },
+    "risk_score": 0.509758,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.490242,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.606
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5046
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 727.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-E9-A5UO",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.411459,
+      "high_concern": 0.588541
+    },
+    "risk_score": 0.588541,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.588541,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5293
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5209
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 785.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A1J5",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.418112,
+      "high_concern": 0.581888
+    },
+    "risk_score": 0.581888,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.581888,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5646
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5053
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 477.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A1J6",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.482422,
+      "high_concern": 0.517578
+    },
+    "risk_score": 0.517578,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.517578,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6374
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5007
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 875.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A1OY",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.487482,
+      "high_concern": 0.512518
+    },
+    "risk_score": 0.512518,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.487482,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5711
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5144
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 908.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A1PE",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.429725,
+      "high_concern": 0.570275
+    },
+    "risk_score": 0.570275,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.570275,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5386
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5138
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 320.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A424",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.449995,
+      "high_concern": 0.550005
+    },
+    "risk_score": 0.550005,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.550005,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5229
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5007
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 715.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A6SA",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.411959,
+      "high_concern": 0.588041
+    },
+    "risk_score": 0.588041,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.588041,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5503
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5159
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 510.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-EW-A6SC",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.512458,
+      "high_concern": 0.487542
+    },
+    "risk_score": 0.487542,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.512458,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5873
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5023
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 952.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-GI-A2C9",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.514581,
+      "high_concern": 0.485419
+    },
+    "risk_score": 0.485419,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.514581,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5516
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.524
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3342.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-GM-A2DK",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.395467,
+      "high_concern": 0.604533
+    },
+    "risk_score": 0.604533,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.604533,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6096
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5145
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2645.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-GM-A3NW",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.410963,
+      "high_concern": 0.589037
+    },
+    "risk_score": 0.589037,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.589037,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5806
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5371
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 3361.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-GM-A3XL",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.444391,
+      "high_concern": 0.555609
+    },
+    "risk_score": 0.555609,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.555609,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5106
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5435
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2108.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-GM-A4E0",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.495856,
+      "high_concern": 0.504144
+    },
+    "risk_score": 0.504144,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.495856,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5807
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5353
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 2191.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LD-A74U",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.489853,
+      "high_concern": 0.510147
+    },
+    "risk_score": 0.510147,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.489853,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5508
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5076
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 402.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LD-A9QF",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.478069,
+      "high_concern": 0.521931
+    },
+    "risk_score": 0.521931,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.521931,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5696
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5312
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 323.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LL-A442",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.446766,
+      "high_concern": 0.553234
+    },
+    "risk_score": 0.553234,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.553234,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5054
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5021
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 889.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LL-A50Y",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.573011,
+      "high_concern": 0.426989
+    },
+    "risk_score": 0.426989,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.573011,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.6073
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5567
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 762.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LL-A5YP",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.462415,
+      "high_concern": 0.537585
+    },
+    "risk_score": 0.537585,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.537585,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5566
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5578
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 450.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LL-A73Z",
+    "true_label": "high_concern",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.472906,
+      "high_concern": 0.527094
+    },
+    "risk_score": 0.527094,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.527094,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.581
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5104
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 192.0,
+    "event_observed": 1,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-LL-A7T0",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.427691,
+      "high_concern": 0.572309
+    },
+    "risk_score": 0.572309,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.572309,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.566
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5135
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 376.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-OK-A5Q2",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.561405,
+      "high_concern": 0.438595
+    },
+    "risk_score": 0.438595,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.561405,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5891
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5518
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 64.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-OL-A5D8",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.406451,
+      "high_concern": 0.593549
+    },
+    "risk_score": 0.593549,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.593549,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5886
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5315
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 973.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-OL-A5RZ",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.406275,
+      "high_concern": 0.593725
+    },
+    "risk_score": 0.593725,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.593725,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5161
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5435
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 679.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-OL-A66K",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.391296,
+      "high_concern": 0.608704
+    },
+    "risk_score": 0.608704,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.608704,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5094
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5194
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1275.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-OL-A6VO",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.346217,
+      "high_concern": 0.653783
+    },
+    "risk_score": 0.653783,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.653783,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5248
+      },
+      "genomics": {
+        "class": "high_concern",
+        "confidence": 0.5767
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 858.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-PE-A5DD",
+    "true_label": "monitor",
+    "predicted_label": "high_concern",
+    "probabilities": {
+      "monitor": 0.434494,
+      "high_concern": 0.565506
+    },
+    "risk_score": 0.565506,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.565506,
+    "modality_predictions": {
+      "vision": {
+        "class": "monitor",
+        "confidence": 0.5056
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.509
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 1953.0,
+    "event_observed": 0,
+    "fold": 5
+  },
+  {
+    "sample_id": "TCGA-S3-A6ZG",
+    "true_label": "monitor",
+    "predicted_label": "monitor",
+    "probabilities": {
+      "monitor": 0.549033,
+      "high_concern": 0.450967
+    },
+    "risk_score": 0.450967,
+    "classification_threshold": 0.516768,
+    "prediction_confidence": 0.549033,
+    "modality_predictions": {
+      "vision": {
+        "class": "high_concern",
+        "confidence": 0.5927
+      },
+      "genomics": {
+        "class": "monitor",
+        "confidence": 0.5081
+      },
+      "clinical": {
+        "class": "high_concern",
+        "confidence": 0.5675
+      }
+    },
+    "survival_time": 562.0,
+    "event_observed": 0,
+    "fold": 5
+  }
+]

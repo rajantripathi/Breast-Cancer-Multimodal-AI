@@ -244,6 +244,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--modalities', default='vision,clinical,genomics')
     parser.add_argument('--endpoint', choices=['overall_survival', '5yr_survival', 'pfi'], default='pfi')
     parser.add_argument('--survival-horizon-days', type=float, default=1825.0)
+    parser.add_argument('--cv-folds', type=int, default=5, help='Compatibility flag; simple fusion currently runs 5-fold CV')
     parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--weight-decay', type=float, default=1e-2)

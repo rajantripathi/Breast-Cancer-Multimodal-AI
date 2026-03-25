@@ -1,0 +1,13 @@
+{
+  "c_index_mean": 0.5648,
+  "c_index_std": 0.0295,
+  "auroc_mean": 0.551,
+  "auroc_std": 0.0216,
+  "num_samples": 1048,
+  "num_folds": 5,
+  "num_train_last_fold": 755,
+  "num_val_last_fold": 84,
+  "num_test_last_fold": 209,
+  "alignment_status": "patient_aligned_tcga",
+  "aligned_sample_count": 1048
+}

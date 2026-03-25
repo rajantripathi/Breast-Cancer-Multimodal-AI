@@ -111,10 +111,28 @@ def build_tcga_crosswalk_with_roots(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build a TCGA patient crosswalk from available embeddings")
-    parser.add_argument("--vision-root", default=None, help="Override the vision embedding root for alternative encoders")
+    parser.add_argument(
+        "--vision-root",
+        "--embedding-dir",
+        dest="vision_root",
+        default=None,
+        help="Override the vision embedding root for alternative encoders",
+    )
     parser.add_argument("--genomics-root", default=None, help="Override the genomics tensor root for alternative representations")
-    parser.add_argument("--output-csv", default=None, help="Override the output CSV path")
-    parser.add_argument("--report-path", default=None, help="Override the alignment report path")
+    parser.add_argument(
+        "--output-csv",
+        "--output",
+        dest="output_csv",
+        default=None,
+        help="Override the output CSV path",
+    )
+    parser.add_argument(
+        "--report-path",
+        "--report",
+        dest="report_path",
+        default=None,
+        help="Override the alignment report path",
+    )
     args = parser.parse_args()
     vision_root = Path(args.vision_root) if args.vision_root else None
     genomics_root = Path(args.genomics_root) if args.genomics_root else None

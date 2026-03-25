@@ -1,0 +1,11 @@
+{
+  "c_index_mean": 0.4798,
+  "c_index_std": 0.035,
+  "auroc_mean": 0.4951,
+  "auroc_std": 0.0253,
+  "num_samples": 1043,
+  "num_folds": 5,
+  "num_train_last_fold": 751,
+  "num_val_last_fold": 84,
+  "num_test_last_fold": 208
+}

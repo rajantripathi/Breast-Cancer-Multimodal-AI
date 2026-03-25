@@ -1,0 +1,113 @@
+{
+  "dataset": {
+    "name": "TCGA-BRCA",
+    "endpoint": "PFI",
+    "endpoint_source": "TCGA-CDR (Liu et al., Cell 2018)",
+    "total_slides": 1054,
+    "total_rna_seq": 1094,
+    "total_clinical": 1097,
+    "uni2_embeddings": 1054,
+    "ctranspath_embeddings": 1049,
+    "conch_embeddings": 1049,
+    "uni2_aligned": 1049,
+    "ctranspath_aligned": 1044,
+    "conch_aligned": 1044,
+    "evaluation": "5-fold stratified cross-validation"
+  },
+  "encoder_comparison": {
+    "uni2_ca_vg": {
+      "c_index_mean": 0.5648,
+      "c_index_std": 0.0295,
+      "per_fold": [
+        0.6154,
+        0.5635,
+        0.53,
+        0.5732,
+        0.542
+      ]
+    },
+    "ctranspath_ca_vg": {
+      "c_index_mean": 0.5787,
+      "c_index_std": 0.0387,
+      "per_fold": [
+        0.5926,
+        0.5042,
+        0.6052,
+        0.6111,
+        0.5804
+      ]
+    },
+    "conch_ca_vg": {
+      "c_index_mean": 0.5846,
+      "c_index_std": 0.0587,
+      "per_fold": [
+        0.6928,
+        0.5597,
+        0.5855,
+        0.5166,
+        0.5686
+      ]
+    },
+    "uni2_simple_vg": {
+      "c_index_mean": 0.5369,
+      "c_index_std": 0.0593,
+      "per_fold": [
+        0.5144,
+        0.5835,
+        0.6238,
+        0.4569,
+        0.5057
+      ]
+    },
+    "ctranspath_simple_vg": {
+      "c_index_mean": 0.4846,
+      "c_index_std": 0.0303,
+      "per_fold": [
+        0.5142,
+        0.5032,
+        0.4829,
+        0.4275,
+        0.4951
+      ]
+    },
+    "conch_simple_vg": {
+      "c_index_mean": 0.4798,
+      "c_index_std": 0.035,
+      "per_fold": [
+        0.5177,
+        0.4758,
+        0.4886,
+        0.4156,
+        0.5012
+      ]
+    }
+  },
+  "ablation": {
+    "best_encoder": "CONCH",
+    "v_only": {
+      "c_index_mean": 0.5675,
+      "c_index_std": 0.0461
+    },
+    "v_c": {
+      "c_index_mean": 0.5615,
+      "c_index_std": 0.0529
+    },
+    "v_g": {
+      "c_index_mean": 0.5846,
+      "c_index_std": 0.0587
+    },
+    "v_c_g": {
+      "c_index_mean": 0.6093,
+      "c_index_std": 0.0441
+    }
+  },
+  "risk_stratification": {
+    "log_rank_p": 0.8383181774607956,
+    "low_risk_n": 69,
+    "low_risk_event_rate": 0.1304,
+    "mid_risk_n": 69,
+    "mid_risk_event_rate": 0.1159,
+    "high_risk_n": 70,
+    "high_risk_event_rate": 0.1429
+  }
+}

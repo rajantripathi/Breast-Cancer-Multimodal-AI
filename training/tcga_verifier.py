@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Train a real aligned TCGA verifier on vision, genomics, and clinical features."""
 
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -719,3 +720,29 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     write_json(output_dir / "summary.json", artifact["metrics"])
     write_json(output_dir / "predictions.json", predictions)
     return output_dir / "artifact.json"
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="TCGA cross-attention verifier trainer")
+    parser.add_argument("--crosswalk", required=True)
+    parser.add_argument("--clinical-csv", required=True)
+    parser.add_argument("--modalities", default="vision,clinical,genomics")
+    parser.add_argument("--endpoint", choices=["overall_survival", "5yr_survival", "pfi"], default="pfi")
+    parser.add_argument("--survival-horizon-days", type=float, default=DEFAULT_SURVIVAL_HORIZON_DAYS)
+    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--patience", type=int, default=20)
+    parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument("--device", default="auto")
+    parser.add_argument("--output-dir", required=True)
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
+    path = train_tcga_verifier(args, Path(args.output_dir))
+    print(f"tcga verifier artifact written to {path}", flush=True)
+
+
+if __name__ == "__main__":
+    main()
