@@ -20,28 +20,34 @@ RED = "#DC2626"
 SOFT = "#F4F8FB"
 
 FROZEN_SCIENCE = {
-    "model": "Pathway verifier",
+    "model": "CONCH cross-attention survival model",
     "endpoint": "Progression-Free Interval (PFI)",
     "evaluation": "5-fold stratified cross-validation",
-    "cohort": 788,
-    "best_configuration": "Vision + Genomics",
-    "c_index_mean": 0.517,
-    "c_index_std": 0.045,
-    "risk_logrank_p": 0.005,
-    "fold_c_index": [0.565, 0.520, 0.434, 0.518, 0.549],
+    "cohort": 1043,
+    "best_configuration": "Vision + Clinical + Genomics",
+    "best_encoder": "CONCH",
+    "c_index_mean": 0.6093,
+    "c_index_std": 0.0441,
+    "risk_logrank_p": 0.0412,
+    "fold_c_index": [0.6588, 0.5558, 0.64, 0.6354, 0.5564],
     "secondary": {
-        "three_year_auroc": 0.617,
-        "five_year_auroc": 0.652,
-        "balanced_accuracy": 0.657,
+        "auroc_mean": 0.5897,
+        "auroc_std": 0.0445,
+        "low_risk_event_rate": 0.1153,
+        "high_risk_event_rate": 0.1552,
     },
     "ablation": {
-        "V": (0.534, 0.072),
-        "V+C": (0.526, 0.063),
-        "V+G": (0.601, 0.046),
-        "V+C+G": (0.589, 0.060),
+        "V": (0.5675, 0.0461),
+        "V+C": (0.5615, 0.0529),
+        "V+G": (0.5846, 0.0587),
+        "V+C+G": (0.6093, 0.0441),
     },
     "training_gpu": "NVIDIA GH200 120GB",
     "genomics_features": 50,
+    "uni2_embeddings": 1054,
+    "ctranspath_embeddings": 1049,
+    "conch_embeddings": 1049,
+    "clinical_rows": 1097,
 }
 
 
@@ -158,16 +164,32 @@ def _metric_text(value: Any) -> str:
     return str(value)
 
 
+def _is_missing(value: Any) -> bool:
+    text = str(value).strip() if value is not None else ""
+    return text == "" or text.lower() in {"n/a", "not available", "none", "nan"}
+
+
+def _maybe_clinical_row(label: str, value: Any) -> None:
+    if not _is_missing(value):
+        st.markdown(f"**{label}:** {value}")
+
+
 def _modality_state(record: dict[str, Any], modality: str) -> tuple[str, float]:
     modality_predictions = record.get("modality_predictions") or {}
     payload = modality_predictions.get(modality, {})
     if payload:
         return str(payload.get("class", "Pending")), float(payload.get("confidence", 0.0) or 0.0)
-    if FROZEN_SCIENCE["best_configuration"] == "Vision + Genomics":
-        if modality in {"vision", "genomics"}:
-            return "Included in best model", 1.0
-        if modality == "clinical":
-            return "Not used in frozen best model", 0.0
+    config = FROZEN_SCIENCE["best_configuration"]
+    included = {
+        "Vision": "vision" in config,
+        "Clinical": "clinical" in config.lower(),
+        "Genomics": "genomics" in config.lower(),
+    }
+    normalized = modality.title()
+    if included.get(normalized):
+        return "Included in best model", 1.0
+    if normalized in included:
+        return "Not used in frozen best model", 0.0
     return "Unavailable in current artifact", 0.0
 
 
@@ -176,6 +198,8 @@ def _display_contributions(record: dict[str, Any]) -> dict[str, float]:
     modality_predictions = record.get("modality_predictions") or {}
     if modality_predictions:
         return contributions or {"vision": 0.333, "clinical": 0.333, "genomics": 0.333}
+    if FROZEN_SCIENCE["best_configuration"] == "Vision + Clinical + Genomics":
+        return {"vision": 0.34, "clinical": 0.23, "genomics": 0.43}
     return {"vision": 0.5, "clinical": 0.0, "genomics": 0.5}
 
 
@@ -237,20 +261,20 @@ def _pathway_chart(pathways: list[dict[str, Any]]) -> go.Figure:
 
 def _ablation_chart() -> go.Figure:
     values = {
-        name: value[0] * 100.0 for name, value in FROZEN_SCIENCE["ablation"].items()
+        name: value[0] for name, value in FROZEN_SCIENCE["ablation"].items()
     }
     figure = go.Figure(
         go.Bar(
             x=list(values.keys()),
             y=list(values.values()),
             marker_color=[NAVY, TEAL, "#4B84B0", GREEN],
-            text=[f"{value:.1f}" for value in values.values()],
+            text=[f"{value:.3f}" for value in values.values()],
             textposition="outside",
         )
     )
     figure.update_layout(
         margin=dict(t=10, b=10, l=10, r=10),
-        yaxis_title="Validation Accuracy (%)",
+        yaxis_title="C-index",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color=NAVY),
@@ -279,9 +303,9 @@ def _render_patient_risk_assessment(assets: dict[str, Any]) -> None:
             st.markdown(f"**Age:** {clinical.get('age', 'N/A')}")
             st.markdown(f"**Gender:** {clinical.get('gender', 'N/A')}")
             st.markdown(f"**Stage:** {clinical.get('stage', 'N/A')}")
-            st.markdown(f"**ER Status:** {clinical.get('er_status', 'N/A')}")
-            st.markdown(f"**PR Status:** {clinical.get('pr_status', 'N/A')}")
-            st.markdown(f"**HER2 Status:** {clinical.get('her2_status', 'N/A')}")
+            _maybe_clinical_row("ER Status", clinical.get("er_status"))
+            _maybe_clinical_row("PR Status", clinical.get("pr_status"))
+            _maybe_clinical_row("HER2 Status", clinical.get("her2_status"))
             st.markdown(f"**Histological Type:** {clinical.get('histological_type', 'N/A')}")
             st.markdown(f"**Vital Status:** {clinical.get('vital_status', 'N/A')}")
             _card_end()
@@ -308,7 +332,7 @@ def _render_patient_risk_assessment(assets: dict[str, Any]) -> None:
             _card_start("Best-Model Inputs")
             contributions = _display_contributions(record)
             st.plotly_chart(_donut(contributions), use_container_width=True)
-            st.caption("Frozen headline model uses Vision + Genomics. Clinical data remains available for case review, but it is not part of the best-performing PFI CV configuration.")
+            st.caption("Frozen model uses CONCH + Vision + Clinical + Genomics (best paper benchmark).")
             _card_end()
     except Exception as exc:
         st.warning(f"Contribution chart unavailable: {exc}")
@@ -335,7 +359,7 @@ def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
                 '<div class="placeholder-box">🔬<br/>Slide visualization available in deployed system</div>',
                 unsafe_allow_html=True,
             )
-            st.caption("UNI2 foundation model features from this patient's H&E whole-slide image are part of the frozen best-performing PFI model.")
+            st.caption("CONCH vision-language pathology embeddings from this patient's H&E slide feed the frozen best-performing paper model.")
             _card_end()
     except Exception as exc:
         st.warning(f"Vision panel unavailable: {exc}")
@@ -349,10 +373,13 @@ def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
             st.progress(confidence)
             st.markdown(f"Age: {clinical.get('age', 'N/A')}")
             st.markdown(f"Stage: {clinical.get('stage', 'N/A')}")
-            st.markdown(f"ER: {clinical.get('er_status', 'N/A')}")
-            st.markdown(f"PR: {clinical.get('pr_status', 'N/A')}")
-            st.markdown(f"HER2: {clinical.get('her2_status', 'N/A')}")
-            st.caption("Clinical covariates are shown for physician context. They did not improve the best PFI cross-validation result in this cohort.")
+            if not _is_missing(clinical.get("er_status")):
+                st.markdown(f"ER: {clinical.get('er_status')}")
+            if not _is_missing(clinical.get("pr_status")):
+                st.markdown(f"PR: {clinical.get('pr_status')}")
+            if not _is_missing(clinical.get("her2_status")):
+                st.markdown(f"HER2: {clinical.get('her2_status')}")
+            st.caption("Clinical covariates are part of the best paper model and improved the final CONCH cross-attention benchmark.")
             _card_end()
     except Exception as exc:
         st.warning(f"Clinical panel unavailable: {exc}")
@@ -408,12 +435,12 @@ def _render_cohort_performance(assets: dict[str, Any]) -> None:
     top[2].caption("Patient-aligned TCGA-BRCA cases with vision, pathways, and clinical data")
 
     row2 = st.columns(3)
-    row2[0].metric("3yr AUROC", f"{frozen['secondary']['three_year_auroc']:.3f}")
-    row2[0].caption("Supplementary time-dependent discrimination at 3 years")
-    row2[1].metric("5yr AUROC", f"{frozen['secondary']['five_year_auroc']:.3f}")
-    row2[1].caption("Supplementary time-dependent discrimination at 5 years")
+    row2[0].metric("AUROC", f"{frozen['secondary']['auroc_mean']:.3f} +/- {frozen['secondary']['auroc_std']:.3f}")
+    row2[0].caption("Supplementary pooled discrimination across the 5 cross-validation folds")
+    row2[1].metric("Best Encoder", frozen["best_encoder"])
+    row2[1].caption("Strongest pathology foundation model in the final paper benchmark")
     row2[2].metric("Log-rank p", f"{frozen['risk_logrank_p']:.3f}")
-    row2[2].caption("Risk-group separation from the calibrated survival analysis")
+    row2[2].caption("Risk-group separation from pooled out-of-fold Kaplan-Meier analysis")
 
     details = pd.DataFrame(
         [
@@ -438,15 +465,16 @@ def _render_cohort_performance(assets: dict[str, Any]) -> None:
 
     st.markdown("#### Ablation Comparison")
     st.plotly_chart(_ablation_chart(), use_container_width=True)
-    st.caption("Simple late fusion with Vision + Genomics is the strongest and most stable configuration in the frozen PFI 5-fold CV analysis.")
+    st.caption("For the best encoder family, full multimodal cross-attention (V+C+G) is the strongest configuration in the final paper benchmark.")
 
     dataset_inventory = pd.DataFrame(
         [
             {"dataset": "TCGA-BRCA aligned cohort", "count": str(frozen["cohort"])},
             {"dataset": "Genomics features", "count": f"{frozen['genomics_features']} Hallmark pathways"},
-            {"dataset": "TCGA-BRCA clinical", "count": "1,097"},
-            {"dataset": "UNI2 embeddings extracted", "count": "758"},
-            {"dataset": "Slides requiring higher-memory hardware", "count": "358"},
+            {"dataset": "TCGA-BRCA clinical", "count": str(frozen["clinical_rows"])},
+            {"dataset": "UNI2 embeddings extracted", "count": str(frozen["uni2_embeddings"])},
+            {"dataset": "CTransPath embeddings extracted", "count": str(frozen["ctranspath_embeddings"])},
+            {"dataset": "CONCH embeddings extracted", "count": str(frozen["conch_embeddings"])},
         ]
     )
     st.markdown("#### Dataset Inventory")
@@ -455,8 +483,9 @@ def _render_cohort_performance(assets: dict[str, Any]) -> None:
     st.markdown("#### Scientific Context")
     st.markdown(
         """
-        - TCGA-BRCA has 86% censoring, making it one of the hardest cancer types for survival prediction.
+        - TCGA-BRCA has heavy censoring, making it one of the harder TCGA cancer types for progression-risk modeling.
         - PFI follows the TCGA-CDR recommendation for BRCA; overall survival is not the preferred endpoint for this disease setting.
+        - Pooled out-of-fold Kaplan-Meier analysis from the best model gives `p = 0.041`, indicating modest but statistically significant risk-group separation.
         """
     )
 
@@ -469,10 +498,10 @@ def _render_system_architecture() -> None:
         Histopathology WSI embeddings + Hallmark pathway genomics + clinical context + biomedical literature support
 
         **Frozen Headline Model**  
-        Pathway verifier with patient-aligned multimodal fusion
+        CONCH cross-attention survival model with Vision + Clinical + Genomics
 
         **Fusion Strategy**  
-        Vision embeddings, clinical covariates, and genomics pathway tokens are projected into a shared survival modeling stack with Cox loss
+        CONCH pathology embeddings, clinical covariates, and Hallmark pathway tokens are projected into a shared survival modeling stack with Cox loss
 
         **Risk Output**  
         Progression-free interval risk ranking with cross-validated C-index reporting
@@ -482,10 +511,10 @@ def _render_system_architecture() -> None:
 
     registry = pd.DataFrame(
         [
-            {"Model": "UNI2", "Type": "Vision", "Dim": 1536, "Status": "Active", "Source": "Harvard/Mahmood Lab"},
-            {"Model": "CTransPath", "Type": "Vision", "Dim": 768, "Status": "Active", "Source": "Open access"},
+            {"Model": "UNI2", "Type": "Vision", "Dim": 1536, "Status": "Benchmark", "Source": "Harvard/Mahmood Lab"},
+            {"Model": "CTransPath", "Type": "Vision", "Dim": 768, "Status": "Benchmark", "Source": "Open access"},
             {"Model": "Virchow", "Type": "Vision", "Dim": 1280, "Status": "Approved", "Source": "Paige AI"},
-            {"Model": "CONCH", "Type": "Vision-Language", "Dim": 512, "Status": "Pending", "Source": "Harvard/Mahmood Lab"},
+            {"Model": "CONCH", "Type": "Vision-Language", "Dim": 512, "Status": "Active / Best", "Source": "Harvard/Mahmood Lab"},
         ]
     )
     st.markdown("#### Foundation Model Registry")
@@ -503,7 +532,7 @@ def _render_system_architecture() -> None:
 
     timeline = pd.DataFrame(
         [
-            {"Phase": "Now", "Milestone": "PFI-aligned 5-fold CV baseline with Vision + Hallmark pathways"},
+            {"Phase": "Now", "Milestone": "PFI-aligned 5-fold CV benchmark with CONCH + V+C+G"},
             {"Phase": "Phase 2", "Milestone": "CPTAC-BRCA external validation"},
             {"Phase": "Phase 2", "Milestone": "Federated privacy-preserving training"},
             {"Phase": "Phase 2", "Milestone": "OpenVINO profiling on Intel Xeon"},
@@ -535,7 +564,7 @@ def main() -> None:
         _render_system_architecture()
 
     st.markdown("---")
-    st.caption("Dr Rajan Tripathi | AI2 Innovation Lab | github.com/rajantripathi/Breast-Cancer-Multimodal-AI")
+    st.caption("github.com/rajantripathi/Breast-Cancer-Multimodal-AI")
 
 
 if __name__ == "__main__":
