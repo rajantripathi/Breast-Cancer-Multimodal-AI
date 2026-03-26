@@ -145,15 +145,57 @@ def build_km_data(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     return payload
 
 
+def _load_predictions(predictions_path: Path) -> list[dict[str, Any]]:
+    predictions = read_json(predictions_path)
+    if isinstance(predictions, list):
+        return predictions
+    raise TypeError(f"Unsupported predictions payload in {predictions_path}")
+
+
+def _load_out_of_fold_predictions(input_path: Path) -> list[dict[str, Any]]:
+    if input_path.name == "artifact.json":
+        artifact = read_json(input_path)
+        predictions = artifact.get("predictions")
+        if isinstance(predictions, list) and predictions:
+            return predictions
+        raise ValueError(f"No pooled predictions found in {input_path}")
+
+    if input_path.name == "predictions.json":
+        artifact_path = input_path.with_name("artifact.json")
+        if artifact_path.exists():
+            artifact = read_json(artifact_path)
+            predictions = artifact.get("predictions")
+            if isinstance(predictions, list) and predictions:
+                return predictions
+        return _load_predictions(input_path)
+
+    if input_path.is_dir():
+        artifact_path = input_path / "artifact.json"
+        if artifact_path.exists():
+            artifact = read_json(artifact_path)
+            predictions = artifact.get("predictions")
+            if isinstance(predictions, list) and predictions:
+                return predictions
+        predictions_path = input_path / "predictions.json"
+        if predictions_path.exists():
+            return _load_predictions(predictions_path)
+
+    raise FileNotFoundError(f"Could not locate pooled predictions from {input_path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate Kaplan-Meier curve data from prediction artifacts")
-    parser.add_argument("--predictions", required=True, help="Path to predictions.json from a 5-fold CV run")
+    parser.add_argument(
+        "--predictions",
+        required=True,
+        help="Path to artifact.json, predictions.json, or run directory from a 5-fold CV run",
+    )
     parser.add_argument("--output", default="reports/paper/km_data.json", help="Output JSON path")
     args = parser.parse_args()
 
     predictions_path = Path(args.predictions)
     output_path = Path(args.output)
-    predictions = read_json(predictions_path)
+    predictions = _load_out_of_fold_predictions(predictions_path)
     payload = build_km_data(predictions)
     write_json(output_path, payload)
     print(json.dumps(payload, indent=2))

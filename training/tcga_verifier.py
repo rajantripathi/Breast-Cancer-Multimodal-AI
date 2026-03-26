@@ -594,6 +594,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=int(args.seed))
     fold_predictions: list[dict[str, Any]] = []
     fold_metrics: list[dict[str, Any]] = []
+    validation_fold_predictions: list[dict[str, Any]] = []
+    validation_fold_metrics: list[dict[str, Any]] = []
     final_state = None
     final_threshold = 0.5
     final_train = final_val = final_test = 0
@@ -650,6 +652,16 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             model.load_state_dict(best_state)
 
         classification_threshold = _select_classification_threshold(model, val_loader if val_loader is not None and val_samples else None, device)
+        val_predictions = _predict(model, val_loader, device, threshold=classification_threshold) if val_loader is not None and val_samples else []
+        for item in val_predictions:
+            item["fold"] = fold_index
+        if val_predictions:
+            val_metrics = _fold_metrics(val_predictions)
+            val_metrics["fold"] = fold_index
+            val_metrics["classification_threshold"] = round(float(classification_threshold), 6)
+            validation_fold_metrics.append(val_metrics)
+            validation_fold_predictions.extend(val_predictions)
+
         predictions = _predict(model, test_loader, device, threshold=classification_threshold)
         for item in predictions:
             item["fold"] = fold_index
@@ -666,6 +678,8 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
 
     c_index_mean, c_index_std = _mean_std([float(item["c_index"]) for item in fold_metrics])
     auroc_mean, auroc_std = _mean_std([float(item["auroc"]) for item in fold_metrics])
+    val_c_index_mean, val_c_index_std = _mean_std([float(item["c_index"]) for item in validation_fold_metrics])
+    val_auroc_mean, val_auroc_std = _mean_std([float(item["auroc"]) for item in validation_fold_metrics])
 
     checkpoint_path = output_dir / "model.pt"
     if final_state is not None:
@@ -693,6 +707,10 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "c_index_std": round(c_index_std, 4),
             "auroc_mean": round(auroc_mean, 4),
             "auroc_std": round(auroc_std, 4),
+            "validation_c_index_mean": round(val_c_index_mean, 4),
+            "validation_c_index_std": round(val_c_index_std, 4),
+            "validation_auroc_mean": round(val_auroc_mean, 4),
+            "validation_auroc_std": round(val_auroc_std, 4),
             "num_samples": int(len(frame)),
             "num_folds": 5,
             "num_train_last_fold": int(final_train),
@@ -714,7 +732,9 @@ def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
             "cv_folds": 5,
         },
         "fold_metrics": fold_metrics,
+        "validation_fold_metrics": validation_fold_metrics,
         "predictions": fold_predictions,
+        "validation_predictions": validation_fold_predictions,
     }
     write_json(output_dir / "artifact.json", artifact)
     write_json(output_dir / "summary.json", artifact["metrics"])

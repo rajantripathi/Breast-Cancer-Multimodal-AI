@@ -102,12 +102,12 @@
     }
   },
   "risk_stratification": {
-    "log_rank_p": 0.8383181774607956,
-    "low_risk_n": 69,
-    "low_risk_event_rate": 0.1304,
-    "mid_risk_n": 69,
-    "mid_risk_event_rate": 0.1159,
-    "high_risk_n": 70,
-    "high_risk_event_rate": 0.1429
+    "log_rank_p": 0.041238994697945244,
+    "low_risk_n": 347,
+    "low_risk_event_rate": 0.1153,
+    "mid_risk_n": 348,
+    "mid_risk_event_rate": 0.1236,
+    "high_risk_n": 348,
+    "high_risk_event_rate": 0.1552
   }
 }

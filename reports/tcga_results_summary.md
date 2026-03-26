@@ -32,15 +32,15 @@
 ## Risk Stratification
 
 - Kaplan-Meier source: pooled `5-fold CV` predictions from `conch_ca_vcg`
-- Tertile log-rank p-value: `0.8383`
+- Tertile log-rank p-value: `0.0412`
 - Group event rates:
-  - `low_risk`: `9 / 69` (`0.1304`)
-  - `mid_risk`: `8 / 69` (`0.1159`)
-  - `high_risk`: `10 / 70` (`0.1429`)
+  - `low_risk`: `40 / 347` (`0.1153`)
+  - `mid_risk`: `43 / 348` (`0.1236`)
+  - `high_risk`: `54 / 348` (`0.1552`)
 
 ## Interpretation
 
 - Full slide coverage changed the benchmark outcome materially from earlier frozen proposal numbers.
 - In the final paper benchmark, pathology-specialized encoders outperform `UNI2` under cross-attention.
 - `CONCH` is the strongest encoder and benefits from adding both clinical and genomics signals in the final ablation.
-- Despite improved discrimination, pooled risk-tertile survival separation remains weak in Kaplan-Meier analysis, so the paper should emphasize benchmark performance rather than a strong clinical stratification claim.
+- Pooled out-of-fold Kaplan-Meier analysis now shows statistically significant but still modest tertile separation, so the paper can claim real risk stratification while keeping the emphasis on benchmark rigor rather than strong clinical utility.
