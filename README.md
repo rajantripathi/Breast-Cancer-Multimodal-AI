@@ -60,6 +60,34 @@ Primary development dataset: **TCGA-BRCA**
 
 Planned Phase 2 expansion datasets include CPTAC-BRCA, METABRIC, CBIS-DDSM, VinDr-Mammo, and EMBED.
 
+## Mammography Screening Layer (In Development)
+
+The system is being extended with a mammography-based screening agent
+that provides the front-end detection layer before the pathology
+diagnostic pipeline. This creates a two-stage clinical AI platform:
+
+1. **Screening** (mammography): Population-level breast cancer detection
+2. **Diagnosis + Prognosis** (pathology + genomics + clinical): Individual patient risk assessment
+
+### Architecture
+- Input: 4-view digital mammogram (L-CC, R-CC, L-MLO, R-MLO)
+- Encoder: ConvNeXt-Base (ImageNet pretrained, fine-tuned)
+- Aggregation: Attention-weighted view fusion
+- Output: Exam-level suspicion score
+
+### Dataset
+- VinDr-Mammo (PhysioNet): 5,000 exams with multi-reader BI-RADS annotations
+
+### Status
+- [x] Module structure created
+- [x] Preprocessing pipeline
+- [x] Model architecture
+- [x] SLURM training scripts
+- [ ] VinDr-Mammo data download (pending PhysioNet access)
+- [ ] Model training
+- [ ] Evaluation and benchmarking
+- [ ] Integration with pathology pipeline
+
 ## Foundation Models
 
 - `UNI2` | Vision | `1536` dims | Active | Harvard/Mahmood Lab
