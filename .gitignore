@@ -11,6 +11,10 @@ checkpoints/*
 logs/*
 !logs/.gitkeep
 outputs/*
+!outputs/mammography/
+!outputs/mammography/summary.json
+!outputs/mammography/history.json
+outputs/mammography/best_model.pt
 !outputs/.gitkeep
 data/raw/*
 !data/raw/.gitkeep

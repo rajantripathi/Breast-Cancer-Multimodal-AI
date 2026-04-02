@@ -28,6 +28,7 @@ Usage:
 import argparse
 import os
 from pathlib import Path
+import re
 
 import numpy as np
 import pandas as pd
@@ -50,9 +51,14 @@ def parse_args():
 
 def assign_label(birads):
     """Map BI-RADS to binary screening label."""
-    if birads in [1, 2, 3]:
+    text = str(birads).strip().upper()
+    match = re.search(r"([1-5])", text)
+    if match is None:
+        return -1  # exclude
+    score = int(match.group(1))
+    if score in [1, 2, 3]:
         return 0  # normal / probably benign
-    elif birads in [4, 5]:
+    elif score in [4, 5]:
         return 1  # suspicious
     return -1  # exclude
 
@@ -104,4 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
