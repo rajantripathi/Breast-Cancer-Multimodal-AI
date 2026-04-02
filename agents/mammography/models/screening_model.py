@@ -4,7 +4,8 @@ Mammography screening model: 4-view exam-level classification.
 Architecture:
 - Shared ConvNeXt-Base encoder (pretrained ImageNet, fine-tuned)
 - Per-view feature extraction -> 4 x 768-dim
-- Attention-weighted aggregation -> exam-level 768-dim
+- Bilateral asymmetry tokens -> 2 x 768-dim
+- Attention-weighted aggregation over 6 tokens -> exam-level 768-dim
 - Binary classifier -> suspicion score
 
 This mirrors the multimodal fusion pattern in the pathology system:
@@ -49,7 +50,7 @@ class MammographyScreener(nn.Module):
     Output: suspicion score [B, 1]
     """
 
-    def __init__(self, pretrained=True, dropout=0.3):
+    def __init__(self, pretrained=True, dropout=0.4):
         super().__init__()
         self.encoder = ViewEncoder(pretrained=pretrained)
         feat_dim = self.encoder.feat_dim
@@ -69,23 +70,34 @@ class MammographyScreener(nn.Module):
             nn.Linear(256, 1),
         )
 
+    def freeze_backbone(self, freeze=True):
+        if self.encoder.backbone is None:
+            return
+        for param in self.encoder.backbone.parameters():
+            param.requires_grad = not freeze
+
     def forward(self, views):
         """
         views: dict with keys 'lcc', 'rcc', 'lmlo', 'rmlo'
         Each value: [B, 3, H, W]
         """
-        # Encode each view
-        features = []
+        encoded = {}
         for key in ["lcc", "rcc", "lmlo", "rmlo"]:
-            if key in views and views[key] is not None:
-                feat = self.encoder(views[key])  # [B, feat_dim]
-                features.append(feat)
+            if key not in views or views[key] is None:
+                raise ValueError(f"Missing required view: {key}")
+            encoded[key] = self.encoder(views[key])
 
-        if not features:
-            raise ValueError("No valid views provided")
-
-        # Stack: [B, num_views, feat_dim]
-        stacked = torch.stack(features, dim=1)
+        stacked = torch.stack(
+            [
+                encoded["lcc"],
+                encoded["rcc"],
+                encoded["lmlo"],
+                encoded["rmlo"],
+                torch.abs(encoded["lcc"] - encoded["rcc"]),
+                torch.abs(encoded["lmlo"] - encoded["rmlo"]),
+            ],
+            dim=1,
+        )
 
         # Attention weights: [B, num_views, 1]
         attn_logits = self.attention(stacked)
@@ -97,4 +109,3 @@ class MammographyScreener(nn.Module):
         # Classify
         logit = self.classifier(aggregated)
         return logit, attn_weights.squeeze(-1)
-

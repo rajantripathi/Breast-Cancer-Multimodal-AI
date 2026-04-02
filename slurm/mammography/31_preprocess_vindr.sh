@@ -10,9 +10,19 @@
 #SBATCH --output=logs/vindr_preprocess_%j.out
 
 set -euo pipefail
-source scripts/isambard/slurm_env.sh
 
-python -u -m agents.mammography.preprocessing.prepare_vindr \
+REPO_DIR="${REPO_DIR:-$PWD}"
+PROJECT_ROOT="${PROJECT_ROOT:-/scratch/u6ef/rajantripathi.u6ef/Breast-Cancer-Multimodal-AI-mammography}"
+VENV_DIR="${VENV_DIR:-$HOME/.venvs/breast-cancer-multimodal-ai}"
+export PROJECT_ROOT
+export REPO_DIR
+export PYTHONPATH="$REPO_DIR:${PYTHONPATH:-}"
+
+module purge || true
+module load cray-python/3.11.7 2>/dev/null || true
+source "$VENV_DIR/bin/activate"
+
+"$VENV_DIR/bin/python" -u -m agents.mammography.preprocessing.prepare_vindr \
   --input-dir "$PROJECT_ROOT/data/mammography/vindr-mammo/raw" \
   --output-dir "$PROJECT_ROOT/data/mammography/vindr-mammo/processed" \
-  --image-size 1024
+  --image-size 1536
