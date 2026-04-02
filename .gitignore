@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 *.pyc
+*.pt
 .pytest_cache/
 .mypy_cache/
 .DS_Store
@@ -15,9 +16,13 @@ outputs/*
 !outputs/mammography/summary.json
 !outputs/mammography/history.json
 outputs/mammography/best_model.pt
+outputs/mammography/best_model*.pt
 !outputs/.gitkeep
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
 artifacts/
+data/splits/literature_splits.json
+data/splits/verifier_splits.json
+slurm/13_retry_failed_tcga_extract.sh
