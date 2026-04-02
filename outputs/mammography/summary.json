@@ -1,0 +1,11 @@
+{
+  "best_epoch": 32,
+  "best_val_auroc": 0.7560115949667303,
+  "test_auroc": 0.7407175925925926,
+  "test_sensitivity_at_90_specificity": 0.43333333333333335,
+  "test_specificity_at_90_sensitivity": 0.38472222222222224,
+  "train_exams": 3497,
+  "val_exams": 749,
+  "test_exams": 750,
+  "image_size": 224
+}
