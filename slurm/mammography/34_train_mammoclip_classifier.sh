@@ -27,7 +27,8 @@ source "$VENV_DIR/bin/activate"
 "$VENV_DIR/bin/python" -u -m agents.mammography.training.train_mammoclip_classifier \
   --metadata "$PROJECT_ROOT/data/mammography/vindr-mammo/processed/metadata.csv" \
   --embedding-dir "$PROJECT_ROOT/data/mammography/vindr-mammo/embeddings/mammoclip" \
-  --output-dir outputs/mammography/mammoclip \
-  --epochs 50 \
+  --output-dir outputs/mammography/mammoclip_attn \
+  --epochs 30 \
   --lr 1e-3 \
+  --patience 8 \
   --device auto
