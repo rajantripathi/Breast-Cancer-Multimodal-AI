@@ -50,6 +50,20 @@ FROZEN_SCIENCE = {
     "clinical_rows": 1097,
 }
 
+FROZEN_SCREENING = {
+    "dataset": "VinDr-Mammo",
+    "exams": 5000,
+    "images": 20000,
+    "model": "ConvNeXt-Base with 4-view attention fusion",
+    "task": "Population-level breast cancer detection from mammograms",
+    "test_auroc": 0.7407,
+    "best_val_auroc": 0.7560,
+    "best_epoch": 32,
+    "image_size": 224,
+    "sensitivity_at_90_specificity": 0.4333,
+    "specificity_at_90_sensitivity": 0.3847,
+}
+
 
 def _inject_style() -> None:
     st.markdown(
@@ -259,6 +273,87 @@ def _pathway_chart(pathways: list[dict[str, Any]]) -> go.Figure:
     return figure
 
 
+def _load_mammography_assets(repo_root: Path) -> dict[str, Any]:
+    summary_path = repo_root / "outputs" / "mammography" / "summary.json"
+    history_path = repo_root / "outputs" / "mammography" / "history.json"
+
+    summary = FROZEN_SCREENING.copy()
+    if summary_path.exists():
+        payload = load_json(summary_path)
+        summary.update(
+            {
+                "best_val_auroc": float(payload.get("best_val_auroc", summary["best_val_auroc"])),
+                "test_auroc": float(payload.get("test_auroc", summary["test_auroc"])),
+                "best_epoch": int(payload.get("best_epoch", summary["best_epoch"])),
+                "image_size": int(payload.get("image_size", summary["image_size"])),
+                "sensitivity_at_90_specificity": float(
+                    payload.get("test_sensitivity_at_90_specificity", summary["sensitivity_at_90_specificity"])
+                ),
+                "specificity_at_90_sensitivity": float(
+                    payload.get("test_specificity_at_90_sensitivity", summary["specificity_at_90_sensitivity"])
+                ),
+                "train_exams": int(payload.get("train_exams", 3497)),
+                "val_exams": int(payload.get("val_exams", 749)),
+                "test_exams": int(payload.get("test_exams", 750)),
+            }
+        )
+
+    history = load_json(history_path) if history_path.exists() else []
+    return {"summary": summary, "history": history}
+
+
+def _render_demo_overview(mammo_assets: dict[str, Any]) -> None:
+    summary = mammo_assets["summary"]
+    st.header("Overview")
+    st.caption("Guided walkthrough of the final two-stage research system")
+    st.info(
+        "This app is a guided research demo built from frozen benchmark artifacts. "
+        "It is intentionally not a live clinical inference product."
+    )
+
+    top = st.columns(4)
+    top[0].metric("Stage 1 AUROC", f"{summary['test_auroc']:.3f}")
+    top[0].caption("VinDr-Mammo screening benchmark")
+    top[1].metric("Stage 2 C-index", f"{FROZEN_SCIENCE['c_index_mean']:.3f}")
+    top[1].caption("Best multimodal prognosis benchmark")
+    top[2].metric("Stage 2 Log-rank p", f"{FROZEN_SCIENCE['risk_logrank_p']:.3f}")
+    top[2].caption("Risk-group separation from pooled out-of-fold analysis")
+    top[3].metric("Cohort", f"{FROZEN_SCIENCE['cohort']}")
+    top[3].caption("Patient-aligned TCGA-BRCA evaluation cohort")
+
+    left, right = st.columns([1.1, 1.0])
+    with left:
+        _card_start("What This Demo Shows")
+        st.markdown("**Stage 1:** population-level mammography screening on VinDr-Mammo.")
+        st.markdown("**Stage 2:** multimodal prognosis from pathology, genomics, and clinical data under PFI.")
+        st.markdown("**Workflow:** suspicious screening cases route into deeper multimodal assessment.")
+        st.markdown("**Interaction model:** curated artifacts, benchmark summaries, and explorable patient examples.")
+        _card_end()
+    with right:
+        _card_start("Recommended Walkthrough")
+        st.markdown("1. Start with `Two-Stage Workflow` to set the story.")
+        st.markdown("2. Show `Stage 1 Screening` and `Stage 1 Performance` for the final mammography benchmark.")
+        st.markdown("3. Move to `Stage 2 Patient Risk` for a representative case.")
+        st.markdown("4. Finish on `Stage 2 Cohort Performance` for the final science metrics.")
+        _card_end()
+
+    route = pd.DataFrame(
+        [
+            {"Step": "1", "Component": "Stage 1 screening", "Role": "Assigns mammography suspicion score"},
+            {"Step": "2", "Component": "Screening router", "Role": "Determines surveillance vs further workup"},
+            {"Step": "3", "Component": "Stage 2 multimodal model", "Role": "Produces prognosis-oriented risk estimate"},
+            {"Step": "4", "Component": "Decision support", "Role": "Provides interpretable benchmark and case context"},
+        ]
+    )
+    st.markdown("#### System Snapshot")
+    st.dataframe(route, use_container_width=True, hide_index=True)
+
+
+def _render_artifact_note(source_label: str, kind: str) -> None:
+    st.caption(f"{kind} source: `{source_label}`")
+    st.caption("Interactive views below are driven by stored research artifacts, not live inference.")
+
+
 def _ablation_chart() -> go.Figure:
     values = {
         name: value[0] for name, value in FROZEN_SCIENCE["ablation"].items()
@@ -282,12 +377,136 @@ def _ablation_chart() -> go.Figure:
     return figure
 
 
+def _mammography_history_chart(history: list[dict[str, Any]]) -> go.Figure:
+    epochs = [item.get("epoch") for item in history]
+    train_auroc = [item.get("train_auroc") for item in history]
+    val_auroc = [item.get("val_auroc") for item in history]
+
+    figure = go.Figure()
+    figure.add_trace(go.Scatter(x=epochs, y=train_auroc, mode="lines", name="Train AUROC", line=dict(color=TEAL, width=2)))
+    figure.add_trace(go.Scatter(x=epochs, y=val_auroc, mode="lines", name="Validation AUROC", line=dict(color=NAVY, width=2)))
+    figure.update_layout(
+        margin=dict(t=10, b=10, l=10, r=10),
+        height=320,
+        xaxis_title="Epoch",
+        yaxis_title="AUROC",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color=NAVY),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+    )
+    return figure
+
+
+def _render_stage1_screening(mammo_assets: dict[str, Any]) -> None:
+    summary = mammo_assets["summary"]
+    st.header("Stage 1 Screening")
+    st.caption("Population-level mammography screening benchmark")
+
+    top = st.columns(4)
+    top[0].metric("Test AUROC", f"{summary['test_auroc']:.3f}")
+    top[0].caption("Final mammography baseline retained after all follow-up experiments")
+    top[1].metric("Model", "ConvNeXt-Base")
+    top[1].caption("4-view attention fusion over L-CC, R-CC, L-MLO, R-MLO")
+    top[2].metric("Dataset", f"{summary['exams']:,} exams")
+    top[2].caption(f"{summary['images']:,} images from VinDr-Mammo")
+    top[3].metric("Image Size", f"{summary['image_size']} px")
+    top[3].caption("Final baseline training resolution")
+
+    left, right = st.columns([1.15, 1.0])
+    with left:
+        _card_start("Screening Task")
+        st.markdown(f"**Task:** {summary['task']}")
+        st.markdown(f"**Dataset:** {summary['dataset']}")
+        st.markdown(f"**Architecture:** {summary['model']}")
+        st.markdown("**Clinical role:** front-end screen to identify suspicious exams before Stage 2 multimodal workup")
+        st.caption("This stage is presented as a validated cohort benchmark. The repository does not store benchmark-grade per-exam mammography demo cases.")
+        _card_end()
+
+    with right:
+        _card_start("Operating Points")
+        st.metric("Best validation AUROC", f"{summary['best_val_auroc']:.3f}")
+        st.metric("Sensitivity @ 90% specificity", f"{summary['sensitivity_at_90_specificity']:.3f}")
+        st.metric("Specificity @ 90% sensitivity", f"{summary['specificity_at_90_sensitivity']:.3f}")
+        st.caption(f"Best epoch: {summary['best_epoch']}")
+        _card_end()
+
+
+def _render_stage1_performance(mammo_assets: dict[str, Any]) -> None:
+    summary = mammo_assets["summary"]
+    history = mammo_assets["history"]
+    st.header("Stage 1 Performance")
+    st.caption("Final retained mammography baseline | ConvNeXt-Base | 224px")
+
+    metrics = st.columns(3)
+    metrics[0].metric("Train / Val / Test", f"{summary.get('train_exams', 3497)} / {summary.get('val_exams', 749)} / {summary.get('test_exams', 750)}")
+    metrics[1].metric("Test AUROC", f"{summary['test_auroc']:.3f}")
+    metrics[2].metric("Best epoch", str(summary["best_epoch"]))
+
+    if history:
+        st.markdown("#### Training History")
+        st.plotly_chart(_mammography_history_chart(history), use_container_width=True)
+
+    st.markdown("#### Benchmark Notes")
+    notes = pd.DataFrame(
+        [
+            {"Field": "Canonical result", "Value": "ConvNeXt-Base baseline retained"},
+            {"Field": "Tried and not promoted", "Value": "EfficientNet-B5 and Mammo-CLIP variants"},
+            {"Field": "Stored mammography artifacts", "Value": "Summary + training history only"},
+            {"Field": "Demo implication", "Value": "Show cohort performance and workflow, not fake per-patient screening predictions"},
+        ]
+    )
+    st.dataframe(notes, use_container_width=True, hide_index=True)
+
+
+def _render_two_stage_workflow() -> None:
+    st.header("Two-Stage Workflow")
+    st.caption("Integrated screening -> diagnosis + prognosis pathway")
+
+    st.markdown(
+        """
+        **Stage 1: Mammography Screening**  
+        Four-view mammography model assigns a suspiciousness score at the population-screening level.
+
+        **Routing Logic**  
+        Low-suspicion cases remain in standard screening surveillance. Suspicious cases are referred for diagnostic workup and routed into the multimodal pathology pipeline.
+
+        **Stage 2: Multimodal Prognosis**  
+        Histopathology, genomics, and clinical data are fused by the frozen CONCH cross-attention survival model to estimate progression risk under PFI.
+        """
+    )
+
+    route = pd.DataFrame(
+        [
+            {"Step": "1", "System block": "Mammography screening", "Output": "Suspicion score"},
+            {"Step": "2", "System block": "Screening router", "Output": "Standard surveillance or pathology referral"},
+            {"Step": "3", "System block": "Pathology + genomics + clinical fusion", "Output": "PFI risk score and risk band"},
+            {"Step": "4", "System block": "Clinical decision support", "Output": "Cohort context and interpretive evidence"},
+        ]
+    )
+    st.dataframe(route, use_container_width=True, hide_index=True)
+
+    left, right = st.columns(2)
+    with left:
+        _card_start("Stage 1 Final Result")
+        st.metric("Mammography test AUROC", f"{FROZEN_SCREENING['test_auroc']:.3f}")
+        st.caption("ConvNeXt-Base, 4-view attention, VinDr-Mammo")
+        _card_end()
+    with right:
+        _card_start("Stage 2 Final Result")
+        st.metric("Best C-index", f"{FROZEN_SCIENCE['c_index_mean']:.3f} +/- {FROZEN_SCIENCE['c_index_std']:.3f}")
+        st.caption("CONCH + Vision + Clinical + Genomics under PFI")
+        _card_end()
+
+
 def _render_patient_risk_assessment(assets: dict[str, Any]) -> None:
     cases, source_label = _choose_cases(assets)
-    st.header("Patient Risk Assessment")
+    st.header("Stage 2 Patient Risk")
+    st.caption("Explorable prognosis example from frozen multimodal prediction artifacts")
     if not cases:
         st.warning("No prediction artifact is available locally yet.")
         return
+    _render_artifact_note(source_label, "Patient-case artifact")
 
     selected_id = _patient_selector(cases, "risk_patient")
     record = _pick_record(cases, selected_id)
@@ -340,10 +559,12 @@ def _render_patient_risk_assessment(assets: dict[str, Any]) -> None:
 
 def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
     cases, source_label = _choose_cases(assets)
-    st.header("Multimodal Analysis")
+    st.header("Stage 2 Multimodal Analysis")
+    st.caption("Modality-level view of the selected prognosis example")
     if not cases:
         st.warning("No prediction artifact is available locally yet.")
         return
+    _render_artifact_note(source_label, "Patient-case artifact")
 
     selected_id = _patient_selector(cases, "analysis_patient")
     record = _pick_record(cases, selected_id)
@@ -422,7 +643,7 @@ def _render_multimodal_analysis(assets: dict[str, Any]) -> None:
 
 def _render_cohort_performance(assets: dict[str, Any]) -> None:
     frozen = FROZEN_SCIENCE
-    st.header("Cohort Performance")
+    st.header("Stage 2 Cohort Performance")
     st.caption("Frozen Final Science Metrics | PFI Endpoint | 5-Fold Stratified Cross-Validation")
     st.info("This page presents the frozen final science results for the proposal recording. It is intentionally pinned to the validated PFI cross-validation summary rather than a live training artifact path.")
 
@@ -545,23 +766,41 @@ def _render_system_architecture() -> None:
 def main() -> None:
     st.set_page_config(page_title="Breast Cancer Multimodal AI", page_icon="BC", layout="wide", initial_sidebar_state="expanded")
     _inject_style()
-    assets = discover_tcga_assets(Path(__file__).resolve().parents[1])
+    repo_root = Path(__file__).resolve().parents[1]
+    assets = discover_tcga_assets(repo_root)
+    mammo_assets = _load_mammography_assets(repo_root)
 
     st.title("Breast Cancer Multimodal AI")
-    st.caption("Clinical Decision Support System | PFI Endpoint | 5-Fold CV")
+    st.caption("Two-Stage Clinical AI Platform | Mammography Screening + Multimodal Prognosis")
+    st.sidebar.caption("Guided demo mode")
+    st.sidebar.caption("Frozen benchmark artifacts only")
 
     page = st.sidebar.radio(
         "Navigate",
-        ["Patient Risk Assessment", "Multimodal Analysis", "Cohort Performance", "System Architecture"],
+        [
+            "Overview",
+            "Stage 1 Screening",
+            "Stage 1 Performance",
+            "Two-Stage Workflow",
+            "Stage 2 Patient Risk",
+            "Stage 2 Multimodal Analysis",
+            "Stage 2 Cohort Performance",
+        ],
     )
-    if page == "Patient Risk Assessment":
+    if page == "Overview":
+        _render_demo_overview(mammo_assets)
+    elif page == "Stage 1 Screening":
+        _render_stage1_screening(mammo_assets)
+    elif page == "Stage 1 Performance":
+        _render_stage1_performance(mammo_assets)
+    elif page == "Two-Stage Workflow":
+        _render_two_stage_workflow()
+    elif page == "Stage 2 Patient Risk":
         _render_patient_risk_assessment(assets)
-    elif page == "Multimodal Analysis":
+    elif page == "Stage 2 Multimodal Analysis":
         _render_multimodal_analysis(assets)
-    elif page == "Cohort Performance":
-        _render_cohort_performance(assets)
     else:
-        _render_system_architecture()
+        _render_cohort_performance(assets)
 
     st.markdown("---")
     st.caption("github.com/rajantripathi/Breast-Cancer-Multimodal-AI")
