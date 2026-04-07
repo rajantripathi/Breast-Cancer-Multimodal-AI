@@ -18,6 +18,9 @@ set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-$PWD}"
 PROJECT_ROOT="${PROJECT_ROOT:-/scratch/u6ef/rajantripathi.u6ef/Breast-Cancer-Multimodal-AI}"
+# The processed VinDr-Mammo dataset currently lives in the legacy
+# mammography-only repo clone on Isambard. Keep code and data roots separate.
+MAMMO_DATA_ROOT="${MAMMO_DATA_ROOT:-/scratch/u6ef/rajantripathi.u6ef/Breast-Cancer-Multimodal-AI-mammography}"
 VENV_DIR="${VENV_DIR:-$HOME/.venvs/breast-cancer-multimodal-ai}"
 OUTPUT_DIR="${OUTPUT_DIR:-outputs/mammography/recovery_seed42}"
 IMAGE_SIZE="${IMAGE_SIZE:-224}"
@@ -34,7 +37,7 @@ source "$VENV_DIR/bin/activate"
 "$VENV_DIR/bin/python" -u -c "import torch; assert torch.cuda.is_available(); print(f'GPU: {torch.cuda.get_device_name(0)}')"
 
 "$VENV_DIR/bin/python" -u -m agents.mammography.training.train_screener \
-  --data-dir "$PROJECT_ROOT/data/mammography/vindr-mammo/processed" \
+  --data-dir "$MAMMO_DATA_ROOT/data/mammography/vindr-mammo/processed" \
   --output-dir "$OUTPUT_DIR" \
   --epochs 50 \
   --lr 3e-4 \
