@@ -15,13 +15,14 @@ import argparse
 import csv
 import json
 import random
+import subprocess
 from pathlib import Path
 
 import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.metrics import roc_auc_score
-from torch.utils.data import DataLoader, Dataset
+from sklearn.metrics import average_precision_score, roc_auc_score
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from agents.mammography.models.screening_model import MammographyScreener
 
@@ -50,6 +51,26 @@ def parse_args():
     parser.add_argument("--effective-batch-size", type=int, default=8)
     parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--freeze-epochs", type=int, default=5)
+    parser.add_argument("--weight-decay", type=float, default=1e-4)
+    parser.add_argument("--balance-sampler", action="store_true")
+    parser.add_argument(
+        "--loss",
+        choices=["smoothed_bce", "weighted_bce", "focal"],
+        default="weighted_bce",
+    )
+    parser.add_argument("--focal-gamma", type=float, default=2.0)
+    parser.add_argument("--pos-weight", type=float, default=None)
+    parser.add_argument("--allow-horizontal-flip", action="store_true")
+    parser.add_argument("--rotation-degrees", type=float, default=7.0)
+    parser.add_argument("--crop-scale-min", type=float, default=0.95)
+    parser.add_argument("--brightness-jitter", type=float, default=0.08)
+    parser.add_argument("--contrast-jitter", type=float, default=0.08)
+    parser.add_argument(
+        "--tta",
+        choices=["none", "hflip"],
+        default="none",
+        help="Validation/test-time augmentation. Horizontal flip is opt-in only.",
+    )
     return parser.parse_args()
 
 
@@ -134,12 +155,27 @@ def filter_valid_exams(exams):
 
 
 class MammographyExamDataset(Dataset):
-    def __init__(self, exams, image_size, training=False):
+    def __init__(
+        self,
+        exams,
+        image_size,
+        training=False,
+        allow_horizontal_flip=False,
+        rotation_degrees=7.0,
+        crop_scale_min=0.95,
+        brightness_jitter=0.08,
+        contrast_jitter=0.08,
+    ):
         if pydicom is None or Image is None:
             raise ImportError("pydicom and Pillow are required for mammography training")
         self.exams = exams
         self.image_size = image_size
         self.training = training
+        self.allow_horizontal_flip = allow_horizontal_flip
+        self.rotation_degrees = rotation_degrees
+        self.crop_scale_min = crop_scale_min
+        self.brightness_jitter = brightness_jitter
+        self.contrast_jitter = contrast_jitter
 
     def __len__(self):
         return len(self.exams)
@@ -163,13 +199,15 @@ class MammographyExamDataset(Dataset):
         return arr
 
     def _apply_augmentations(self, img):
-        if random.random() < 0.5:
+        # Horizontal flips can corrupt laterality semantics in mammography, so
+        # they are disabled by default and must be explicitly enabled.
+        if self.allow_horizontal_flip and random.random() < 0.5:
             img = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
 
-        angle = random.uniform(-10.0, 10.0)
+        angle = random.uniform(-self.rotation_degrees, self.rotation_degrees)
         img = img.rotate(angle, resample=Image.Resampling.BILINEAR, fillcolor=0)
 
-        crop_scale = random.uniform(0.9, 1.0)
+        crop_scale = random.uniform(self.crop_scale_min, 1.0)
         width, height = img.size
         crop_w = max(1, int(width * crop_scale))
         crop_h = max(1, int(height * crop_scale))
@@ -180,8 +218,8 @@ class MammographyExamDataset(Dataset):
             resample=Image.Resampling.BILINEAR,
         )
 
-        brightness = random.uniform(0.85, 1.15)
-        contrast = random.uniform(0.85, 1.15)
+        brightness = random.uniform(1.0 - self.brightness_jitter, 1.0 + self.brightness_jitter)
+        contrast = random.uniform(1.0 - self.contrast_jitter, 1.0 + self.contrast_jitter)
         arr = np.asarray(img, dtype=np.float32)
         arr *= brightness
         mean = arr.mean()
@@ -226,8 +264,10 @@ def compute_metrics(labels, probs):
     metrics = {}
     if len(np.unique(labels)) > 1:
         metrics["auroc"] = float(roc_auc_score(labels, probs))
+        metrics["prauc"] = float(average_precision_score(labels, probs))
     else:
         metrics["auroc"] = float("nan")
+        metrics["prauc"] = float("nan")
 
     thresholds = np.unique(probs)
     best_sens_at_90_spec = 0.0
@@ -249,7 +289,13 @@ def compute_metrics(labels, probs):
     return metrics
 
 
-def run_epoch(model, loader, criterion, device, optimizer=None, scheduler=None, accumulation_steps=1):
+def apply_tta(views, mode):
+    if mode == "hflip":
+        return {k: torch.flip(v, dims=[3]) for k, v in views.items()}
+    return views
+
+
+def run_epoch(model, loader, criterion, device, optimizer=None, scheduler=None, accumulation_steps=1, tta="none"):
     training = optimizer is not None
     model.train(training)
     total_loss = 0.0
@@ -265,6 +311,9 @@ def run_epoch(model, loader, criterion, device, optimizer=None, scheduler=None, 
         with torch.set_grad_enabled(training):
             logits, _ = model(views)
             logits = logits.squeeze(1)
+            if not training and tta != "none":
+                aug_logits, _ = model(apply_tta(views, tta))
+                logits = 0.5 * (logits + aug_logits.squeeze(1))
             loss = criterion(logits, labels)
             if training:
                 (loss / accumulation_steps).backward()
@@ -298,6 +347,60 @@ class SmoothedBCEWithLogitsLoss(nn.Module):
     def forward(self, logits, labels):
         smooth_labels = labels * (1.0 - self.smoothing) + 0.5 * self.smoothing
         return self.loss(logits, smooth_labels)
+
+
+class BinaryFocalLoss(nn.Module):
+    def __init__(self, pos_weight=None, gamma=2.0):
+        super().__init__()
+        self.gamma = gamma
+        self.register_buffer("pos_weight", pos_weight if pos_weight is not None else None)
+
+    def forward(self, logits, labels):
+        bce = nn.functional.binary_cross_entropy_with_logits(
+            logits,
+            labels,
+            reduction="none",
+            pos_weight=self.pos_weight,
+        )
+        probs = torch.sigmoid(logits)
+        pt = probs * labels + (1.0 - probs) * (1.0 - labels)
+        focal_factor = (1.0 - pt).pow(self.gamma)
+        return (focal_factor * bce).mean()
+
+
+def get_git_commit():
+    try:
+        return (
+            subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL)
+            .strip()
+        )
+    except Exception:
+        return "unknown"
+
+
+def build_sampler_and_pos_weight(exams, override_pos_weight=None):
+    train_labels = [int(exam["label"]) for exam in exams]
+    n_neg = sum(1 for label in train_labels if label == 0)
+    n_pos = sum(1 for label in train_labels if label == 1)
+    if n_pos == 0:
+        raise RuntimeError("No positive exams found in training split.")
+    pos_weight_value = override_pos_weight if override_pos_weight is not None else (n_neg / n_pos)
+    sample_weights = [1.0 if label == 0 else pos_weight_value for label in train_labels]
+    sampler = WeightedRandomSampler(
+        weights=torch.as_tensor(sample_weights, dtype=torch.double),
+        num_samples=len(sample_weights),
+        replacement=True,
+    )
+    return sampler, float(pos_weight_value), n_neg, n_pos
+
+
+def build_criterion(args, device, pos_weight_value):
+    pos_weight = torch.tensor([pos_weight_value], dtype=torch.float32, device=device)
+    if args.loss == "smoothed_bce":
+        return SmoothedBCEWithLogitsLoss(args.label_smoothing)
+    if args.loss == "focal":
+        return BinaryFocalLoss(pos_weight=pos_weight, gamma=args.focal_gamma)
+    return nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
 
 def main():
@@ -345,14 +448,34 @@ def main():
     if dropped:
         print(f"Dropped invalid exams: {dropped}")
 
-    train_ds = MammographyExamDataset(split_buckets["train"], args.image_size, training=True)
+    train_ds = MammographyExamDataset(
+        split_buckets["train"],
+        args.image_size,
+        training=True,
+        allow_horizontal_flip=args.allow_horizontal_flip,
+        rotation_degrees=args.rotation_degrees,
+        crop_scale_min=args.crop_scale_min,
+        brightness_jitter=args.brightness_jitter,
+        contrast_jitter=args.contrast_jitter,
+    )
     val_ds = MammographyExamDataset(split_buckets["val"], args.image_size, training=False)
     test_ds = MammographyExamDataset(split_buckets["test"], args.image_size, training=False)
+
+    sampler = None
+    pos_weight_value = 1.0
+    train_neg = train_pos = 0
+    if args.balance_sampler or args.loss in {"weighted_bce", "focal"} or args.pos_weight is not None:
+        sampler, pos_weight_value, train_neg, train_pos = build_sampler_and_pos_weight(
+            split_buckets["train"],
+            override_pos_weight=args.pos_weight,
+        )
+        print(f"Class balance: {train_neg} neg, {train_pos} pos, weight={pos_weight_value:.4f}")
 
     train_loader = DataLoader(
         train_ds,
         batch_size=args.batch_size,
-        shuffle=True,
+        shuffle=sampler is None,
+        sampler=sampler,
         num_workers=args.num_workers,
         pin_memory=device.type == "cuda",
         collate_fn=collate_batch,
@@ -378,8 +501,8 @@ def main():
     if model.encoder.backbone is None:
         raise RuntimeError("timm is required for real mammography training but is not installed")
     model = model.to(device)
-    criterion = SmoothedBCEWithLogitsLoss(args.label_smoothing)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    criterion = build_criterion(args, device, pos_weight_value)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     accumulation_steps = max(1, args.effective_batch_size // args.batch_size)
     total_optimizer_steps = args.epochs * int(np.ceil(len(train_loader) / accumulation_steps))
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
@@ -403,13 +526,15 @@ def main():
             scheduler=scheduler,
             accumulation_steps=accumulation_steps,
         )
-        val_metrics = run_epoch(model, val_loader, criterion, device)
+        val_metrics = run_epoch(model, val_loader, criterion, device, tta=args.tta)
         epoch_summary = {
             "epoch": epoch,
             "train_loss": train_metrics["loss"],
             "train_auroc": train_metrics["auroc"],
+            "train_prauc": train_metrics["prauc"],
             "val_loss": val_metrics["loss"],
             "val_auroc": val_metrics["auroc"],
+            "val_prauc": val_metrics["prauc"],
             "lr": optimizer.param_groups[0]["lr"],
         }
         history.append(epoch_summary)
@@ -424,6 +549,7 @@ def main():
                 {
                     "model_state_dict": model.state_dict(),
                     "args": vars(args),
+                    "git_commit": get_git_commit(),
                     "best_epoch": best_epoch,
                     "best_val_auroc": best_val_auroc,
                 },
@@ -435,12 +561,13 @@ def main():
 
     checkpoint = torch.load(output_dir / "best_model.pt", map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
-    test_metrics = run_epoch(model, test_loader, criterion, device)
+    test_metrics = run_epoch(model, test_loader, criterion, device, tta=args.tta)
 
     summary = {
         "best_epoch": best_epoch,
         "best_val_auroc": best_val_auroc,
         "test_auroc": test_metrics["auroc"],
+        "test_prauc": test_metrics["prauc"],
         "test_sensitivity_at_90_specificity": test_metrics["sensitivity_at_90_specificity"],
         "test_specificity_at_90_sensitivity": test_metrics["specificity_at_90_sensitivity"],
         "train_exams": len(train_ds),
@@ -449,9 +576,30 @@ def main():
         "image_size": args.image_size,
         "batch_size": args.batch_size,
         "effective_batch_size": args.effective_batch_size,
+        "loss": args.loss,
+        "balance_sampler": args.balance_sampler,
+        "pos_weight": pos_weight_value,
+        "tta": args.tta,
+        "train_negatives": train_neg,
+        "train_positives": train_pos,
+        "git_commit": get_git_commit(),
+    }
+    manifest = {
+        "git_commit": get_git_commit(),
+        "data_dir": str(data_dir),
+        "metadata_path": str(metadata_path),
+        "output_dir": str(output_dir),
+        "config": vars(args),
+        "split_counts": {k: len(v) for k, v in split_buckets.items()},
+        "class_balance": {
+            "train_negatives": train_neg,
+            "train_positives": train_pos,
+            "pos_weight": pos_weight_value,
+        },
     }
     save_json(output_dir / "summary.json", summary)
     save_json(output_dir / "history.json", history)
+    save_json(output_dir / "manifest.json", manifest)
     print(json.dumps(summary, indent=2))
 
 
