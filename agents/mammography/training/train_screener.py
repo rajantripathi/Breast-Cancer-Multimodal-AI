@@ -338,6 +338,22 @@ def save_json(path, payload):
     path.write_text(json.dumps(payload, indent=2))
 
 
+def build_manifest(data_dir, metadata_path, output_dir, args, split_buckets, train_neg, train_pos, pos_weight_value):
+    return {
+        "git_commit": get_git_commit(),
+        "data_dir": str(data_dir),
+        "metadata_path": str(metadata_path),
+        "output_dir": str(output_dir),
+        "config": vars(args),
+        "split_counts": {k: len(v) for k, v in split_buckets.items()},
+        "class_balance": {
+            "train_negatives": train_neg,
+            "train_positives": train_pos,
+            "pos_weight": pos_weight_value,
+        },
+    }
+
+
 class SmoothedBCEWithLogitsLoss(nn.Module):
     def __init__(self, smoothing=0.1):
         super().__init__()
@@ -514,6 +530,17 @@ def main():
     best_val_auroc = -1.0
     best_epoch = -1
     history = []
+    manifest = build_manifest(
+        data_dir,
+        metadata_path,
+        output_dir,
+        args,
+        split_buckets,
+        train_neg,
+        train_pos,
+        pos_weight_value,
+    )
+    save_json(output_dir / "manifest.json", manifest)
 
     for epoch in range(1, args.epochs + 1):
         model.freeze_backbone(epoch <= args.freeze_epochs)
@@ -539,6 +566,7 @@ def main():
         }
         history.append(epoch_summary)
         print(json.dumps(epoch_summary))
+        save_json(output_dir / "history.json", history)
 
         if np.isnan(val_metrics["auroc"]):
             continue
@@ -583,19 +611,6 @@ def main():
         "train_negatives": train_neg,
         "train_positives": train_pos,
         "git_commit": get_git_commit(),
-    }
-    manifest = {
-        "git_commit": get_git_commit(),
-        "data_dir": str(data_dir),
-        "metadata_path": str(metadata_path),
-        "output_dir": str(output_dir),
-        "config": vars(args),
-        "split_counts": {k: len(v) for k, v in split_buckets.items()},
-        "class_balance": {
-            "train_negatives": train_neg,
-            "train_positives": train_pos,
-            "pos_weight": pos_weight_value,
-        },
     }
     save_json(output_dir / "summary.json", summary)
     save_json(output_dir / "history.json", history)
