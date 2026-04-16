@@ -126,6 +126,11 @@ def extract_side_labels(row: pd.Series, patient_id: str) -> dict[str, int]:
     labels: dict[str, int] = {}
     normalized = {normalize_colname(col): row[col] for col in row.index}
 
+    row_side = str(normalized.get("leftright", "") or "").strip().upper()
+    row_label = parse_label_value(normalized.get("classification"))
+    if row_side in {"L", "R"} and row_label is not None:
+        labels[row_side.lower()] = row_label
+
     for key, value in normalized.items():
         side = None
         if "left" in key:
@@ -164,7 +169,12 @@ def build_side_label_map(clinical_df: pd.DataFrame) -> dict[str, dict[str, int]]
         if not side_labels:
             skipped += 1
             continue
-        side_map[patient_id] = side_labels
+        current = side_map.setdefault(patient_id, {})
+        for side, label in side_labels.items():
+            if side in current:
+                current[side] = max(current[side], label)
+            else:
+                current[side] = label
     print(f"Clinical rows with usable side labels: {len(side_map)} (skipped={skipped})")
     return side_map
 
@@ -200,6 +210,14 @@ def infer_view(ds) -> str | None:
     value = str(getattr(ds, "ViewPosition", "") or "").strip().upper()
     if value in VIEW_KEYS:
         return value.lower()
+
+    if getattr(ds, "ViewCodeSequence", None):
+        code_meaning = str(getattr(ds.ViewCodeSequence[0], "CodeMeaning", "") or "").strip().lower()
+        if "cranio" in code_meaning or code_meaning == "cc":
+            return "cc"
+        if "oblique" in code_meaning or "mlo" in code_meaning:
+            return "mlo"
+
     series_desc = str(getattr(ds, "SeriesDescription", "") or "").upper()
     if "MLO" in series_desc:
         return "mlo"
