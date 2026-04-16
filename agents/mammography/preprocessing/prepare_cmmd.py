@@ -15,8 +15,6 @@ Notes:
   side should be treated as benign when missing.
 """
 
-from __future__ import annotations
-
 import argparse
 import re
 from collections import defaultdict
