@@ -1,13 +1,16 @@
 """
 Training script for mammography screening model.
 
+Recovered from commit f209755, which produced the tracked
+`outputs/mammography/summary.json` benchmark at test AUROC 0.7407.
+
 Usage:
   python -m agents.mammography.training.train_screener \
     --data-dir data/mammography/vindr-mammo/processed \
     --output-dir outputs/mammography \
     --epochs 50 \
-    --lr 3e-4 \
-    --batch-size 2 \
+    --lr 1e-4 \
+    --batch-size 8 \
     --device auto
 """
 
@@ -23,7 +26,7 @@ import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 
-from agents.mammography.models.screening_model import MammographyScreener
+from agents.mammography.models.screening_model_legacy import LegacyMammographyScreener as MammographyScreener
 
 try:
     import pydicom
@@ -40,16 +43,23 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", required=True)
     parser.add_argument("--output-dir", default="outputs/mammography")
+    parser.add_argument(
+        "--checkpoint",
+        default=None,
+        help="Optional checkpoint to evaluate or resume from. Defaults to <output-dir>/best_model.pt.",
+    )
+    parser.add_argument(
+        "--eval-only",
+        action="store_true",
+        help="Skip training and only evaluate the provided checkpoint on the test split.",
+    )
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--lr", type=float, default=3e-4)
-    parser.add_argument("--batch-size", type=int, default=2)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--image-size", type=int, default=1536)
+    parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--effective-batch-size", type=int, default=8)
-    parser.add_argument("--label-smoothing", type=float, default=0.1)
-    parser.add_argument("--freeze-epochs", type=int, default=5)
     return parser.parse_args()
 
 
@@ -134,25 +144,16 @@ def filter_valid_exams(exams):
 
 
 class MammographyExamDataset(Dataset):
-    def __init__(self, exams, image_size, training=False):
+    def __init__(self, exams, image_size):
         if pydicom is None or Image is None:
             raise ImportError("pydicom and Pillow are required for mammography training")
         self.exams = exams
         self.image_size = image_size
-        self.training = training
 
     def __len__(self):
         return len(self.exams)
 
-    def _load_png_or_dicom(self, exam, view_key):
-        path = exam["views"][view_key]
-        png_path = exam.get("png_views", {}).get(view_key)
-        if png_path is not None and png_path.exists():
-            img = Image.open(png_path)
-            arr = np.asarray(img, dtype=np.float32)
-            arr /= 65535.0 if arr.max() > 255 else 255.0
-            return arr
-
+    def _load_view(self, path):
         ds = pydicom.dcmread(path)
         arr = ds.pixel_array.astype(np.float32)
         if getattr(ds, "PhotometricInterpretation", "") == "MONOCHROME1":
@@ -160,52 +161,15 @@ class MammographyExamDataset(Dataset):
         arr -= arr.min()
         if arr.max() > 0:
             arr /= arr.max()
-        return arr
-
-    def _apply_augmentations(self, img):
-        if random.random() < 0.5:
-            img = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-
-        angle = random.uniform(-10.0, 10.0)
-        img = img.rotate(angle, resample=Image.Resampling.BILINEAR, fillcolor=0)
-
-        crop_scale = random.uniform(0.9, 1.0)
-        width, height = img.size
-        crop_w = max(1, int(width * crop_scale))
-        crop_h = max(1, int(height * crop_scale))
-        left = random.randint(0, max(width - crop_w, 0))
-        top = random.randint(0, max(height - crop_h, 0))
-        img = img.crop((left, top, left + crop_w, top + crop_h)).resize(
-            (self.image_size, self.image_size),
-            resample=Image.Resampling.BILINEAR,
-        )
-
-        brightness = random.uniform(0.85, 1.15)
-        contrast = random.uniform(0.85, 1.15)
-        arr = np.asarray(img, dtype=np.float32)
-        arr *= brightness
-        mean = arr.mean()
-        arr = (arr - mean) * contrast + mean
-        arr = np.clip(arr, 0.0, 1.0)
-        return Image.fromarray((arr * 65535.0).astype(np.uint16), mode="I;16")
-
-    def _load_view(self, exam, view_key):
-        arr = self._load_png_or_dicom(exam, view_key)
-        img = Image.fromarray((arr * 65535.0).astype(np.uint16), mode="I;16")
-        if self.training:
-            img = self._apply_augmentations(img)
-        arr = np.asarray(img, dtype=np.float32) / 65535.0
-        if arr.shape != (self.image_size, self.image_size):
-            img = Image.fromarray((arr * 65535.0).astype(np.uint16), mode="I;16").resize(
-                (self.image_size, self.image_size), resample=Image.Resampling.BILINEAR
-            )
-            arr = np.asarray(img, dtype=np.float32) / 65535.0
-        arr = np.stack([arr, arr, arr], axis=0)
+        img = Image.fromarray((arr * 255.0).astype(np.uint8)).convert("RGB")
+        img = img.resize((self.image_size, self.image_size))
+        arr = np.asarray(img, dtype=np.float32) / 255.0
+        arr = np.transpose(arr, (2, 0, 1))
         return torch.from_numpy(arr)
 
     def __getitem__(self, idx):
         exam = self.exams[idx]
-        views = {k: self._load_view(exam, k) for k in VIEW_KEYS}
+        views = {k: self._load_view(exam["views"][k]) for k in VIEW_KEYS}
         return {
             "views": views,
             "label": torch.tensor(float(exam["label"]), dtype=torch.float32),
@@ -249,16 +213,14 @@ def compute_metrics(labels, probs):
     return metrics
 
 
-def run_epoch(model, loader, criterion, device, optimizer=None, scheduler=None, accumulation_steps=1):
+def run_epoch(model, loader, criterion, device, optimizer=None):
     training = optimizer is not None
     model.train(training)
     total_loss = 0.0
     all_labels = []
     all_probs = []
-    if training:
-        optimizer.zero_grad()
 
-    for step, batch in enumerate(loader, start=1):
+    for batch in loader:
         views = {k: v.to(device) for k, v in batch["views"].items()}
         labels = batch["labels"].to(device)
 
@@ -267,12 +229,9 @@ def run_epoch(model, loader, criterion, device, optimizer=None, scheduler=None, 
             logits = logits.squeeze(1)
             loss = criterion(logits, labels)
             if training:
-                (loss / accumulation_steps).backward()
-                if step % accumulation_steps == 0 or step == len(loader):
-                    optimizer.step()
-                    optimizer.zero_grad()
-                    if scheduler is not None:
-                        scheduler.step()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
         probs = torch.sigmoid(logits).detach().cpu().numpy()
         all_probs.extend(probs.tolist())
@@ -289,17 +248,6 @@ def save_json(path, payload):
     path.write_text(json.dumps(payload, indent=2))
 
 
-class SmoothedBCEWithLogitsLoss(nn.Module):
-    def __init__(self, smoothing=0.1):
-        super().__init__()
-        self.smoothing = smoothing
-        self.loss = nn.BCEWithLogitsLoss()
-
-    def forward(self, logits, labels):
-        smooth_labels = labels * (1.0 - self.smoothing) + 0.5 * self.smoothing
-        return self.loss(logits, smooth_labels)
-
-
 def main():
     args = parse_args()
     set_seed(args.seed)
@@ -308,6 +256,7 @@ def main():
     data_dir = Path(args.data_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_path = Path(args.checkpoint) if args.checkpoint else (output_dir / "best_model.pt")
 
     metadata_path = data_dir / "metadata.csv"
     if not metadata_path.exists():
@@ -317,18 +266,6 @@ def main():
     exams = build_exam_records(metadata_path, raw_dir)
     if not exams:
         raise RuntimeError(f"No complete 4-view exams found under {raw_dir}")
-
-    png_root = data_dir / f"png_{args.image_size}"
-    fallback_png_root = data_dir / "png_1024"
-    for exam in exams:
-        exam["png_views"] = {}
-        for key, dicom_path in exam["views"].items():
-            image_id = dicom_path.stem
-            png_path = png_root / exam["study_id"] / f"{image_id}.png"
-            if not png_path.exists():
-                png_path = fallback_png_root / exam["study_id"] / f"{image_id}.png"
-            if png_path.exists():
-                exam["png_views"][key] = png_path
 
     exams, dropped = filter_valid_exams(exams)
     if not exams:
@@ -345,9 +282,9 @@ def main():
     if dropped:
         print(f"Dropped invalid exams: {dropped}")
 
-    train_ds = MammographyExamDataset(split_buckets["train"], args.image_size, training=True)
-    val_ds = MammographyExamDataset(split_buckets["val"], args.image_size, training=False)
-    test_ds = MammographyExamDataset(split_buckets["test"], args.image_size, training=False)
+    train_ds = MammographyExamDataset(split_buckets["train"], args.image_size)
+    val_ds = MammographyExamDataset(split_buckets["val"], args.image_size)
+    test_ds = MammographyExamDataset(split_buckets["test"], args.image_size)
 
     train_loader = DataLoader(
         train_ds,
@@ -378,31 +315,39 @@ def main():
     if model.encoder.backbone is None:
         raise RuntimeError("timm is required for real mammography training but is not installed")
     model = model.to(device)
-    criterion = SmoothedBCEWithLogitsLoss(args.label_smoothing)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
-    accumulation_steps = max(1, args.effective_batch_size // args.batch_size)
-    total_optimizer_steps = args.epochs * int(np.ceil(len(train_loader) / accumulation_steps))
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer,
-        T_max=max(total_optimizer_steps, 1),
-        eta_min=1e-6,
-    )
+    criterion = nn.BCEWithLogitsLoss()
 
     best_val_auroc = -1.0
     best_epoch = -1
     history = []
 
+    if args.eval_only:
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"Missing checkpoint for eval-only run: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        best_epoch = int(checkpoint.get("best_epoch", -1))
+        best_val_auroc = float(checkpoint.get("best_val_auroc", float("nan")))
+        test_metrics = run_epoch(model, test_loader, criterion, device)
+        summary = {
+            "best_epoch": best_epoch,
+            "best_val_auroc": best_val_auroc,
+            "test_auroc": test_metrics["auroc"],
+            "test_sensitivity_at_90_specificity": test_metrics["sensitivity_at_90_specificity"],
+            "test_specificity_at_90_sensitivity": test_metrics["specificity_at_90_sensitivity"],
+            "train_exams": len(train_ds),
+            "val_exams": len(val_ds),
+            "test_exams": len(test_ds),
+            "image_size": args.image_size,
+        }
+        save_json(output_dir / "summary.json", summary)
+        print(json.dumps(summary, indent=2))
+        return
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+
     for epoch in range(1, args.epochs + 1):
-        model.freeze_backbone(epoch <= args.freeze_epochs)
-        train_metrics = run_epoch(
-            model,
-            train_loader,
-            criterion,
-            device,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            accumulation_steps=accumulation_steps,
-        )
+        train_metrics = run_epoch(model, train_loader, criterion, device, optimizer=optimizer)
         val_metrics = run_epoch(model, val_loader, criterion, device)
         epoch_summary = {
             "epoch": epoch,
@@ -410,7 +355,6 @@ def main():
             "train_auroc": train_metrics["auroc"],
             "val_loss": val_metrics["loss"],
             "val_auroc": val_metrics["auroc"],
-            "lr": optimizer.param_groups[0]["lr"],
         }
         history.append(epoch_summary)
         print(json.dumps(epoch_summary))
@@ -427,13 +371,13 @@ def main():
                     "best_epoch": best_epoch,
                     "best_val_auroc": best_val_auroc,
                 },
-                output_dir / "best_model.pt",
+                checkpoint_path,
             )
 
     if best_epoch < 0:
         raise RuntimeError("Validation AUROC was never defined; check label balance.")
 
-    checkpoint = torch.load(output_dir / "best_model.pt", map_location=device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
     test_metrics = run_epoch(model, test_loader, criterion, device)
 
@@ -447,8 +391,6 @@ def main():
         "val_exams": len(val_ds),
         "test_exams": len(test_ds),
         "image_size": args.image_size,
-        "batch_size": args.batch_size,
-        "effective_batch_size": args.effective_batch_size,
     }
     save_json(output_dir / "summary.json", summary)
     save_json(output_dir / "history.json", history)
