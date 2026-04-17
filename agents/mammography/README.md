@@ -19,3 +19,8 @@ AI platform (screening + multimodal diagnosis/prognosis).
 - Sensitivity at 90% specificity
 - Specificity at 90% sensitivity
 
+## Current Result
+- Canonical benchmark: VinDr-only legacy recovery
+- `test_auroc`: `0.7407175925925926`
+- CMMD auxiliary ablation was completed and did not improve VinDr test
+  performance (`0.7091564427808968`), so it is not the default path

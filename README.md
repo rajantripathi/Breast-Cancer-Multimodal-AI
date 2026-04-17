@@ -83,10 +83,14 @@ diagnostic pipeline. This creates a two-stage clinical AI platform:
 - [x] Preprocessing pipeline
 - [x] Model architecture
 - [x] SLURM training scripts
-- [ ] VinDr-Mammo data download (pending PhysioNet access)
-- [ ] Model training
-- [ ] Evaluation and benchmarking
+- [x] VinDr-Mammo benchmark recovery
+- [x] Model training
+- [x] Evaluation and benchmarking
 - [ ] Integration with pathology pipeline
+
+Current screening benchmark:
+- VinDr-only legacy recovery: `test_auroc = 0.7407`
+- CMMD auxiliary ablation: `test_auroc = 0.7092`
 
 ## Foundation Models
 
