@@ -20,6 +20,30 @@ Two-stage AI platform for breast cancer screening, diagnosis, and prognosis.
 - **Endpoint:** PFI per TCGA-CDR recommendation
 - **Paper:** Submitted to Computer Methods and Programs in Biomedicine
 
+## Mammography Status
+
+- Default screening path: legacy VinDr-only ConvNeXt recipe
+- Final mammography benchmark: `test_auroc = 0.7407`
+- CMMD auxiliary ablation: `test_auroc = 0.7092`
+
+## Foundation Models
+
+- `UNI2` | Vision | `1536` dims | Active | Harvard/Mahmood Lab
+- `CTransPath` | Vision | `768` dims | Active | Open access
+- `Virchow` | Vision | `1280` dims | Approved | Paige AI
+- `CONCH` | Vision-language | `512` dims | Pending | Harvard/Mahmood Lab
+
+## Publications and References
+
+- Pathomic Fusion
+- PORPOISE
+- SurvPath
+- MMP
+- UNI2
+- TITAN
+- MCAT
+- SABCS 2025 ICM+ benchmark
+
 ## Infrastructure
 
 - Isambard-AI national supercomputer (NVIDIA GH200, 32 GPUs)

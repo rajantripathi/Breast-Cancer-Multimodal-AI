@@ -1,17 +1,16 @@
 """
-Training script for mammography screening model.
+Legacy-style mammography screener training with train-only auxiliary metadata.
 
-Recovered from commit f209755, which produced the tracked
-`outputs/mammography/summary.json` benchmark at test AUROC 0.7407.
+This keeps the recovered legacy recipe intact:
+- ConvNeXt-Base 4-view attention fusion
+- BCEWithLogitsLoss
+- AdamW at 1e-4
+- batch size 8
+- no class balancing
+- no source weighting
 
-Usage:
-  python -m agents.mammography.training.train_screener \
-    --data-dir data/mammography/vindr-mammo/processed \
-    --output-dir outputs/mammography \
-    --epochs 50 \
-    --lr 1e-4 \
-    --batch-size 8 \
-    --device auto
+Auxiliary metadata is folded into the training split only. Validation and test
+remain driven by the primary dataset metadata.
 """
 
 import argparse
@@ -42,17 +41,9 @@ VIEW_KEYS = ["lcc", "rcc", "lmlo", "rmlo"]
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", required=True)
+    parser.add_argument("--metadata-csv", default=None)
+    parser.add_argument("--aux-metadata-csv", action="append", default=[])
     parser.add_argument("--output-dir", default="outputs/mammography")
-    parser.add_argument(
-        "--checkpoint",
-        default=None,
-        help="Optional checkpoint to evaluate or resume from. Defaults to <output-dir>/best_model.pt.",
-    )
-    parser.add_argument(
-        "--eval-only",
-        action="store_true",
-        help="Skip training and only evaluate the provided checkpoint on the test split.",
-    )
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--batch-size", type=int, default=8)
@@ -89,32 +80,70 @@ def normalize_view_name(laterality, view_name):
     return None
 
 
-def build_exam_records(metadata_path, raw_dir):
-    records = {}
+def infer_dataset_source(metadata_path, row):
+    source = str(row.get("dataset_source") or "").strip().lower()
+    if source:
+        return source
+    if "cmmd" in str(metadata_path).lower():
+        return "cmmd"
+    return "vindr"
+
+
+def resolve_dicom_path(row, raw_dir):
+    explicit = str(row.get("raw_path") or row.get("dicom_path") or "").strip()
+    if explicit and Path(explicit).exists():
+        return Path(explicit)
+
+    study_id = row.get("study_id")
+    image_id = row.get("image_id")
+    if not study_id or not image_id:
+        return None
+
     raw_dir = Path(raw_dir)
     archive_root = raw_dir / (
         "vindr-mammo-a-large-scale-benchmark-dataset-for-computer-aided-detection-and-diagnosis-in-full-field-digital-mammography-1.0.0"
     )
-    for row in csv.DictReader(metadata_path.open()):
-        study_id = row["study_id"]
-        image_id = row["image_id"]
-        split = row["split"]
-        label = int(row["label"])
-        key = normalize_view_name(row.get("laterality"), row.get("view_position") or row.get("view"))
-        if key is None:
-            continue
+    candidates = [
+        raw_dir / "images" / str(study_id) / f"{image_id}.dicom",
+        archive_root / "images" / str(study_id) / f"{image_id}.dicom",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
 
-        dicom_path = raw_dir / "images" / study_id / f"{image_id}.dicom"
-        if not dicom_path.exists():
-            dicom_path = archive_root / "images" / study_id / f"{image_id}.dicom"
-        if not dicom_path.exists():
-            continue
 
-        exam = records.setdefault(
-            study_id,
-            {"study_id": study_id, "split": split, "label": label, "views": {}},
-        )
-        exam["views"][key] = dicom_path
+def build_exam_records(metadata_specs):
+    records = {}
+    for metadata_path, raw_dir, auxiliary_only in metadata_specs:
+        for row in csv.DictReader(metadata_path.open()):
+            study_id = str(row["study_id"]).strip()
+            image_id = str(row["image_id"]).strip()
+            split = "train" if auxiliary_only else str(row.get("split", "train")).strip().lower()
+            label = int(row["label"])
+            key = normalize_view_name(row.get("laterality"), row.get("view_position") or row.get("view"))
+            if key is None:
+                continue
+
+            dataset_source = infer_dataset_source(metadata_path, row)
+            dicom_path = resolve_dicom_path(row, raw_dir)
+            if dicom_path is None or not dicom_path.exists():
+                continue
+
+            exam_key = (dataset_source, study_id)
+            exam = records.setdefault(
+                exam_key,
+                {
+                    "study_id": study_id,
+                    "sample_id": f"{dataset_source}:{study_id}",
+                    "split": split,
+                    "label": label,
+                    "dataset_source": dataset_source,
+                    "views": {},
+                },
+            )
+            exam["label"] = max(int(exam["label"]), label)
+            exam["views"][key] = dicom_path
 
     exams = []
     for exam in records.values():
@@ -173,7 +202,7 @@ class MammographyExamDataset(Dataset):
         return {
             "views": views,
             "label": torch.tensor(float(exam["label"]), dtype=torch.float32),
-            "study_id": exam["study_id"],
+            "study_id": exam["sample_id"],
         }
 
 
@@ -256,24 +285,31 @@ def main():
     data_dir = Path(args.data_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint_path = Path(args.checkpoint) if args.checkpoint else (output_dir / "best_model.pt")
 
-    metadata_path = data_dir / "metadata.csv"
+    metadata_path = Path(args.metadata_csv) if args.metadata_csv else (data_dir / "metadata.csv")
     if not metadata_path.exists():
         raise FileNotFoundError(f"Missing metadata file: {metadata_path}")
 
-    raw_dir = data_dir.parent / "raw"
-    exams = build_exam_records(metadata_path, raw_dir)
+    metadata_specs = [(metadata_path, data_dir.parent / "raw", False)]
+    for item in args.aux_metadata_csv:
+        aux_path = Path(item)
+        if not aux_path.exists():
+            raise FileNotFoundError(f"Missing auxiliary metadata file: {aux_path}")
+        metadata_specs.append((aux_path, aux_path.parent.parent / "raw", True))
+
+    exams = build_exam_records(metadata_specs)
     if not exams:
-        raise RuntimeError(f"No complete 4-view exams found under {raw_dir}")
+        raise RuntimeError("No complete 4-view exams found across the supplied metadata sources")
 
     exams, dropped = filter_valid_exams(exams)
     if not exams:
         raise RuntimeError("All candidate exams failed DICOM validation")
 
     split_buckets = {"train": [], "val": [], "test": []}
+    source_counts = {"vindr": 0, "cmmd": 0}
     for exam in exams:
         split_buckets[exam["split"]].append(exam)
+        source_counts[exam["dataset_source"]] = source_counts.get(exam["dataset_source"], 0) + 1
 
     print(
         f"Loaded exams: train={len(split_buckets['train'])}, "
@@ -281,6 +317,7 @@ def main():
     )
     if dropped:
         print(f"Dropped invalid exams: {dropped}")
+    print(f"Data sources: {source_counts}")
 
     train_ds = MammographyExamDataset(split_buckets["train"], args.image_size)
     val_ds = MammographyExamDataset(split_buckets["val"], args.image_size)
@@ -316,35 +353,11 @@ def main():
         raise RuntimeError("timm is required for real mammography training but is not installed")
     model = model.to(device)
     criterion = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
     best_val_auroc = -1.0
     best_epoch = -1
     history = []
-
-    if args.eval_only:
-        if not checkpoint_path.exists():
-            raise FileNotFoundError(f"Missing checkpoint for eval-only run: {checkpoint_path}")
-        checkpoint = torch.load(checkpoint_path, map_location=device)
-        model.load_state_dict(checkpoint["model_state_dict"])
-        best_epoch = int(checkpoint.get("best_epoch", -1))
-        best_val_auroc = float(checkpoint.get("best_val_auroc", float("nan")))
-        test_metrics = run_epoch(model, test_loader, criterion, device)
-        summary = {
-            "best_epoch": best_epoch,
-            "best_val_auroc": best_val_auroc,
-            "test_auroc": test_metrics["auroc"],
-            "test_sensitivity_at_90_specificity": test_metrics["sensitivity_at_90_specificity"],
-            "test_specificity_at_90_sensitivity": test_metrics["specificity_at_90_sensitivity"],
-            "train_exams": len(train_ds),
-            "val_exams": len(val_ds),
-            "test_exams": len(test_ds),
-            "image_size": args.image_size,
-        }
-        save_json(output_dir / "summary.json", summary)
-        print(json.dumps(summary, indent=2))
-        return
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train_metrics = run_epoch(model, train_loader, criterion, device, optimizer=optimizer)
@@ -371,13 +384,13 @@ def main():
                     "best_epoch": best_epoch,
                     "best_val_auroc": best_val_auroc,
                 },
-                checkpoint_path,
+                output_dir / "best_model.pt",
             )
 
     if best_epoch < 0:
         raise RuntimeError("Validation AUROC was never defined; check label balance.")
 
-    checkpoint = torch.load(checkpoint_path, map_location=device)
+    checkpoint = torch.load(output_dir / "best_model.pt", map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
     test_metrics = run_epoch(model, test_loader, criterion, device)
 
@@ -391,6 +404,7 @@ def main():
         "val_exams": len(val_ds),
         "test_exams": len(test_ds),
         "image_size": args.image_size,
+        "data_sources": source_counts,
     }
     save_json(output_dir / "summary.json", summary)
     save_json(output_dir / "history.json", history)
