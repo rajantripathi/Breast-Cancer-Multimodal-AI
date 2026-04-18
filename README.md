@@ -1,37 +1,41 @@
 # Breast Cancer Multimodal AI
 
-Two-stage AI platform for breast cancer screening, diagnosis, and prognosis.
+Stage 2 multimodal pathology benchmarking system for breast cancer
+diagnosis and prognosis, with a two-stage screening-to-diagnosis
+deployment path.
 
-## Stage 1: Mammography Screening
-
-- **Task:** Population-level breast cancer detection from mammograms
-- **Data:** VinDr-Mammo (5,000 exams, 20,000 images)
-- **Model:** ConvNeXt-Base with 4-view attention fusion
-- **Result:** Test AUROC 0.741
-- **Module:** `agents/mammography/`
-
-## Stage 2: Multimodal Pathology Diagnosis + Prognosis
+## Stage 2 Benchmark Contribution
 
 - **Task:** Individual patient risk assessment from tissue + genomics + clinical
 - **Data:** TCGA-BRCA (1,054 slides, 1,094 RNA-seq, 1,097 clinical)
-- **Models:** UNI2, CONCH, CTransPath (foundation model comparison)
-- **Best Result:** CONCH V+C+G cross-attention, C-index 0.609 +/- 0.044
-- **Risk Stratification:** Log-rank p = 0.041 (n = 1,043)
+- **Benchmark focus:** foundation encoder comparison under a shared multimodal survival pipeline
+- **Vision encoders compared:** UNI2, CONCH, CTransPath
+- **Best result:** CONCH V+C+G cross-attention, C-index `0.609 +/- 0.044`
+- **Risk stratification:** Log-rank `p = 0.041` (`n = 1,043`)
 - **Endpoint:** PFI per TCGA-CDR recommendation
 - **Paper:** Submitted to Computer Methods and Programs in Biomedicine
 
-## Mammography Status
+## Encoder Benchmarking
+
+- `CONCH` | Vision-language | `512` dims | Best downstream survival result
+- `UNI2` | Vision | `1536` dims | Strong pathology baseline
+- `CTransPath` | Vision | `768` dims | Open-access pathology encoder
+- `Virchow` | Vision | `1280` dims | Approved for later comparison, not the current benchmark winner
+
+## Clinical Deployment Context
+
+The repository also carries the deployment path as a two-stage breast
+cancer AI system:
+
+1. **Stage 1: Mammography screening** for population-level detection
+2. **Stage 2: Multimodal pathology diagnosis + prognosis** for patient-level risk assessment
+
+### Stage 1: Mammography Screening
 
 - Default screening path: legacy VinDr-only ConvNeXt recipe
 - Final mammography benchmark: `test_auroc = 0.7407`
 - CMMD auxiliary ablation: `test_auroc = 0.7092`
-
-## Foundation Models
-
-- `UNI2` | Vision | `1536` dims | Active | Harvard/Mahmood Lab
-- `CTransPath` | Vision | `768` dims | Active | Open access
-- `Virchow` | Vision | `1280` dims | Approved | Paige AI
-- `CONCH` | Vision-language | `512` dims | Pending | Harvard/Mahmood Lab
+- Module: `agents/mammography/`
 
 ## Publications and References
 
