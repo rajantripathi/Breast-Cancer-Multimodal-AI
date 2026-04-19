@@ -1,0 +1,46 @@
+{
+  "status": "blocked_missing_training_clinical_csv",
+  "verified_exact_clinical_dim": null,
+  "verified_feature_names": [],
+  "paper_assumed_clinical_dim": 10,
+  "artifact_reference": {
+    "source": "outputs/paper/conch_ca_vcg/artifact.json",
+    "clinical_csv": "data/tcga_brca_clinical.csv",
+    "genomics_feature_count": 550,
+    "vision_feature_count": 512
+  },
+  "code_verified_feature_selection_rule": {
+    "source": "training/tcga_verifier.py",
+    "function": "_clinical_feature_columns",
+    "rule": "Use all numeric and boolean columns from the clinical CSV except the excluded survival bookkeeping columns.",
+    "excluded_columns": [
+      "clinical_row_idx",
+      "days_to_death",
+      "days_to_last_followup",
+      "vital_status"
+    ]
+  },
+  "upstream_raw_clinical_columns": {
+    "source": "data/download/download_tcga_brca.py",
+    "columns": [
+      "bcr_patient_barcode",
+      "age_at_diagnosis",
+      "gender",
+      "vital_status",
+      "days_to_death",
+      "days_to_last_followup",
+      "tumor_stage",
+      "pathologic_stage",
+      "er_status_by_ihc",
+      "pr_status_by_ihc",
+      "her2_status_by_ihc",
+      "histological_type"
+    ]
+  },
+  "notes": [
+    "The trained paper artifacts consistently reference data/tcga_brca_clinical.csv as the clinical feature source.",
+    "That CSV is not present in the current local clean worktree or the current Isambard checkout, so the exact trained clinical_dim and the exact feature names cannot be re-derived from the current filesystem.",
+    "What is verified is the feature-selection rule in training/tcga_verifier.py: the model consumes numeric/bool columns from the clinical CSV after excluding clinical_row_idx, days_to_death, days_to_last_followup, and vital_status.",
+    "Because the actual training CSV is missing, the paper's assumed clinical_dim=10 remains unverified rather than disproved."
+  ]
+}

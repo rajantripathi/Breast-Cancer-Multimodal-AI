@@ -47,7 +47,10 @@ def set_style() -> None:
 
 def save(fig: plt.Figure, filename: str) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(OUT_DIR / filename, dpi=300, bbox_inches="tight")
+    png_path = OUT_DIR / filename
+    pdf_path = OUT_DIR / filename.replace(".png", ".pdf")
+    fig.savefig(png_path, dpi=600, bbox_inches="tight")
+    fig.savefig(pdf_path, bbox_inches="tight")
     plt.close(fig)
 
 

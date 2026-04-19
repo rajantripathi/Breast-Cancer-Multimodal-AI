@@ -1,0 +1,22 @@
+{
+  "higher_resolution_1536": {
+    "test_auroc": null,
+    "val_auroc": null,
+    "notes": "Targeted launcher preserved in slurm/mammography/32_train_screener.sh with --image-size 1536, but no retained summary.json or identifiable log for the 1536 run exists in the current Isambard outputs/logs tree. Exact AUROC cannot be recovered from preserved artifacts and would require rerunning the 1536 experiment or locating older archived logs."
+  },
+  "efficientnet_b5": {
+    "test_auroc": null,
+    "val_auroc": null,
+    "notes": "No standalone EfficientNet-B5 mammography summary or log artifact is retained in the current Isambard outputs/logs tree. The only explicit EfficientNet-B5 reference in the current repo is the Mammo-CLIP classifier backbone string in agents/mammography/training/train_mammoclip_classifier.py. Exact AUROC for a separate EfficientNet-B5 baseline cannot be recovered from preserved artifacts and would require rerunning that baseline or locating an older experiment archive."
+  },
+  "mammo_clip": {
+    "test_auroc": null,
+    "val_auroc": null,
+    "notes": "Launchers and code are preserved for Mammo-CLIP runs: slurm/mammography/34_train_mammoclip_classifier.sh -> outputs/mammography/mammoclip_attn and slurm/mammography/37_train_breast_mammoclip_multiview.sh -> outputs/mammography/mammoclip_breast_multiview. No retained summary.json or log for either output directory exists in the current Isambard outputs/logs tree, so the exact AUROC cannot be recovered without rerunning or finding older archived artifacts."
+  },
+  "vindr_cmmd": {
+    "test_auroc": 0.7091564427808968,
+    "val_auroc": 0.7201704026035763,
+    "notes": "Confirmed from outputs/mammography/vindr_cmmd_legacy_seed42/summary.json on Isambard. Legacy VinDr recipe with CMMD auxiliary data; training data sources were vindr=4996 and cmmd=826 at 224px."
+  }
+}
