@@ -6,6 +6,7 @@ Two-stage AI platform for breast cancer screening, diagnosis, and prognosis.
 
 - **Task:** Population-level breast cancer detection from mammograms
 - **Data:** VinDr-Mammo (5,000 exams, 20,000 images)
+- **Auxiliary Data Path:** optional train-only public mammography expansion via metadata-compatible auxiliary datasets such as CBIS-DDSM
 - **Model:** ConvNeXt-Base with 4-view attention fusion
 - **Result:** Test AUROC 0.741
 - **Module:** `agents/mammography/`
@@ -18,12 +19,17 @@ Two-stage AI platform for breast cancer screening, diagnosis, and prognosis.
 - **Best Result:** CONCH V+C+G cross-attention, C-index 0.609 +/- 0.044
 - **Risk Stratification:** Log-rank p = 0.041 (n = 1,043)
 - **Endpoint:** PFI per TCGA-CDR recommendation
-- **Paper:** Submitted to Computer Methods and Programs in Biomedicine
 
 ## Infrastructure
 
 - Isambard-AI national supercomputer (NVIDIA GH200, 32 GPUs)
 - Feature extraction parallelised across GPU shards
+
+## Scope
+
+This repository is the project codebase for the two-stage breast cancer AI
+workflow, including training, evaluation, orchestration, and paper-supporting
+analysis artifacts. It is not tied to a single manuscript submission target.
 
 ## Repository Structure
 
