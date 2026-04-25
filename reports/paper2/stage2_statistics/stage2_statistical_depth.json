@@ -1,0 +1,290 @@
+{
+  "B1_encoder_pairwise_tests": {
+    "CONCH_vs_CTransPath": {
+      "comparison": "CONCH_vs_CTransPath",
+      "mean_diff": 0.0059,
+      "wilcoxon_statistic": 7.0,
+      "wilcoxon_p": 1.0,
+      "exact_sign_flip_p": 0.9375,
+      "fold_metrics_a": [
+        0.6928,
+        0.5597,
+        0.5855,
+        0.5166,
+        0.5686
+      ],
+      "fold_metrics_b": [
+        0.5926,
+        0.5042,
+        0.6052,
+        0.6111,
+        0.5804
+      ]
+    },
+    "CONCH_vs_UNI2": {
+      "comparison": "CONCH_vs_UNI2",
+      "mean_diff": 0.0198,
+      "wilcoxon_statistic": 5.0,
+      "wilcoxon_p": 0.625,
+      "exact_sign_flip_p": 0.5,
+      "fold_metrics_a": [
+        0.6928,
+        0.5597,
+        0.5855,
+        0.5166,
+        0.5686
+      ],
+      "fold_metrics_b": [
+        0.6154,
+        0.5635,
+        0.53,
+        0.5732,
+        0.542
+      ]
+    },
+    "CTransPath_vs_UNI2": {
+      "comparison": "CTransPath_vs_UNI2",
+      "mean_diff": 0.0139,
+      "wilcoxon_statistic": 5.0,
+      "wilcoxon_p": 0.625,
+      "exact_sign_flip_p": 0.625,
+      "fold_metrics_a": [
+        0.5926,
+        0.5042,
+        0.6052,
+        0.6111,
+        0.5804
+      ],
+      "fold_metrics_b": [
+        0.6154,
+        0.5635,
+        0.53,
+        0.5732,
+        0.542
+      ]
+    }
+  },
+  "B2_ablation_significance": {
+    "V+G_vs_V": {
+      "comparison": "V+G_vs_V",
+      "mean_diff": 0.0172,
+      "wilcoxon_statistic": 7.0,
+      "wilcoxon_p": 1.0,
+      "exact_sign_flip_p": 0.8125,
+      "fold_metrics_a": [
+        0.6928,
+        0.5597,
+        0.5855,
+        0.5166,
+        0.5686
+      ],
+      "fold_metrics_b": [
+        0.5405,
+        0.5834,
+        0.6501,
+        0.5434,
+        0.52
+      ]
+    },
+    "V+C+G_vs_V": {
+      "comparison": "V+C+G_vs_V",
+      "mean_diff": 0.0418,
+      "wilcoxon_statistic": 3.0,
+      "wilcoxon_p": 0.3125,
+      "exact_sign_flip_p": 0.3125,
+      "fold_metrics_a": [
+        0.6588,
+        0.5558,
+        0.64,
+        0.6354,
+        0.5564
+      ],
+      "fold_metrics_b": [
+        0.5405,
+        0.5834,
+        0.6501,
+        0.5434,
+        0.52
+      ]
+    },
+    "V+C+G_vs_V+G": {
+      "comparison": "V+C+G_vs_V+G",
+      "mean_diff": 0.0247,
+      "wilcoxon_statistic": 6.0,
+      "wilcoxon_p": 0.8125,
+      "exact_sign_flip_p": 0.5,
+      "fold_metrics_a": [
+        0.6588,
+        0.5558,
+        0.64,
+        0.6354,
+        0.5564
+      ],
+      "fold_metrics_b": [
+        0.6928,
+        0.5597,
+        0.5855,
+        0.5166,
+        0.5686
+      ]
+    },
+    "V+C_vs_V": {
+      "comparison": "V+C_vs_V",
+      "mean_diff": -0.006,
+      "wilcoxon_statistic": 5.0,
+      "wilcoxon_p": 0.625,
+      "exact_sign_flip_p": 0.75,
+      "fold_metrics_a": [
+        0.525,
+        0.6351,
+        0.6153,
+        0.5264,
+        0.5057
+      ],
+      "fold_metrics_b": [
+        0.5405,
+        0.5834,
+        0.6501,
+        0.5434,
+        0.52
+      ]
+    }
+  },
+  "B3_time_dependent_auc": {
+    "2_year": {
+      "auroc": 0.5855,
+      "n_eligible": 615,
+      "n_events": 60
+    },
+    "3_year": {
+      "auroc": 0.5686,
+      "n_eligible": 485,
+      "n_events": 84
+    },
+    "5_year": {
+      "auroc": 0.6123,
+      "n_eligible": 332,
+      "n_events": 116
+    },
+    "5_year_CONCH": {
+      "auroc": 0.576,
+      "n_eligible": 332,
+      "n_events": 116
+    },
+    "5_year_CTransPath": {
+      "auroc": 0.552,
+      "n_eligible": 332,
+      "n_events": 116
+    },
+    "5_year_UNI2": {
+      "auroc": 0.4918,
+      "n_eligible": 332,
+      "n_events": 116
+    }
+  },
+  "B4_survival_calibration": {
+    "horizon_days": 1826.25,
+    "n_bins": 10,
+    "calibration_bins": [
+      {
+        "bin": 1,
+        "mean_predicted_probability": 0.1119,
+        "observed_event_rate": 0.1471,
+        "n_patients": 105,
+        "n_events_within_horizon": 5
+      },
+      {
+        "bin": 2,
+        "mean_predicted_probability": 0.2073,
+        "observed_event_rate": 0.325,
+        "n_patients": 104,
+        "n_events_within_horizon": 13
+      },
+      {
+        "bin": 3,
+        "mean_predicted_probability": 0.3671,
+        "observed_event_rate": 0.4231,
+        "n_patients": 104,
+        "n_events_within_horizon": 11
+      },
+      {
+        "bin": 4,
+        "mean_predicted_probability": 0.4112,
+        "observed_event_rate": 0.1714,
+        "n_patients": 104,
+        "n_events_within_horizon": 6
+      },
+      {
+        "bin": 5,
+        "mean_predicted_probability": 0.4433,
+        "observed_event_rate": 0.2759,
+        "n_patients": 104,
+        "n_events_within_horizon": 8
+      },
+      {
+        "bin": 6,
+        "mean_predicted_probability": 0.4698,
+        "observed_event_rate": 0.4412,
+        "n_patients": 105,
+        "n_events_within_horizon": 15
+      },
+      {
+        "bin": 7,
+        "mean_predicted_probability": 0.4974,
+        "observed_event_rate": 0.3784,
+        "n_patients": 104,
+        "n_events_within_horizon": 14
+      },
+      {
+        "bin": 8,
+        "mean_predicted_probability": 0.5288,
+        "observed_event_rate": 0.4375,
+        "n_patients": 104,
+        "n_events_within_horizon": 14
+      },
+      {
+        "bin": 9,
+        "mean_predicted_probability": 0.568,
+        "observed_event_rate": 0.3333,
+        "n_patients": 104,
+        "n_events_within_horizon": 11
+      },
+      {
+        "bin": 10,
+        "mean_predicted_probability": 0.629,
+        "observed_event_rate": 0.5938,
+        "n_patients": 105,
+        "n_events_within_horizon": 19
+      }
+    ]
+  },
+  "B5_alternative_stratification": {
+    "median_split": {
+      "median_score": 0.4564,
+      "low_risk_n": 521,
+      "low_risk_event_rate": 0.1036,
+      "high_risk_n": 522,
+      "high_risk_event_rate": 0.159,
+      "log_rank_p": 0.005
+    },
+    "quartile_split": {
+      "cutpoints": [
+        0.3704,
+        0.4564,
+        0.5299
+      ],
+      "event_rates": [
+        0.1264,
+        0.0808,
+        0.1648,
+        0.1533
+      ],
+      "group_sizes": [
+        261,
+        260,
+        261,
+        261
+      ]
+    }
+  }
+}

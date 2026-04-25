@@ -1,0 +1,3752 @@
+[
+  {
+    "study_id": "2c314c0a8f364d1a8889bb555d3d04c9",
+    "true_label": 0,
+    "predicted_probability": 0.005975629203021526
+  },
+  {
+    "study_id": "229b0c72152c8c7c6cd902876046c795",
+    "true_label": 0,
+    "predicted_probability": 0.010856843553483486
+  },
+  {
+    "study_id": "6103811434cbc0a8478c71b4a955ed57",
+    "true_label": 0,
+    "predicted_probability": 0.04240664467215538
+  },
+  {
+    "study_id": "17659a68a1d991d89fbf041a70b93d5f",
+    "true_label": 0,
+    "predicted_probability": 0.00453215604647994
+  },
+  {
+    "study_id": "a7794293e92e0ef8094491f210fde7a3",
+    "true_label": 0,
+    "predicted_probability": 0.01831773668527603
+  },
+  {
+    "study_id": "2e59c9d87903cf06b7c1d42fa0bb744c",
+    "true_label": 0,
+    "predicted_probability": 0.01209026575088501
+  },
+  {
+    "study_id": "c7a203339f22c4218eecddc67a826080",
+    "true_label": 0,
+    "predicted_probability": 0.011124231852591038
+  },
+  {
+    "study_id": "4fcc704a47aba7583ad1e426a20e8c95",
+    "true_label": 0,
+    "predicted_probability": 0.009622021578252316
+  },
+  {
+    "study_id": "1e2b90b24ddfa3b07d4add179c07e725",
+    "true_label": 0,
+    "predicted_probability": 0.041549284011125565
+  },
+  {
+    "study_id": "9bf9931f63250b35bb97d8baed771271",
+    "true_label": 0,
+    "predicted_probability": 0.00958502758294344
+  },
+  {
+    "study_id": "a61dae3e47f2e0affc040353e2e4d442",
+    "true_label": 0,
+    "predicted_probability": 0.004387189168483019
+  },
+  {
+    "study_id": "832a34d06e07d82e76f7126562b1c296",
+    "true_label": 0,
+    "predicted_probability": 0.006263601128011942
+  },
+  {
+    "study_id": "58d61fcfbae03476f469be38ebd07ab1",
+    "true_label": 0,
+    "predicted_probability": 0.006559546105563641
+  },
+  {
+    "study_id": "91026190b505e68a77e631a7c9012184",
+    "true_label": 0,
+    "predicted_probability": 0.012471833266317844
+  },
+  {
+    "study_id": "1bdca5a1fd4412b2f94aa8871d1f0107",
+    "true_label": 0,
+    "predicted_probability": 0.019492032006382942
+  },
+  {
+    "study_id": "488a4c8c303ff5d396f876c9339d8c42",
+    "true_label": 0,
+    "predicted_probability": 0.007733854930847883
+  },
+  {
+    "study_id": "caa4eba9b95ac07e8063ff87e90b60ee",
+    "true_label": 0,
+    "predicted_probability": 0.006657002028077841
+  },
+  {
+    "study_id": "5daa7f91a089d754d6e2f45d358d1574",
+    "true_label": 0,
+    "predicted_probability": 0.02840295247733593
+  },
+  {
+    "study_id": "b2b2db4b25454482e99d3e249b2f59fa",
+    "true_label": 0,
+    "predicted_probability": 0.005179712548851967
+  },
+  {
+    "study_id": "2833f097d4253916570cb82379e25682",
+    "true_label": 0,
+    "predicted_probability": 0.018496986478567123
+  },
+  {
+    "study_id": "546a51cd365f6933a6de5cf67e6fde89",
+    "true_label": 0,
+    "predicted_probability": 0.015550128184258938
+  },
+  {
+    "study_id": "ea9eae3db9c40e4314d67a104e5e2504",
+    "true_label": 0,
+    "predicted_probability": 0.01301258709281683
+  },
+  {
+    "study_id": "ccffef11e76198b83db09a6fb2c2893a",
+    "true_label": 0,
+    "predicted_probability": 0.004686728585511446
+  },
+  {
+    "study_id": "f8b0454611434c2e639337dfbb021acf",
+    "true_label": 0,
+    "predicted_probability": 0.19320769608020782
+  },
+  {
+    "study_id": "8caa19db09f6f7dc307c198f15d8456e",
+    "true_label": 0,
+    "predicted_probability": 0.015222115442156792
+  },
+  {
+    "study_id": "c0e4ad8c1d357b77b472532f7563d95e",
+    "true_label": 0,
+    "predicted_probability": 0.01229410246014595
+  },
+  {
+    "study_id": "65b87ec059ebc0c6eab127793a4b8149",
+    "true_label": 0,
+    "predicted_probability": 0.010973742231726646
+  },
+  {
+    "study_id": "8acfb46904bc5a6f8fb4ade6d91dce9d",
+    "true_label": 0,
+    "predicted_probability": 0.009089253842830658
+  },
+  {
+    "study_id": "edc4825b4402b236eaf629800a55a102",
+    "true_label": 0,
+    "predicted_probability": 0.00893153715878725
+  },
+  {
+    "study_id": "b1f3e2065ae5087a53243e0b0729273b",
+    "true_label": 0,
+    "predicted_probability": 0.017788786441087723
+  },
+  {
+    "study_id": "964da212cbe653df7dd875533409a892",
+    "true_label": 0,
+    "predicted_probability": 0.009689584374427795
+  },
+  {
+    "study_id": "f34e322fbf4023bd4e169ed6c862b4b2",
+    "true_label": 0,
+    "predicted_probability": 0.0037751730997115374
+  },
+  {
+    "study_id": "bc805a3638fda3dea489b846d34896bd",
+    "true_label": 0,
+    "predicted_probability": 0.012753088027238846
+  },
+  {
+    "study_id": "3369c4181701b4115a8f318996947f27",
+    "true_label": 0,
+    "predicted_probability": 0.019108694046735764
+  },
+  {
+    "study_id": "4f826a33f4af7181211dae033ea1c23e",
+    "true_label": 0,
+    "predicted_probability": 0.005754009820520878
+  },
+  {
+    "study_id": "c9dd7776a1d8a691750b080f209bba60",
+    "true_label": 0,
+    "predicted_probability": 0.05409702658653259
+  },
+  {
+    "study_id": "e337a13683289a1c39535479d0f930f5",
+    "true_label": 0,
+    "predicted_probability": 0.0072664301842451096
+  },
+  {
+    "study_id": "430d1e08131752a7c6fabe09b7a075f5",
+    "true_label": 0,
+    "predicted_probability": 0.010394089855253696
+  },
+  {
+    "study_id": "c2e63b084c3955f4a7a806d6d9c2b169",
+    "true_label": 0,
+    "predicted_probability": 0.00511655118316412
+  },
+  {
+    "study_id": "71c0ea1e756931e3a9ca070b3053fcfa",
+    "true_label": 0,
+    "predicted_probability": 0.029154879972338676
+  },
+  {
+    "study_id": "e964b3b698d9c99b76205489afe7cd2f",
+    "true_label": 0,
+    "predicted_probability": 0.010380243882536888
+  },
+  {
+    "study_id": "8a6ef52c1a6c9f9984d269f9bf5e794d",
+    "true_label": 0,
+    "predicted_probability": 0.0040085469372570515
+  },
+  {
+    "study_id": "685b50b316a2ddf2eb2b107c4b845865",
+    "true_label": 0,
+    "predicted_probability": 0.0057386551052331924
+  },
+  {
+    "study_id": "d6480d39796febacb60b1b973179c151",
+    "true_label": 0,
+    "predicted_probability": 0.006551180500537157
+  },
+  {
+    "study_id": "da9a79e0b02f9c635eceded0f7652d92",
+    "true_label": 0,
+    "predicted_probability": 0.005447429604828358
+  },
+  {
+    "study_id": "a32528da615a00d8a2a07deb4cc4cbc7",
+    "true_label": 0,
+    "predicted_probability": 0.0074982610531151295
+  },
+  {
+    "study_id": "38cc668ce1f235ab2c3dd2408198cebf",
+    "true_label": 0,
+    "predicted_probability": 0.6682932376861572
+  },
+  {
+    "study_id": "771a26023239098a254bbf59d8ff2ebd",
+    "true_label": 0,
+    "predicted_probability": 0.004132018890231848
+  },
+  {
+    "study_id": "77c3a4ce830f1384403ab7f9dc37259d",
+    "true_label": 0,
+    "predicted_probability": 0.011554146185517311
+  },
+  {
+    "study_id": "b927d189be4fcf2cadfbb6d30fbd6bca",
+    "true_label": 0,
+    "predicted_probability": 0.009530561044812202
+  },
+  {
+    "study_id": "56224cd47272aa6d5125945869a2d92a",
+    "true_label": 0,
+    "predicted_probability": 0.008024862967431545
+  },
+  {
+    "study_id": "00464e1a9bfd88d33466321e03a55c1a",
+    "true_label": 0,
+    "predicted_probability": 0.010401406325399876
+  },
+  {
+    "study_id": "c8a9e5e007552395b47a30658fcb6726",
+    "true_label": 0,
+    "predicted_probability": 0.017813947051763535
+  },
+  {
+    "study_id": "9503dda787dfc0f5f0b84917a3464b5b",
+    "true_label": 0,
+    "predicted_probability": 0.008802496828138828
+  },
+  {
+    "study_id": "b825ddf6de3c16c635ba603365171579",
+    "true_label": 0,
+    "predicted_probability": 0.012140884064137936
+  },
+  {
+    "study_id": "28b0da83ab46cc8371b501ab005c88b7",
+    "true_label": 1,
+    "predicted_probability": 0.007413775194436312
+  },
+  {
+    "study_id": "3ea078d3f8d84a9aebc493b103b3916b",
+    "true_label": 0,
+    "predicted_probability": 0.016324637457728386
+  },
+  {
+    "study_id": "9446c522f4de625a93310975acbda1ac",
+    "true_label": 0,
+    "predicted_probability": 0.005459807813167572
+  },
+  {
+    "study_id": "a8432d0a79bd841ef36623194d839d7d",
+    "true_label": 0,
+    "predicted_probability": 0.010648446157574654
+  },
+  {
+    "study_id": "dc2b0e3eddf38d5c92254217ed83e8d4",
+    "true_label": 0,
+    "predicted_probability": 0.011723372153937817
+  },
+  {
+    "study_id": "99e880e8d860ed86d42caa8728582335",
+    "true_label": 0,
+    "predicted_probability": 0.005892891902476549
+  },
+  {
+    "study_id": "1decfb12f89c1d7ee3b73c160040fd9c",
+    "true_label": 0,
+    "predicted_probability": 0.00383395841345191
+  },
+  {
+    "study_id": "872b83b92267c4e4aeb493df6171b1aa",
+    "true_label": 0,
+    "predicted_probability": 0.02309945598244667
+  },
+  {
+    "study_id": "b1bdecddd13004919488cbb5161706bb",
+    "true_label": 0,
+    "predicted_probability": 0.009831931442022324
+  },
+  {
+    "study_id": "6c6af8c910bca9e8e91dcd757b2060bd",
+    "true_label": 0,
+    "predicted_probability": 0.011298904195427895
+  },
+  {
+    "study_id": "dff1587d6206757cc366f179b88f8e54",
+    "true_label": 0,
+    "predicted_probability": 0.007734926883131266
+  },
+  {
+    "study_id": "eaf4031c2bade0296b7d140e4b5a04a9",
+    "true_label": 0,
+    "predicted_probability": 0.005277474410831928
+  },
+  {
+    "study_id": "e82ead4cf056c2377f17eda58fbe8293",
+    "true_label": 0,
+    "predicted_probability": 0.009958947077393532
+  },
+  {
+    "study_id": "bbddf710a59aaf64e4fe816e04d539d5",
+    "true_label": 0,
+    "predicted_probability": 0.005054819863289595
+  },
+  {
+    "study_id": "7ed66c4511fc58c1a4925dcfe2945495",
+    "true_label": 0,
+    "predicted_probability": 0.009006130509078503
+  },
+  {
+    "study_id": "d371582a3e1a8ae343bc8cf87ff4dc55",
+    "true_label": 0,
+    "predicted_probability": 0.011686657555401325
+  },
+  {
+    "study_id": "5996b674aba7a82b87244404d94d9f6d",
+    "true_label": 0,
+    "predicted_probability": 0.00570561783388257
+  },
+  {
+    "study_id": "188f1f61ec50582057d3355247fc49c0",
+    "true_label": 0,
+    "predicted_probability": 0.0063453130424022675
+  },
+  {
+    "study_id": "8ef2457edf1b63b4b7da95e7dad460f7",
+    "true_label": 0,
+    "predicted_probability": 0.012640764936804771
+  },
+  {
+    "study_id": "44df3cba954815e5801d29d64cfd1089",
+    "true_label": 0,
+    "predicted_probability": 0.020674319937825203
+  },
+  {
+    "study_id": "fb19c61785923edddc159c1741579dec",
+    "true_label": 0,
+    "predicted_probability": 0.020496075972914696
+  },
+  {
+    "study_id": "b17d2729e8c7284da3ecd721b79f1512",
+    "true_label": 0,
+    "predicted_probability": 0.01677052117884159
+  },
+  {
+    "study_id": "4b521b8fd6faf100121b2285e4cf2c69",
+    "true_label": 0,
+    "predicted_probability": 0.010470366105437279
+  },
+  {
+    "study_id": "0ef3606a50761c7bd8778bfe381a362e",
+    "true_label": 0,
+    "predicted_probability": 0.005038766656070948
+  },
+  {
+    "study_id": "51c513b3bcf8fa42f4db5f168988671e",
+    "true_label": 0,
+    "predicted_probability": 0.009182880632579327
+  },
+  {
+    "study_id": "66b5a33279b9cafb3e238b7f76a2a19b",
+    "true_label": 0,
+    "predicted_probability": 0.012463508173823357
+  },
+  {
+    "study_id": "8f5bfebe4dc00a437550d2e00dd6577e",
+    "true_label": 0,
+    "predicted_probability": 0.00825065840035677
+  },
+  {
+    "study_id": "e7125fbcbb6f8002e601b99417e731bf",
+    "true_label": 0,
+    "predicted_probability": 0.0076841632835567
+  },
+  {
+    "study_id": "6fd3d6f1e31f5496952044db685deda8",
+    "true_label": 0,
+    "predicted_probability": 0.011025185696780682
+  },
+  {
+    "study_id": "f1cfe4acbb620d11c48b097b1a4c6941",
+    "true_label": 0,
+    "predicted_probability": 0.005525332875549793
+  },
+  {
+    "study_id": "32a511be8d3d846da5207718f0d5b7ad",
+    "true_label": 0,
+    "predicted_probability": 0.009080394171178341
+  },
+  {
+    "study_id": "145edd42aeb386f6d6d6388b4efbf20e",
+    "true_label": 0,
+    "predicted_probability": 0.009348123334348202
+  },
+  {
+    "study_id": "1668cb482e20c96c740b66095a4cd4f3",
+    "true_label": 0,
+    "predicted_probability": 0.002977470401674509
+  },
+  {
+    "study_id": "51cd52d6df06c6c004965aa3fa7157a8",
+    "true_label": 0,
+    "predicted_probability": 0.008101864717900753
+  },
+  {
+    "study_id": "9d2385a0f5f9ffa4dd6848905db9c7ca",
+    "true_label": 0,
+    "predicted_probability": 0.006957368925213814
+  },
+  {
+    "study_id": "09a55793d7158ba28dbb1486a47b49cf",
+    "true_label": 0,
+    "predicted_probability": 0.006814540829509497
+  },
+  {
+    "study_id": "6aec58bb8b3b2277827ea82292d46029",
+    "true_label": 0,
+    "predicted_probability": 0.006406425032764673
+  },
+  {
+    "study_id": "76aaead849bdb1667de0b6f7b987217e",
+    "true_label": 0,
+    "predicted_probability": 0.00612797774374485
+  },
+  {
+    "study_id": "f132348fba403645b37cd96ad4deaa70",
+    "true_label": 0,
+    "predicted_probability": 0.009226951748132706
+  },
+  {
+    "study_id": "94ebdce07de4052a2a7dbeaf1a627627",
+    "true_label": 0,
+    "predicted_probability": 0.010168779641389847
+  },
+  {
+    "study_id": "2d80c57224957fc549957e28fbe00a96",
+    "true_label": 0,
+    "predicted_probability": 0.007379962597042322
+  },
+  {
+    "study_id": "d20e854e243eb765409347b523b5af8f",
+    "true_label": 0,
+    "predicted_probability": 0.006256967782974243
+  },
+  {
+    "study_id": "b9d9e040a3b805990f014d12c7e59f74",
+    "true_label": 0,
+    "predicted_probability": 0.0059217847883701324
+  },
+  {
+    "study_id": "edf77542898e717cb2c613d62c1878e1",
+    "true_label": 0,
+    "predicted_probability": 0.007395193912088871
+  },
+  {
+    "study_id": "ef4fd53bb99a92819b1dff9327fd9bc9",
+    "true_label": 0,
+    "predicted_probability": 0.016510073095560074
+  },
+  {
+    "study_id": "c3355392bd916127c468d33ab5f5e2f2",
+    "true_label": 0,
+    "predicted_probability": 0.011275446973741055
+  },
+  {
+    "study_id": "d0c9ed546f54159e70a051805c9f7499",
+    "true_label": 0,
+    "predicted_probability": 0.015097693540155888
+  },
+  {
+    "study_id": "ab38c7255e81cfc885b2815719481da5",
+    "true_label": 0,
+    "predicted_probability": 0.021522877737879753
+  },
+  {
+    "study_id": "dd78c80d0afad8252b1b7d2c22c56a79",
+    "true_label": 0,
+    "predicted_probability": 0.021533707156777382
+  },
+  {
+    "study_id": "b7c945cdde52ceaeeac14a5997b3130a",
+    "true_label": 0,
+    "predicted_probability": 0.010537211783230305
+  },
+  {
+    "study_id": "9f35b8c014dd3ceb4351240806b04365",
+    "true_label": 0,
+    "predicted_probability": 0.017077920958399773
+  },
+  {
+    "study_id": "d06d1dcd3e83ce206ba413103f996319",
+    "true_label": 0,
+    "predicted_probability": 0.009553573094308376
+  },
+  {
+    "study_id": "7c0fb51ff7a4027fdd4b7d7c7dca6b04",
+    "true_label": 0,
+    "predicted_probability": 0.011840516701340675
+  },
+  {
+    "study_id": "2d86e5855fdc107e9b74c361b19797ca",
+    "true_label": 0,
+    "predicted_probability": 0.0038614938966929913
+  },
+  {
+    "study_id": "6ec9e5612f4f982ee843befc2851e01b",
+    "true_label": 0,
+    "predicted_probability": 0.012842009775340557
+  },
+  {
+    "study_id": "6616e9669e7878188d57b7948b3a48fc",
+    "true_label": 0,
+    "predicted_probability": 0.09549295902252197
+  },
+  {
+    "study_id": "159fd6cdd9499e55558a7a7cb08e68db",
+    "true_label": 0,
+    "predicted_probability": 0.008427576161921024
+  },
+  {
+    "study_id": "e1b91a51a8ffa7dd603104abae65c0ab",
+    "true_label": 0,
+    "predicted_probability": 0.008546224795281887
+  },
+  {
+    "study_id": "2f5e6219a65c6d86d873dee70ef65d91",
+    "true_label": 0,
+    "predicted_probability": 0.006534703075885773
+  },
+  {
+    "study_id": "436befa1eb000c851fab4e3442f54bbc",
+    "true_label": 0,
+    "predicted_probability": 0.007633871398866177
+  },
+  {
+    "study_id": "4a620d9d7330ba536e850924abe7b10a",
+    "true_label": 0,
+    "predicted_probability": 0.02707001008093357
+  },
+  {
+    "study_id": "ddc0b03b3613cd56689db1fe8dbbc2f5",
+    "true_label": 0,
+    "predicted_probability": 0.0062932888977229595
+  },
+  {
+    "study_id": "c5e31ae0f941a550e5ee54966c209fab",
+    "true_label": 0,
+    "predicted_probability": 0.05913739278912544
+  },
+  {
+    "study_id": "cd886a40a524bb1f5247fe20bcaa4186",
+    "true_label": 0,
+    "predicted_probability": 0.014646708033978939
+  },
+  {
+    "study_id": "c8c318393f00aaf37cd93ceeec9ad81a",
+    "true_label": 0,
+    "predicted_probability": 0.003454347141087055
+  },
+  {
+    "study_id": "532c6133a93ba2ccef53c16f330824b2",
+    "true_label": 0,
+    "predicted_probability": 0.00770206144079566
+  },
+  {
+    "study_id": "841ce713d5f348645f808b379367cffb",
+    "true_label": 0,
+    "predicted_probability": 0.01804935373365879
+  },
+  {
+    "study_id": "1ecf4917545e2ad4ffc7fea4b025354f",
+    "true_label": 0,
+    "predicted_probability": 0.008822089061141014
+  },
+  {
+    "study_id": "ad7bb165008d94c2d281542e9c048434",
+    "true_label": 0,
+    "predicted_probability": 0.008436395786702633
+  },
+  {
+    "study_id": "6dc96a9bda7fa876473679a90f33079d",
+    "true_label": 0,
+    "predicted_probability": 0.008075322024524212
+  },
+  {
+    "study_id": "b123bcd385130b5d089f3fc9a7d24a11",
+    "true_label": 1,
+    "predicted_probability": 0.007745536509901285
+  },
+  {
+    "study_id": "cb160f911982d27efe832e0efe7cf80c",
+    "true_label": 0,
+    "predicted_probability": 0.004093697760254145
+  },
+  {
+    "study_id": "50aba5db2fe27c3109ef1fac4b031a6f",
+    "true_label": 0,
+    "predicted_probability": 0.02228761464357376
+  },
+  {
+    "study_id": "2e11995dc3502ce656461738dbf4227d",
+    "true_label": 0,
+    "predicted_probability": 0.0114865368232131
+  },
+  {
+    "study_id": "26b1a61af2357833acfd2fbdda6f45d4",
+    "true_label": 0,
+    "predicted_probability": 0.015316944569349289
+  },
+  {
+    "study_id": "f2a1318d8d2c433c3453bf970a463604",
+    "true_label": 0,
+    "predicted_probability": 0.009406495839357376
+  },
+  {
+    "study_id": "1b0714eb932ec9740387e488d8d87f98",
+    "true_label": 0,
+    "predicted_probability": 0.009312000125646591
+  },
+  {
+    "study_id": "5e584e3ceb1687140189d8c25930a8ed",
+    "true_label": 0,
+    "predicted_probability": 0.007846732623875141
+  },
+  {
+    "study_id": "8cef307c92cd6746f7120348d9157fe3",
+    "true_label": 0,
+    "predicted_probability": 0.07454325258731842
+  },
+  {
+    "study_id": "b8f8fdca9f95cb0f5291e11a7d796a28",
+    "true_label": 0,
+    "predicted_probability": 0.0027480872813612223
+  },
+  {
+    "study_id": "484512e83ae6c1e4c4f85f398f4912b7",
+    "true_label": 0,
+    "predicted_probability": 0.002649736823514104
+  },
+  {
+    "study_id": "f86271e28239e5bf4651f0f45cc5fad3",
+    "true_label": 0,
+    "predicted_probability": 0.009932567365467548
+  },
+  {
+    "study_id": "ade0d1df4833760695c8126e9e0893c4",
+    "true_label": 0,
+    "predicted_probability": 0.02255488559603691
+  },
+  {
+    "study_id": "27cb9b293d3802cf0d6260a606cca55a",
+    "true_label": 0,
+    "predicted_probability": 0.01337745226919651
+  },
+  {
+    "study_id": "a4046f021f9de4265a5c01ae953b9f09",
+    "true_label": 0,
+    "predicted_probability": 0.01758609153330326
+  },
+  {
+    "study_id": "95ab3c36b6aa877e314afef88d427500",
+    "true_label": 0,
+    "predicted_probability": 0.021129505708813667
+  },
+  {
+    "study_id": "2acc075c29ee781d02f1c5dd8c756240",
+    "true_label": 0,
+    "predicted_probability": 0.0030338969081640244
+  },
+  {
+    "study_id": "0549f06b8cb16dd8a2f82e95e90128eb",
+    "true_label": 0,
+    "predicted_probability": 0.006923510693013668
+  },
+  {
+    "study_id": "7b6ffc5a51c22856e29562c0ad725343",
+    "true_label": 0,
+    "predicted_probability": 0.010241209529340267
+  },
+  {
+    "study_id": "c04ee721783f5d7e74f6ea67dd29bac3",
+    "true_label": 0,
+    "predicted_probability": 0.020091790705919266
+  },
+  {
+    "study_id": "3539a0da1ccbc332eb60ece8b2f5917c",
+    "true_label": 0,
+    "predicted_probability": 0.011434713378548622
+  },
+  {
+    "study_id": "be8c4f5825ae3fbbed8ec87729fb61f8",
+    "true_label": 0,
+    "predicted_probability": 0.014623508788645267
+  },
+  {
+    "study_id": "08ff6ccb8d89375cae5032f2ed646293",
+    "true_label": 0,
+    "predicted_probability": 0.005584748461842537
+  },
+  {
+    "study_id": "e3a2780ef3b4eeaf6eaafdd4cb7d3b3d",
+    "true_label": 0,
+    "predicted_probability": 0.006526934914290905
+  },
+  {
+    "study_id": "be8e01a4a58b545c26ff31142900344f",
+    "true_label": 0,
+    "predicted_probability": 0.010942456312477589
+  },
+  {
+    "study_id": "61f3d797233b229db610017bd62dc862",
+    "true_label": 0,
+    "predicted_probability": 0.012547774240374565
+  },
+  {
+    "study_id": "2e1f57baf6e3e742404c401b0999cadb",
+    "true_label": 0,
+    "predicted_probability": 0.010573501698672771
+  },
+  {
+    "study_id": "2f395cbc581f4e2e20881eeedd11e981",
+    "true_label": 0,
+    "predicted_probability": 0.01038000825792551
+  },
+  {
+    "study_id": "593a30050bad8dae42a9e7fd6166f1ae",
+    "true_label": 0,
+    "predicted_probability": 0.0040842704474925995
+  },
+  {
+    "study_id": "c482f2b26a75eef3af0822f79e944ec6",
+    "true_label": 0,
+    "predicted_probability": 0.01650090143084526
+  },
+  {
+    "study_id": "359c8f8129c5699e18f462a50c2db6d3",
+    "true_label": 0,
+    "predicted_probability": 0.021673843264579773
+  },
+  {
+    "study_id": "8d9c92e1d808b589b1fa5c49a0061117",
+    "true_label": 0,
+    "predicted_probability": 0.005322359036654234
+  },
+  {
+    "study_id": "42663c96a87d1976f18916158fd72c91",
+    "true_label": 0,
+    "predicted_probability": 0.008113319054245949
+  },
+  {
+    "study_id": "8a86597519af4def1a2a3ca631f24334",
+    "true_label": 0,
+    "predicted_probability": 0.018169797956943512
+  },
+  {
+    "study_id": "a8d4888742a3bbd89cbc8397f91c8402",
+    "true_label": 1,
+    "predicted_probability": 0.006631852593272924
+  },
+  {
+    "study_id": "81595d9be2827323037d62790d649ce4",
+    "true_label": 0,
+    "predicted_probability": 0.007058633025735617
+  },
+  {
+    "study_id": "a9acb512c476a1259655ee606826c687",
+    "true_label": 0,
+    "predicted_probability": 0.009113860316574574
+  },
+  {
+    "study_id": "4b6b3191586373a5a3b1f76b60145e22",
+    "true_label": 0,
+    "predicted_probability": 0.005577224772423506
+  },
+  {
+    "study_id": "d205ddf8c698a37853c7b91834435996",
+    "true_label": 0,
+    "predicted_probability": 0.01979377493262291
+  },
+  {
+    "study_id": "d540a38fcac9ff0136535fb45fa45dda",
+    "true_label": 0,
+    "predicted_probability": 0.01963014155626297
+  },
+  {
+    "study_id": "1eaf36582da7537d2084a20d25de46be",
+    "true_label": 0,
+    "predicted_probability": 0.012534605339169502
+  },
+  {
+    "study_id": "496f0d73a61053155b445e83bdc68905",
+    "true_label": 0,
+    "predicted_probability": 0.006050480529665947
+  },
+  {
+    "study_id": "f53795e32e8d574377e83bc93373bc65",
+    "true_label": 0,
+    "predicted_probability": 0.004750546533614397
+  },
+  {
+    "study_id": "a727d3dda378340c58d6cde56e891a9b",
+    "true_label": 0,
+    "predicted_probability": 0.007650940679013729
+  },
+  {
+    "study_id": "eb6f53ebf42ab3aa19d5e7cc362195c4",
+    "true_label": 0,
+    "predicted_probability": 0.005683591589331627
+  },
+  {
+    "study_id": "9e4a6d8da350d9e44a0f5545c5dc4d2b",
+    "true_label": 0,
+    "predicted_probability": 0.022378088906407356
+  },
+  {
+    "study_id": "98294cc2af0394d59018579374440684",
+    "true_label": 0,
+    "predicted_probability": 0.01156019326299429
+  },
+  {
+    "study_id": "a99009b5becce42e46f78a06a20a29d7",
+    "true_label": 0,
+    "predicted_probability": 0.010254897177219391
+  },
+  {
+    "study_id": "fade1400b24d749789268e9269441977",
+    "true_label": 0,
+    "predicted_probability": 0.008567179553210735
+  },
+  {
+    "study_id": "8abaf178e500859d0a532bf34a4ce595",
+    "true_label": 1,
+    "predicted_probability": 0.010163477621972561
+  },
+  {
+    "study_id": "a4f82a0c3225cbf61cef472b5e8293da",
+    "true_label": 0,
+    "predicted_probability": 0.006115693598985672
+  },
+  {
+    "study_id": "607a92929d0f868a674a05b9afa37604",
+    "true_label": 0,
+    "predicted_probability": 0.009410042315721512
+  },
+  {
+    "study_id": "42f2ab8beab7c6a4e29cf73beb93424f",
+    "true_label": 0,
+    "predicted_probability": 0.008095272816717625
+  },
+  {
+    "study_id": "0f4054de5b4d73698d4c69ff5590b07c",
+    "true_label": 0,
+    "predicted_probability": 0.03427676111459732
+  },
+  {
+    "study_id": "92eadb0a7424e7ce5188e55059d4d70f",
+    "true_label": 0,
+    "predicted_probability": 0.027280962094664574
+  },
+  {
+    "study_id": "3fe8b534f8ce4d0d999a8d08143b795d",
+    "true_label": 0,
+    "predicted_probability": 0.005374402739107609
+  },
+  {
+    "study_id": "067dc6d1aa40986dcd6b5522dfa37a6c",
+    "true_label": 0,
+    "predicted_probability": 0.004082269035279751
+  },
+  {
+    "study_id": "84d77d808cb9acbc740da6e7042024bc",
+    "true_label": 0,
+    "predicted_probability": 0.006336651276797056
+  },
+  {
+    "study_id": "51c7d1b91a47f5ed5a32f8921d722e71",
+    "true_label": 0,
+    "predicted_probability": 0.009092570282518864
+  },
+  {
+    "study_id": "fc52f5f7f83057fe882d21ebdac35922",
+    "true_label": 0,
+    "predicted_probability": 0.02106410451233387
+  },
+  {
+    "study_id": "fbc135926b71e4f85482ba9d756ba3f8",
+    "true_label": 0,
+    "predicted_probability": 0.00896767619997263
+  },
+  {
+    "study_id": "55432d803774825408dadf24883cb347",
+    "true_label": 1,
+    "predicted_probability": 0.006663569714874029
+  },
+  {
+    "study_id": "f177d840b255e151bda5bfd48359c618",
+    "true_label": 0,
+    "predicted_probability": 0.004778695292770863
+  },
+  {
+    "study_id": "ea92b23b07118974d880d2e8ee560971",
+    "true_label": 0,
+    "predicted_probability": 0.010527695529162884
+  },
+  {
+    "study_id": "e965b3f2117b8021352f54d5b64a92c6",
+    "true_label": 0,
+    "predicted_probability": 0.010831693187355995
+  },
+  {
+    "study_id": "012e0595adba5173b6e60a97f9e84b6e",
+    "true_label": 0,
+    "predicted_probability": 0.0320470966398716
+  },
+  {
+    "study_id": "bbeab2738ef4d6ffcc0e1598f99c911b",
+    "true_label": 0,
+    "predicted_probability": 0.032113850116729736
+  },
+  {
+    "study_id": "e549f0ea058b3002844aec9328e24498",
+    "true_label": 0,
+    "predicted_probability": 0.0072919451631605625
+  },
+  {
+    "study_id": "dd6333df02b3131120f721d732b3e1ee",
+    "true_label": 1,
+    "predicted_probability": 0.015014621429145336
+  },
+  {
+    "study_id": "a8f590a5b3a26a7164d9a84207d6feac",
+    "true_label": 0,
+    "predicted_probability": 0.0039759972132742405
+  },
+  {
+    "study_id": "d59a790889a1b68297e62c780026ca88",
+    "true_label": 0,
+    "predicted_probability": 0.02178432047367096
+  },
+  {
+    "study_id": "3e7669bb0a00f2dbdb9d7918b7d628b0",
+    "true_label": 0,
+    "predicted_probability": 0.006804182194173336
+  },
+  {
+    "study_id": "035d8eb3c33b11cdebaf600e9666d351",
+    "true_label": 0,
+    "predicted_probability": 0.005179653875529766
+  },
+  {
+    "study_id": "38b062f3a3ebc9c7f7b6dc291d8e69d3",
+    "true_label": 0,
+    "predicted_probability": 0.024545341730117798
+  },
+  {
+    "study_id": "ead7b50e5a5b353be53628b9fe2adfa3",
+    "true_label": 0,
+    "predicted_probability": 0.006239230744540691
+  },
+  {
+    "study_id": "c8b98ec621e15b34e49608a1afb11b02",
+    "true_label": 0,
+    "predicted_probability": 0.006577718071639538
+  },
+  {
+    "study_id": "b4af77205b86dac60f95a1e995f4c14a",
+    "true_label": 0,
+    "predicted_probability": 0.008641852997243404
+  },
+  {
+    "study_id": "55a12c640ccebc100e67e21476b57285",
+    "true_label": 0,
+    "predicted_probability": 0.004031539428979158
+  },
+  {
+    "study_id": "e224cbfb15443755b7dc74998a21d5dc",
+    "true_label": 0,
+    "predicted_probability": 0.01079675741493702
+  },
+  {
+    "study_id": "65b536aabb9aa9bf840dccc3990cc11f",
+    "true_label": 0,
+    "predicted_probability": 0.02689146064221859
+  },
+  {
+    "study_id": "2cddf8995cd47a72e67b1cf6d10188f8",
+    "true_label": 0,
+    "predicted_probability": 0.012929080054163933
+  },
+  {
+    "study_id": "2f2577800a9020cccde6f0ec3770d0cb",
+    "true_label": 0,
+    "predicted_probability": 0.013693167828023434
+  },
+  {
+    "study_id": "1219a9200759a6320e1ff54e8df065a1",
+    "true_label": 0,
+    "predicted_probability": 0.024305310100317
+  },
+  {
+    "study_id": "7488c5e22bd56c1580ce5534026d174f",
+    "true_label": 0,
+    "predicted_probability": 0.0195934921503067
+  },
+  {
+    "study_id": "e2c85f8e53ec0e41ad8ce106ef2ffca6",
+    "true_label": 0,
+    "predicted_probability": 0.007726363837718964
+  },
+  {
+    "study_id": "6a4299c80ff3e5b2597e2093972dcc8c",
+    "true_label": 0,
+    "predicted_probability": 0.01767115481197834
+  },
+  {
+    "study_id": "b0072434b00ba801945491423fb15a7e",
+    "true_label": 0,
+    "predicted_probability": 0.00972459465265274
+  },
+  {
+    "study_id": "b246600ed2faf4746f82af6ad170809b",
+    "true_label": 0,
+    "predicted_probability": 0.01457588467746973
+  },
+  {
+    "study_id": "c38f7f72e375edbd288ae100764baeb3",
+    "true_label": 1,
+    "predicted_probability": 0.0188865065574646
+  },
+  {
+    "study_id": "b9103cf98ee7f3b2fba1a5aae945b311",
+    "true_label": 0,
+    "predicted_probability": 0.0059193712659180164
+  },
+  {
+    "study_id": "60d52cc79703b09628d5f445f320c63d",
+    "true_label": 0,
+    "predicted_probability": 0.008268688805401325
+  },
+  {
+    "study_id": "ade13aae261defb3ed157afa4796d503",
+    "true_label": 0,
+    "predicted_probability": 0.00533480616286397
+  },
+  {
+    "study_id": "553e66edd391adc5edaa05431566081c",
+    "true_label": 0,
+    "predicted_probability": 0.011702832765877247
+  },
+  {
+    "study_id": "5f858de09785fe747962fe5fafbea3c9",
+    "true_label": 0,
+    "predicted_probability": 0.04726210981607437
+  },
+  {
+    "study_id": "0c4f7c9f7617ba2669a6dbb89a1f9d46",
+    "true_label": 0,
+    "predicted_probability": 0.013575838878750801
+  },
+  {
+    "study_id": "f3dcf7ab2efb8ff49d3df3c139bce8ad",
+    "true_label": 0,
+    "predicted_probability": 0.010686137713491917
+  },
+  {
+    "study_id": "60ecf41b7df55c1c49ab9cad1e86ed1f",
+    "true_label": 0,
+    "predicted_probability": 0.005120531190186739
+  },
+  {
+    "study_id": "6ae97fd130ffbfe49816f0b4355eed0d",
+    "true_label": 0,
+    "predicted_probability": 0.02334422431886196
+  },
+  {
+    "study_id": "64e059578f3b6f30fc9f14796b6190ff",
+    "true_label": 0,
+    "predicted_probability": 0.0070218853652477264
+  },
+  {
+    "study_id": "ff9e4f3aa02c617fd62e2ec6782b6246",
+    "true_label": 0,
+    "predicted_probability": 0.008508667349815369
+  },
+  {
+    "study_id": "c205a0e69876b7c83b37a084b663aacb",
+    "true_label": 0,
+    "predicted_probability": 0.0055251470766961575
+  },
+  {
+    "study_id": "10b9efa3bb9b9cf8b571a3e506d25da2",
+    "true_label": 0,
+    "predicted_probability": 0.015762655064463615
+  },
+  {
+    "study_id": "0c2873e4b72fcfbc878fbc7642e44653",
+    "true_label": 0,
+    "predicted_probability": 0.008439663797616959
+  },
+  {
+    "study_id": "ceb2804e636f649f4266b18f32835fbe",
+    "true_label": 0,
+    "predicted_probability": 0.004304933361709118
+  },
+  {
+    "study_id": "4d6e3b59ded14d91640fe28bd13020fe",
+    "true_label": 0,
+    "predicted_probability": 0.008184692822396755
+  },
+  {
+    "study_id": "a522aeeb8f80828d220219c97c131ffc",
+    "true_label": 0,
+    "predicted_probability": 0.006688806694000959
+  },
+  {
+    "study_id": "8c60ac267e7ac61dbab806f2da63cb28",
+    "true_label": 0,
+    "predicted_probability": 0.007304512895643711
+  },
+  {
+    "study_id": "d4ec96eb2128aed8164f3228f943cdb9",
+    "true_label": 0,
+    "predicted_probability": 0.011865206994116306
+  },
+  {
+    "study_id": "298f65f718635afbfb4b1117412584cd",
+    "true_label": 0,
+    "predicted_probability": 0.006543311290442944
+  },
+  {
+    "study_id": "c4e07fbe9880fe436ec4138da3983840",
+    "true_label": 0,
+    "predicted_probability": 0.004601106513291597
+  },
+  {
+    "study_id": "9dd7e7c0883199643838e533967168ba",
+    "true_label": 0,
+    "predicted_probability": 0.02736705169081688
+  },
+  {
+    "study_id": "0acd944a001b1a65570340e559ed7a69",
+    "true_label": 0,
+    "predicted_probability": 0.003581345546990633
+  },
+  {
+    "study_id": "2367222f179f8e739145c5bca65cea19",
+    "true_label": 0,
+    "predicted_probability": 0.006488327868282795
+  },
+  {
+    "study_id": "441d2eb020b8b5934fbc2f07aa1f7cd4",
+    "true_label": 0,
+    "predicted_probability": 0.009224937297403812
+  },
+  {
+    "study_id": "0e7981072f41e298184c3546d38157af",
+    "true_label": 0,
+    "predicted_probability": 0.014507465064525604
+  },
+  {
+    "study_id": "5ed241690b2b9488f7c68e441357c6cf",
+    "true_label": 0,
+    "predicted_probability": 0.005589808337390423
+  },
+  {
+    "study_id": "6829f8b3a46afe4f357839fa1b95767c",
+    "true_label": 0,
+    "predicted_probability": 0.007242422550916672
+  },
+  {
+    "study_id": "809c9885afc09b19981fe0ff47c9cca4",
+    "true_label": 0,
+    "predicted_probability": 0.015813352540135384
+  },
+  {
+    "study_id": "72ef4670e0a1dee1ec6e1319f1960b9e",
+    "true_label": 0,
+    "predicted_probability": 0.0047138589434325695
+  },
+  {
+    "study_id": "876245c2c298cff1c87021575dd8b208",
+    "true_label": 0,
+    "predicted_probability": 0.009495615027844906
+  },
+  {
+    "study_id": "2aba852b18dae4cb74a05136d62fb145",
+    "true_label": 0,
+    "predicted_probability": 0.005040093325078487
+  },
+  {
+    "study_id": "1d6708c18a5e13bd1946bddd58b995f2",
+    "true_label": 0,
+    "predicted_probability": 0.006658102385699749
+  },
+  {
+    "study_id": "e40395270b091c226dc73cc9c6c2afe2",
+    "true_label": 0,
+    "predicted_probability": 0.01986551843583584
+  },
+  {
+    "study_id": "cbcf4610cd2bb656ba56a49276ec78ed",
+    "true_label": 0,
+    "predicted_probability": 0.004834378603845835
+  },
+  {
+    "study_id": "d2a330658a956d255f4e9bee5be010f1",
+    "true_label": 0,
+    "predicted_probability": 0.005247774999588728
+  },
+  {
+    "study_id": "89f61a8f95b494e9816d3184b350429f",
+    "true_label": 0,
+    "predicted_probability": 0.0030514912214130163
+  },
+  {
+    "study_id": "adfd894922d1a977e3806f42eb3d3588",
+    "true_label": 0,
+    "predicted_probability": 0.0076476759277284145
+  },
+  {
+    "study_id": "30ad46b0520344cd84be15253b8abec6",
+    "true_label": 0,
+    "predicted_probability": 0.01426685694605112
+  },
+  {
+    "study_id": "cd3cb8443144e4b6196ed36dfac3385b",
+    "true_label": 0,
+    "predicted_probability": 0.005580599885433912
+  },
+  {
+    "study_id": "da2b71e7b671494c9165043962bb4f12",
+    "true_label": 0,
+    "predicted_probability": 0.01721891760826111
+  },
+  {
+    "study_id": "7c8b9ff908b9cbcd44e4f69e7fb7dff5",
+    "true_label": 0,
+    "predicted_probability": 0.024603329598903656
+  },
+  {
+    "study_id": "69047ef9628192e208d91eaa0ad0c15f",
+    "true_label": 0,
+    "predicted_probability": 0.006988537032157183
+  },
+  {
+    "study_id": "8d8ddcd0ff2d8f55bdeff65bc1b59793",
+    "true_label": 0,
+    "predicted_probability": 0.00492135901004076
+  },
+  {
+    "study_id": "d42d709cc6bf5e36c8dfdffaebcfbc0e",
+    "true_label": 0,
+    "predicted_probability": 0.005255916155874729
+  },
+  {
+    "study_id": "af24d324d92c93eb19691dcf04d457fc",
+    "true_label": 0,
+    "predicted_probability": 0.007268511224538088
+  },
+  {
+    "study_id": "4fbf67c19f3ea29e7955172de6ca5262",
+    "true_label": 0,
+    "predicted_probability": 0.009434622712433338
+  },
+  {
+    "study_id": "20a0367e9d07c9d5b8cd11f51c4d4784",
+    "true_label": 0,
+    "predicted_probability": 0.029039224609732628
+  },
+  {
+    "study_id": "5a8e2896d167fea6afbbf7fe7ea074fe",
+    "true_label": 0,
+    "predicted_probability": 0.006270392797887325
+  },
+  {
+    "study_id": "943aff41579c97e654e42aa301bdfcf9",
+    "true_label": 0,
+    "predicted_probability": 0.006410672795027494
+  },
+  {
+    "study_id": "390ea4c21dce6c76df078182fcf0582f",
+    "true_label": 0,
+    "predicted_probability": 0.007060799282044172
+  },
+  {
+    "study_id": "54134d835c42d01a9ab9ac15ec30c983",
+    "true_label": 0,
+    "predicted_probability": 0.01187867671251297
+  },
+  {
+    "study_id": "f19d7b364ea4ae74f3fb2cf4071d2a90",
+    "true_label": 0,
+    "predicted_probability": 0.0053712837398052216
+  },
+  {
+    "study_id": "e27be5d8c7b7423887436abc27b4d583",
+    "true_label": 0,
+    "predicted_probability": 0.0028592206072062254
+  },
+  {
+    "study_id": "73b28aa5318d8c79e5d1ec9704facdfc",
+    "true_label": 0,
+    "predicted_probability": 0.009169882163405418
+  },
+  {
+    "study_id": "619889664a1800098d890d1daec7fac6",
+    "true_label": 0,
+    "predicted_probability": 0.03678929805755615
+  },
+  {
+    "study_id": "8150c98ec19092ec79e88114c6b83e1b",
+    "true_label": 0,
+    "predicted_probability": 0.0053306324407458305
+  },
+  {
+    "study_id": "6bc5c5c2839b40ef91e70e8ce202777f",
+    "true_label": 0,
+    "predicted_probability": 0.8172483444213867
+  },
+  {
+    "study_id": "988948f8b1a543c0f3f093a28d9d4222",
+    "true_label": 0,
+    "predicted_probability": 0.007927153259515762
+  },
+  {
+    "study_id": "fb9d9c771561abef492df58889845617",
+    "true_label": 0,
+    "predicted_probability": 0.00736979441717267
+  },
+  {
+    "study_id": "efb1201b3375f966f79743fa1f1bd3f4",
+    "true_label": 0,
+    "predicted_probability": 0.00528288446366787
+  },
+  {
+    "study_id": "b9a26e6808491c4163f538b00dd7d1c1",
+    "true_label": 0,
+    "predicted_probability": 0.01596846990287304
+  },
+  {
+    "study_id": "ed9c3ced63b8194c9d91c4ebc531b010",
+    "true_label": 0,
+    "predicted_probability": 0.008070041425526142
+  },
+  {
+    "study_id": "b57bf86c4723f38810154f04b04f0ab2",
+    "true_label": 0,
+    "predicted_probability": 0.0054283407516777515
+  },
+  {
+    "study_id": "07e5c636c39f4925b8043d9fd07867f2",
+    "true_label": 0,
+    "predicted_probability": 0.0033545673359185457
+  },
+  {
+    "study_id": "0951ae8d6bff9f54d901a6b6bd1fa95d",
+    "true_label": 0,
+    "predicted_probability": 0.009094399400055408
+  },
+  {
+    "study_id": "dade88bf5ab35143eec4f7cc27319bcb",
+    "true_label": 0,
+    "predicted_probability": 0.005115522537380457
+  },
+  {
+    "study_id": "fd4a104a04d515610c7b838d630864ac",
+    "true_label": 0,
+    "predicted_probability": 0.007981664501130581
+  },
+  {
+    "study_id": "f53bbb04c170a7e3aa63c822b378fc88",
+    "true_label": 0,
+    "predicted_probability": 0.014723009429872036
+  },
+  {
+    "study_id": "6e83c679394df8d8e525ae8259a4e8d1",
+    "true_label": 0,
+    "predicted_probability": 0.00787886418402195
+  },
+  {
+    "study_id": "d7cdec931ae6daa98156444c65163ea9",
+    "true_label": 0,
+    "predicted_probability": 0.01282031461596489
+  },
+  {
+    "study_id": "4f95a9363cb5b5d9c562db0f9bcdf68f",
+    "true_label": 0,
+    "predicted_probability": 0.004347837995737791
+  },
+  {
+    "study_id": "4c90daefefdbca85c74f370c0b83a48e",
+    "true_label": 0,
+    "predicted_probability": 0.02234094776213169
+  },
+  {
+    "study_id": "26982a5641a203900a1b87883728e46f",
+    "true_label": 0,
+    "predicted_probability": 0.006017192732542753
+  },
+  {
+    "study_id": "a4d6262b5d2949c533a8768b554dd547",
+    "true_label": 0,
+    "predicted_probability": 0.005660981871187687
+  },
+  {
+    "study_id": "8850f3f623b7615136d068685f555a14",
+    "true_label": 0,
+    "predicted_probability": 0.0152741689234972
+  },
+  {
+    "study_id": "65bc74e1464436c80e233f94bd5c120b",
+    "true_label": 0,
+    "predicted_probability": 0.0029173376969993114
+  },
+  {
+    "study_id": "2423cb95d8fa822dd87663f57f995c4e",
+    "true_label": 0,
+    "predicted_probability": 0.019511140882968903
+  },
+  {
+    "study_id": "f3c855dd2fc8d2169ac1af3316429209",
+    "true_label": 0,
+    "predicted_probability": 0.00386005244217813
+  },
+  {
+    "study_id": "91a60342c832522a2b8d93c58eeb793f",
+    "true_label": 0,
+    "predicted_probability": 0.007118485867977142
+  },
+  {
+    "study_id": "018745b22cf81ee554e0d9c9147a78ad",
+    "true_label": 0,
+    "predicted_probability": 0.02454874850809574
+  },
+  {
+    "study_id": "e315902ce49832b4714312a985617af2",
+    "true_label": 1,
+    "predicted_probability": 0.012339604087173939
+  },
+  {
+    "study_id": "b2723324863e5050529dea6c9de4911a",
+    "true_label": 0,
+    "predicted_probability": 0.017848797142505646
+  },
+  {
+    "study_id": "b619a476b64bc9181bb8b8fd7c7e5b79",
+    "true_label": 0,
+    "predicted_probability": 0.0035685314796864986
+  },
+  {
+    "study_id": "d176abcedcf1d0230b0da51946e5fbfa",
+    "true_label": 0,
+    "predicted_probability": 0.005252272821962833
+  },
+  {
+    "study_id": "9d53e2b08d3010df56de71a8052f5880",
+    "true_label": 0,
+    "predicted_probability": 0.007032433524727821
+  },
+  {
+    "study_id": "6b37e6b1c2372793646bda3c08c2dec2",
+    "true_label": 0,
+    "predicted_probability": 0.017709843814373016
+  },
+  {
+    "study_id": "af0f59caf158894e8778dd6ada4c9cac",
+    "true_label": 0,
+    "predicted_probability": 0.022639764472842216
+  },
+  {
+    "study_id": "3752f93ac7960ebafb0ca142e162daa8",
+    "true_label": 0,
+    "predicted_probability": 0.009662352502346039
+  },
+  {
+    "study_id": "a9eb7555c2cf01016ac88ead742018fe",
+    "true_label": 0,
+    "predicted_probability": 0.006337360478937626
+  },
+  {
+    "study_id": "6103d1a20628c200b52bf2a949c8af0b",
+    "true_label": 0,
+    "predicted_probability": 0.0028480819892138243
+  },
+  {
+    "study_id": "775ebb0780b981ac287f8340f3452bf3",
+    "true_label": 0,
+    "predicted_probability": 0.007180664222687483
+  },
+  {
+    "study_id": "4e7dc61b1642489642ffec0ba58b6a88",
+    "true_label": 0,
+    "predicted_probability": 0.005000298377126455
+  },
+  {
+    "study_id": "d6751693a8f2c11a67fbaed260449abd",
+    "true_label": 0,
+    "predicted_probability": 0.03403393551707268
+  },
+  {
+    "study_id": "04b17fe99196d18c5b28740bfcf15024",
+    "true_label": 0,
+    "predicted_probability": 0.009818728081882
+  },
+  {
+    "study_id": "833dc428ac55ef017ea9d238cc9a841b",
+    "true_label": 0,
+    "predicted_probability": 0.012696512043476105
+  },
+  {
+    "study_id": "4a55afd0d112bcc760240003aefa0807",
+    "true_label": 0,
+    "predicted_probability": 0.009306952357292175
+  },
+  {
+    "study_id": "589ae6f0d944e41c9ef50e8bcf5686f7",
+    "true_label": 0,
+    "predicted_probability": 0.006347432732582092
+  },
+  {
+    "study_id": "80f4259ff9b06b388fe379d1dfd4ebcf",
+    "true_label": 0,
+    "predicted_probability": 0.0068328189663589
+  },
+  {
+    "study_id": "8146e728f3db9a113a6512f2b93564b3",
+    "true_label": 0,
+    "predicted_probability": 0.011787498369812965
+  },
+  {
+    "study_id": "39f00569bae5fac45b6ea48245f07e24",
+    "true_label": 0,
+    "predicted_probability": 0.019578294828534126
+  },
+  {
+    "study_id": "3c4584b1e5c4b82e46f1e147c0425067",
+    "true_label": 0,
+    "predicted_probability": 0.05080319941043854
+  },
+  {
+    "study_id": "e64c381fc58cf29b35a997305e301e1e",
+    "true_label": 0,
+    "predicted_probability": 0.0029881412629038095
+  },
+  {
+    "study_id": "0fef1dc2976b7248be89047c49e07b9e",
+    "true_label": 0,
+    "predicted_probability": 0.011173968203365803
+  },
+  {
+    "study_id": "94708ed810f24298b10105d4e351b686",
+    "true_label": 0,
+    "predicted_probability": 0.002629537135362625
+  },
+  {
+    "study_id": "db35fcd3f24283d42b1e6ebaf7167b65",
+    "true_label": 0,
+    "predicted_probability": 0.004029917996376753
+  },
+  {
+    "study_id": "21d6df28ae5cb221a4c8c1b6443abcc4",
+    "true_label": 0,
+    "predicted_probability": 0.013365192338824272
+  },
+  {
+    "study_id": "7ad1473d3ea340d0eb73304fbac54a08",
+    "true_label": 0,
+    "predicted_probability": 0.08229047060012817
+  },
+  {
+    "study_id": "ee7524235122232251864bcacd15b7e9",
+    "true_label": 0,
+    "predicted_probability": 0.00804750993847847
+  },
+  {
+    "study_id": "bb639e3af9d507ccb4a584be23bb9349",
+    "true_label": 0,
+    "predicted_probability": 0.06306376308202744
+  },
+  {
+    "study_id": "972c891cf5a27e187980609ac0b56cc5",
+    "true_label": 0,
+    "predicted_probability": 0.01107628084719181
+  },
+  {
+    "study_id": "092cefbdd53b53df67ebd6a805bddea0",
+    "true_label": 0,
+    "predicted_probability": 0.013372065499424934
+  },
+  {
+    "study_id": "3125c3ab913cde6595b18ad4b3f6f466",
+    "true_label": 0,
+    "predicted_probability": 0.009017248637974262
+  },
+  {
+    "study_id": "be185ec224fd01bc966505d01eef5925",
+    "true_label": 0,
+    "predicted_probability": 0.006887670606374741
+  },
+  {
+    "study_id": "bba470c7ae302b5e4bfd2ed1a4515661",
+    "true_label": 0,
+    "predicted_probability": 0.008196409791707993
+  },
+  {
+    "study_id": "41aaa90ab08b058d9d9570d2d0924240",
+    "true_label": 0,
+    "predicted_probability": 0.052072588354349136
+  },
+  {
+    "study_id": "76bc758d99f6f0b3df5d7fcc7d87d342",
+    "true_label": 0,
+    "predicted_probability": 0.012937524355947971
+  },
+  {
+    "study_id": "164569070b886396241499567b12e007",
+    "true_label": 0,
+    "predicted_probability": 0.010967421345412731
+  },
+  {
+    "study_id": "94753a85ffd5ee01b21ca14c55e9363a",
+    "true_label": 0,
+    "predicted_probability": 0.005738925188779831
+  },
+  {
+    "study_id": "1d7b9378279587e35fabb7ae25343d5a",
+    "true_label": 0,
+    "predicted_probability": 0.011007329449057579
+  },
+  {
+    "study_id": "dd9e53f6b6859b8661d3718ceea95f17",
+    "true_label": 0,
+    "predicted_probability": 0.00808019656687975
+  },
+  {
+    "study_id": "a1b69e0eefcdf6652f293182a40b8c50",
+    "true_label": 0,
+    "predicted_probability": 0.008327350951731205
+  },
+  {
+    "study_id": "cc41a6e2ed7d7e1b18c3fdfe364989b2",
+    "true_label": 0,
+    "predicted_probability": 0.009880835190415382
+  },
+  {
+    "study_id": "605c5ed952da1a7831f134b91fef765e",
+    "true_label": 0,
+    "predicted_probability": 0.008912373334169388
+  },
+  {
+    "study_id": "c104afcef952c35b1eac48908e27ebce",
+    "true_label": 0,
+    "predicted_probability": 0.005034682806581259
+  },
+  {
+    "study_id": "8eb552d828a80c0d57fbce35226edc1f",
+    "true_label": 0,
+    "predicted_probability": 0.018902307376265526
+  },
+  {
+    "study_id": "303b12ba4cacb9461bc7df75947a4e2c",
+    "true_label": 0,
+    "predicted_probability": 0.009414790198206902
+  },
+  {
+    "study_id": "5cb142b14d2d8891ab31cf1e10c9a384",
+    "true_label": 0,
+    "predicted_probability": 0.0100891487672925
+  },
+  {
+    "study_id": "07889ee9b57d18e83cfd940b160965b6",
+    "true_label": 0,
+    "predicted_probability": 0.0071068210527300835
+  },
+  {
+    "study_id": "d4b3e4068cad6202c58dd2bfe9698287",
+    "true_label": 0,
+    "predicted_probability": 0.011192786507308483
+  },
+  {
+    "study_id": "22818f32953ee3011407f8753035295d",
+    "true_label": 0,
+    "predicted_probability": 0.006330079864710569
+  },
+  {
+    "study_id": "4858bdc35de6bf7ba950d23239993c1b",
+    "true_label": 0,
+    "predicted_probability": 0.00692305201664567
+  },
+  {
+    "study_id": "18473ad623483f5475dd3e79a7b4f264",
+    "true_label": 0,
+    "predicted_probability": 0.004950056783854961
+  },
+  {
+    "study_id": "9ea020a74caea13c4990c9d34a4bb45f",
+    "true_label": 0,
+    "predicted_probability": 0.007993184030056
+  },
+  {
+    "study_id": "72a0490317f3a1bec22b446cf3ab69fe",
+    "true_label": 0,
+    "predicted_probability": 0.016818614676594734
+  },
+  {
+    "study_id": "840a2797a18347d1917cfa2872be1460",
+    "true_label": 0,
+    "predicted_probability": 0.016291791573166847
+  },
+  {
+    "study_id": "9d70fdb1b75e27fc265289abd9fd3800",
+    "true_label": 0,
+    "predicted_probability": 0.0037542188074439764
+  },
+  {
+    "study_id": "3f383fea789ae136143326685b98ec61",
+    "true_label": 0,
+    "predicted_probability": 0.008604285307228565
+  },
+  {
+    "study_id": "90e54680b3ba0e38c45c5141d7ed69d9",
+    "true_label": 0,
+    "predicted_probability": 0.004144363570958376
+  },
+  {
+    "study_id": "4d73151d25e8a64ceac3ad18ff88c664",
+    "true_label": 0,
+    "predicted_probability": 0.011079352349042892
+  },
+  {
+    "study_id": "5d857f468c6c05b998b901a57487b29f",
+    "true_label": 0,
+    "predicted_probability": 0.004811528604477644
+  },
+  {
+    "study_id": "0b666e8ea8e2a0772fcd18b528553565",
+    "true_label": 0,
+    "predicted_probability": 0.030857888981699944
+  },
+  {
+    "study_id": "dc525b81491e0d9c04db70c774c54025",
+    "true_label": 0,
+    "predicted_probability": 0.023304902017116547
+  },
+  {
+    "study_id": "1cb30b99a18a99f7b11fb3f13328022e",
+    "true_label": 0,
+    "predicted_probability": 0.01010334026068449
+  },
+  {
+    "study_id": "9d70df5a83f33ec2d4c1f9eed8151f6e",
+    "true_label": 0,
+    "predicted_probability": 0.00938435923308134
+  },
+  {
+    "study_id": "5c9d7863e0c50cdb8e8f7bf5cf1c91b3",
+    "true_label": 1,
+    "predicted_probability": 0.02472335658967495
+  },
+  {
+    "study_id": "c1efa130e4258fcd9fa64d4461bd8145",
+    "true_label": 0,
+    "predicted_probability": 0.010772060602903366
+  },
+  {
+    "study_id": "05d46604537630e9e5b7fb83d4130617",
+    "true_label": 0,
+    "predicted_probability": 0.09517638385295868
+  },
+  {
+    "study_id": "559ebd93b1bee27474b3b2349b5fa3db",
+    "true_label": 0,
+    "predicted_probability": 0.0032962223049253225
+  },
+  {
+    "study_id": "93cc5719b7fd42d698e01c7cdfbf5ca0",
+    "true_label": 0,
+    "predicted_probability": 0.006691411603242159
+  },
+  {
+    "study_id": "87a22d89afe69d0d6dc3665deec78b6b",
+    "true_label": 0,
+    "predicted_probability": 0.025474196299910545
+  },
+  {
+    "study_id": "24914da760058d305206b7d4324d853a",
+    "true_label": 0,
+    "predicted_probability": 0.0313962884247303
+  },
+  {
+    "study_id": "3e0985909de21beed734ff87a52b1c08",
+    "true_label": 0,
+    "predicted_probability": 0.011565708555281162
+  },
+  {
+    "study_id": "cff56208d45f1ca8182a15fc2148c535",
+    "true_label": 0,
+    "predicted_probability": 0.005407948512583971
+  },
+  {
+    "study_id": "03f40980d5978ca95d5c59363430624d",
+    "true_label": 0,
+    "predicted_probability": 0.007335947826504707
+  },
+  {
+    "study_id": "d0175212b64492010f5258276f869b29",
+    "true_label": 0,
+    "predicted_probability": 0.009151699021458626
+  },
+  {
+    "study_id": "5b899d2c2de6806b27310852f6c03b94",
+    "true_label": 0,
+    "predicted_probability": 0.016552478075027466
+  },
+  {
+    "study_id": "3c6a6210c7adf47cba39486cc160230a",
+    "true_label": 0,
+    "predicted_probability": 0.054227348417043686
+  },
+  {
+    "study_id": "561db6d025aaa275f595350fb3d0b2af",
+    "true_label": 0,
+    "predicted_probability": 0.006054720841348171
+  },
+  {
+    "study_id": "3c06837f1d6dcdb4cdc464f937dd154f",
+    "true_label": 0,
+    "predicted_probability": 0.017550578340888023
+  },
+  {
+    "study_id": "aee2a7657dd4584aa5d023b3c6fe09fe",
+    "true_label": 0,
+    "predicted_probability": 0.01802510768175125
+  },
+  {
+    "study_id": "a1fc6be3e710a51145427fbdf0f8140c",
+    "true_label": 0,
+    "predicted_probability": 0.02267230488359928
+  },
+  {
+    "study_id": "c13b634ee7384ad3aeb8f0bea694da85",
+    "true_label": 0,
+    "predicted_probability": 0.009709957987070084
+  },
+  {
+    "study_id": "003700f3c960e0b9bca2b8437c3dbf05",
+    "true_label": 1,
+    "predicted_probability": 0.006535056047141552
+  },
+  {
+    "study_id": "5153e88dd13c157fc0f783f7ffea13b6",
+    "true_label": 0,
+    "predicted_probability": 0.01035939808934927
+  },
+  {
+    "study_id": "825a572d61762a3ce212d135892a9f5a",
+    "true_label": 0,
+    "predicted_probability": 0.0020239506848156452
+  },
+  {
+    "study_id": "2078a9aa298d78bc710441899883bb86",
+    "true_label": 1,
+    "predicted_probability": 0.009577266871929169
+  },
+  {
+    "study_id": "c3a4083c5d1cbae24bf78b95465c89b1",
+    "true_label": 0,
+    "predicted_probability": 0.045267269015312195
+  },
+  {
+    "study_id": "81885e37a9a42bd351516b83bc3f6d66",
+    "true_label": 1,
+    "predicted_probability": 0.840808093547821
+  },
+  {
+    "study_id": "01dd49731329cbe81a9876b583b92f30",
+    "true_label": 0,
+    "predicted_probability": 0.006017306819558144
+  },
+  {
+    "study_id": "c29fef34f4e5bfc19c9bc03a9b8f9c9e",
+    "true_label": 0,
+    "predicted_probability": 0.00575234554708004
+  },
+  {
+    "study_id": "1d80107f16dcec71ac819d7655f03d07",
+    "true_label": 0,
+    "predicted_probability": 0.004604009445756674
+  },
+  {
+    "study_id": "07b2966671cd768f41e0e9e86d57c5af",
+    "true_label": 0,
+    "predicted_probability": 0.009471186436712742
+  },
+  {
+    "study_id": "3106693db4844438acd50905160269be",
+    "true_label": 0,
+    "predicted_probability": 0.008305364288389683
+  },
+  {
+    "study_id": "45215105d967cc5bffa178203d89f674",
+    "true_label": 0,
+    "predicted_probability": 0.007322878576815128
+  },
+  {
+    "study_id": "160294cb0d10850bb8e91257120563b1",
+    "true_label": 0,
+    "predicted_probability": 0.010341004468500614
+  },
+  {
+    "study_id": "c08d2b284f17700e6283db74df18c27d",
+    "true_label": 0,
+    "predicted_probability": 0.004752603359520435
+  },
+  {
+    "study_id": "4867450bcd6f8e6e5820811b995c1b0e",
+    "true_label": 0,
+    "predicted_probability": 0.022070445120334625
+  },
+  {
+    "study_id": "c8a92cf907d7a54ceb4445ef9068179d",
+    "true_label": 0,
+    "predicted_probability": 0.003555760020390153
+  },
+  {
+    "study_id": "15128e5627fc0ce10eae6e0ada06ed81",
+    "true_label": 0,
+    "predicted_probability": 0.010958899743855
+  },
+  {
+    "study_id": "6652417b08e5a05a0ba1568140fc3ae2",
+    "true_label": 0,
+    "predicted_probability": 0.014427286572754383
+  },
+  {
+    "study_id": "030561532b801ef4b623657ebee557bd",
+    "true_label": 0,
+    "predicted_probability": 0.02139180898666382
+  },
+  {
+    "study_id": "6deff74cbc3bfa963378efc3935bf019",
+    "true_label": 0,
+    "predicted_probability": 0.015827704221010208
+  },
+  {
+    "study_id": "aac0d0492fab5085aa6a73809cd71df5",
+    "true_label": 0,
+    "predicted_probability": 0.005075573455542326
+  },
+  {
+    "study_id": "8a45984f17df63340f2e06caa7819a99",
+    "true_label": 0,
+    "predicted_probability": 0.00243800668977201
+  },
+  {
+    "study_id": "3d7a29f366f2cc2c0aec860490172e48",
+    "true_label": 0,
+    "predicted_probability": 0.008395119570195675
+  },
+  {
+    "study_id": "4a840882c784a146226ab8134749b8b0",
+    "true_label": 0,
+    "predicted_probability": 0.008878376334905624
+  },
+  {
+    "study_id": "00dfcde5aaf6cd0aab3c3a0435632b3f",
+    "true_label": 0,
+    "predicted_probability": 0.005515571217983961
+  },
+  {
+    "study_id": "78146d06b38300ad5ed4d0bb001823db",
+    "true_label": 0,
+    "predicted_probability": 0.006584906484931707
+  },
+  {
+    "study_id": "85e276e2e169121bfd36be0b77c18bf8",
+    "true_label": 0,
+    "predicted_probability": 0.009962784126400948
+  },
+  {
+    "study_id": "0089db766396d0df4406d46cd6107b58",
+    "true_label": 0,
+    "predicted_probability": 0.008052554912865162
+  },
+  {
+    "study_id": "3780f3f82ed54874cf296b9df745b2ec",
+    "true_label": 0,
+    "predicted_probability": 0.011860181577503681
+  },
+  {
+    "study_id": "b1f8ca9aab09b0e87296a06a3e8c916d",
+    "true_label": 0,
+    "predicted_probability": 0.002772293984889984
+  },
+  {
+    "study_id": "e9bece069ff09d6f88f4d6f36870d213",
+    "true_label": 0,
+    "predicted_probability": 0.002352191833779216
+  },
+  {
+    "study_id": "f8d6e1a8c1774a7470cb7554ebe21b2e",
+    "true_label": 0,
+    "predicted_probability": 0.02986714243888855
+  },
+  {
+    "study_id": "4db04558bbf5a998f527d487d3f46f25",
+    "true_label": 0,
+    "predicted_probability": 0.004623637534677982
+  },
+  {
+    "study_id": "dd40afcc87ec2505b4a8973819fb5cdb",
+    "true_label": 0,
+    "predicted_probability": 0.006236573681235313
+  },
+  {
+    "study_id": "e5a14d55eb5de443c6917d256651309b",
+    "true_label": 0,
+    "predicted_probability": 0.008658147417008877
+  },
+  {
+    "study_id": "4c3074e9476f0f2c1f81cd41cb45be46",
+    "true_label": 0,
+    "predicted_probability": 0.0021527695935219526
+  },
+  {
+    "study_id": "375665072d53ac6ed4e14aa85868166e",
+    "true_label": 0,
+    "predicted_probability": 0.008417636156082153
+  },
+  {
+    "study_id": "d1d18ce9cabc82332904ce8f28ba08e5",
+    "true_label": 0,
+    "predicted_probability": 0.003385888645425439
+  },
+  {
+    "study_id": "7ae67a9323fc47beceec45da3e856f9e",
+    "true_label": 0,
+    "predicted_probability": 0.01078732032328844
+  },
+  {
+    "study_id": "022aeb154d895d7575349313ad161b7a",
+    "true_label": 0,
+    "predicted_probability": 0.005725149530917406
+  },
+  {
+    "study_id": "263b2419b79679288df30a00e077bbb0",
+    "true_label": 0,
+    "predicted_probability": 0.020710119977593422
+  },
+  {
+    "study_id": "f8ecdaa6953d1a12988f35bbd2719239",
+    "true_label": 0,
+    "predicted_probability": 0.005453113466501236
+  },
+  {
+    "study_id": "468af6ce346100e22b41d30b8305cf3d",
+    "true_label": 0,
+    "predicted_probability": 0.00870742741972208
+  },
+  {
+    "study_id": "de0b57f5421dfff47e3ef1e6868408c7",
+    "true_label": 0,
+    "predicted_probability": 0.012810548767447472
+  },
+  {
+    "study_id": "9b525290bf02748b099f78f7d430e861",
+    "true_label": 0,
+    "predicted_probability": 0.01145197357982397
+  },
+  {
+    "study_id": "4141898a609bbcdf7fa4e9b49188514e",
+    "true_label": 0,
+    "predicted_probability": 0.004764079581946135
+  },
+  {
+    "study_id": "87e1a623019fcd8b77a7057b5e2d469e",
+    "true_label": 0,
+    "predicted_probability": 0.00842462107539177
+  },
+  {
+    "study_id": "2d3f722896d9c562017546fde5d8dcc4",
+    "true_label": 0,
+    "predicted_probability": 0.009407957084476948
+  },
+  {
+    "study_id": "8492112cba1ba5926caf14e5805ef0b3",
+    "true_label": 0,
+    "predicted_probability": 0.005147533491253853
+  },
+  {
+    "study_id": "620540eacf40713d457794075b6194ca",
+    "true_label": 0,
+    "predicted_probability": 0.0048267776146531105
+  },
+  {
+    "study_id": "517798b7f911bff1c58e3a2ffb5b20de",
+    "true_label": 0,
+    "predicted_probability": 0.0033207309897989035
+  },
+  {
+    "study_id": "8a4e105bdca79202d38bb3be2a7af967",
+    "true_label": 0,
+    "predicted_probability": 0.0035518950317054987
+  },
+  {
+    "study_id": "543f67d7c06bc174ebfea8531ea9416c",
+    "true_label": 0,
+    "predicted_probability": 0.0355522520840168
+  },
+  {
+    "study_id": "d3f46378044a3e35039e7d1a9fd397d8",
+    "true_label": 0,
+    "predicted_probability": 0.008896466344594955
+  },
+  {
+    "study_id": "ea55421e1e5daa53e3212435fe7a5b14",
+    "true_label": 0,
+    "predicted_probability": 0.008021682500839233
+  },
+  {
+    "study_id": "038bd3caac221613b2340090251ee000",
+    "true_label": 0,
+    "predicted_probability": 0.00922329816967249
+  },
+  {
+    "study_id": "a2ed63879a40e18e597582777bb1ee65",
+    "true_label": 0,
+    "predicted_probability": 0.012338226661086082
+  },
+  {
+    "study_id": "ca8c77e041e13ebb91c89a8e0962b291",
+    "true_label": 0,
+    "predicted_probability": 0.00937929842621088
+  },
+  {
+    "study_id": "fedfaab3bd1730d837d7b3b9ff228aad",
+    "true_label": 0,
+    "predicted_probability": 0.01830303855240345
+  },
+  {
+    "study_id": "2438c90cce7209733a62c5ffa6f5ef94",
+    "true_label": 0,
+    "predicted_probability": 0.014989572577178478
+  },
+  {
+    "study_id": "58f909e936a14049de83be0ad193a562",
+    "true_label": 1,
+    "predicted_probability": 0.007411565165966749
+  },
+  {
+    "study_id": "af8a0671156d0e595ce3200e73c0baf6",
+    "true_label": 0,
+    "predicted_probability": 0.021507563069462776
+  },
+  {
+    "study_id": "f71debb4fc7c967593c57211362fe8cd",
+    "true_label": 0,
+    "predicted_probability": 0.007398107089102268
+  },
+  {
+    "study_id": "ad3b3c26f89e7b710e633cf310df6051",
+    "true_label": 0,
+    "predicted_probability": 0.05139793083071709
+  },
+  {
+    "study_id": "af676efd34cae27940a8eb1261216ff3",
+    "true_label": 0,
+    "predicted_probability": 0.0111349793151021
+  },
+  {
+    "study_id": "3a4f17cf44a3e7a5e8c936d2c2b8da03",
+    "true_label": 0,
+    "predicted_probability": 0.007279398385435343
+  },
+  {
+    "study_id": "524684f24059c3e8ec0734eb1d06050e",
+    "true_label": 0,
+    "predicted_probability": 0.008058575913310051
+  },
+  {
+    "study_id": "2b2a86fb6f9d9d894d125a13977ecf87",
+    "true_label": 0,
+    "predicted_probability": 0.003740093670785427
+  },
+  {
+    "study_id": "78480822998350f5d116d49ecc50f6a3",
+    "true_label": 1,
+    "predicted_probability": 0.0302065908908844
+  },
+  {
+    "study_id": "816c11f1efd7a1432b728301c079d91c",
+    "true_label": 0,
+    "predicted_probability": 0.014583846554160118
+  },
+  {
+    "study_id": "6ae9c8f307114392317545f28424a0ff",
+    "true_label": 0,
+    "predicted_probability": 0.008829021826386452
+  },
+  {
+    "study_id": "77d2b897870fd48aacdc9b2bbad1ef52",
+    "true_label": 0,
+    "predicted_probability": 0.303640216588974
+  },
+  {
+    "study_id": "2e7d7d5f997bb1c77f1be4dffcbfe4c5",
+    "true_label": 0,
+    "predicted_probability": 0.006100466940551996
+  },
+  {
+    "study_id": "dc32f111b94513987397e578fa14dfd8",
+    "true_label": 0,
+    "predicted_probability": 0.02631824091076851
+  },
+  {
+    "study_id": "f8680b368fd78c04befeb46f43711ed5",
+    "true_label": 0,
+    "predicted_probability": 0.008727912791073322
+  },
+  {
+    "study_id": "a02c18ad550874d9e9b9018756e555f4",
+    "true_label": 0,
+    "predicted_probability": 0.007167662959545851
+  },
+  {
+    "study_id": "3c82c686c9482c6c4c8a0940f815a3d3",
+    "true_label": 1,
+    "predicted_probability": 0.024645408615469933
+  },
+  {
+    "study_id": "7e691b1890bbdaf84db26cabddf32668",
+    "true_label": 0,
+    "predicted_probability": 0.012870924547314644
+  },
+  {
+    "study_id": "bc51110c4f017af4d6180dd0f152cd1f",
+    "true_label": 0,
+    "predicted_probability": 0.008574165403842926
+  },
+  {
+    "study_id": "308b244f07c39973d914c24bd1bbc8e0",
+    "true_label": 0,
+    "predicted_probability": 0.00801087636500597
+  },
+  {
+    "study_id": "db2055ed07e728a1919b31c764e6936b",
+    "true_label": 0,
+    "predicted_probability": 0.006332056596875191
+  },
+  {
+    "study_id": "08f9ef5d5ddf5dd3c01ff2298e05673a",
+    "true_label": 0,
+    "predicted_probability": 0.009781903587281704
+  },
+  {
+    "study_id": "8ec64d7fcb01cb582052533c9ea00e1c",
+    "true_label": 0,
+    "predicted_probability": 0.005629539489746094
+  },
+  {
+    "study_id": "e2fa59a151d7fee4c68a05027eb5c73b",
+    "true_label": 0,
+    "predicted_probability": 0.006727604661136866
+  },
+  {
+    "study_id": "0fc607ea393c96552a1926060d4303d4",
+    "true_label": 0,
+    "predicted_probability": 0.020484235137701035
+  },
+  {
+    "study_id": "b23fb697d22a860c7c590a8c1fe3f2e6",
+    "true_label": 0,
+    "predicted_probability": 0.012396697886288166
+  },
+  {
+    "study_id": "5be15564e7f8c5593194a380ff2e1d7f",
+    "true_label": 0,
+    "predicted_probability": 0.016234461218118668
+  },
+  {
+    "study_id": "857e8fcdea4691ce1c5eb7ea7c849b9d",
+    "true_label": 0,
+    "predicted_probability": 0.007235897239297628
+  },
+  {
+    "study_id": "99288599d73af38b70043141516a2e49",
+    "true_label": 0,
+    "predicted_probability": 0.010158725082874298
+  },
+  {
+    "study_id": "f9eead6754001db8afcb5691161903f5",
+    "true_label": 0,
+    "predicted_probability": 0.008766964077949524
+  },
+  {
+    "study_id": "6e668aaeb4daa860b2a87ae61e19e26f",
+    "true_label": 0,
+    "predicted_probability": 0.010917712934315205
+  },
+  {
+    "study_id": "af3978e524395222062f243c0e242ce8",
+    "true_label": 0,
+    "predicted_probability": 0.0036286867689341307
+  },
+  {
+    "study_id": "1f85b3aa70098ca6512a70eb5b64253e",
+    "true_label": 1,
+    "predicted_probability": 0.011202771216630936
+  },
+  {
+    "study_id": "1655e8229f224faa520f598ed58fbfcf",
+    "true_label": 0,
+    "predicted_probability": 0.004492820706218481
+  },
+  {
+    "study_id": "041656eea2b3ca050bc07cde237de84e",
+    "true_label": 0,
+    "predicted_probability": 0.010623272508382797
+  },
+  {
+    "study_id": "d01655ab6372a7adf01fdd062f02cc04",
+    "true_label": 0,
+    "predicted_probability": 0.004199407063424587
+  },
+  {
+    "study_id": "71e1c99aaa708f39cf4f6c395041011d",
+    "true_label": 0,
+    "predicted_probability": 0.009057116694748402
+  },
+  {
+    "study_id": "933609849e477b2daf41aef84ebe7e09",
+    "true_label": 0,
+    "predicted_probability": 0.013515996746718884
+  },
+  {
+    "study_id": "ece71b764590d2922a73b98efeef25cc",
+    "true_label": 0,
+    "predicted_probability": 0.011204044334590435
+  },
+  {
+    "study_id": "7f093503e341bcec486b4330ad0c5271",
+    "true_label": 0,
+    "predicted_probability": 0.011893372051417828
+  },
+  {
+    "study_id": "d5f05748abc38af636fb4a83e989dd62",
+    "true_label": 0,
+    "predicted_probability": 0.003611089428886771
+  },
+  {
+    "study_id": "ee150414982fb632bdcb898ea16348d7",
+    "true_label": 0,
+    "predicted_probability": 0.00396436732262373
+  },
+  {
+    "study_id": "427cadaef2d9faaeb4223c55f4339043",
+    "true_label": 0,
+    "predicted_probability": 0.015303400345146656
+  },
+  {
+    "study_id": "dfe5da621d5a62d81e5b8824a9f9fca0",
+    "true_label": 0,
+    "predicted_probability": 0.005170403979718685
+  },
+  {
+    "study_id": "be04b655593a99f6e97f01b51f68efc7",
+    "true_label": 0,
+    "predicted_probability": 0.009036025032401085
+  },
+  {
+    "study_id": "5c2b075b66e72a627175ca05beaa1d34",
+    "true_label": 0,
+    "predicted_probability": 0.01472166832536459
+  },
+  {
+    "study_id": "35eb15c7c9522cfb54e75dcbb73f1e55",
+    "true_label": 0,
+    "predicted_probability": 0.023844677954912186
+  },
+  {
+    "study_id": "ef9bcee35f3e5d4bca8d5bb5c6f09450",
+    "true_label": 0,
+    "predicted_probability": 0.030989237129688263
+  },
+  {
+    "study_id": "e78963739a4ab1c4ea5188024281e38e",
+    "true_label": 0,
+    "predicted_probability": 0.026935871690511703
+  },
+  {
+    "study_id": "996f1876ba61a22dbe494eaaddab5f68",
+    "true_label": 0,
+    "predicted_probability": 0.004578690510243177
+  },
+  {
+    "study_id": "2978d1240c7e154dd95b3f1eec24a761",
+    "true_label": 0,
+    "predicted_probability": 0.005998715292662382
+  },
+  {
+    "study_id": "4c89f544e892ef073d3c3417097f0b10",
+    "true_label": 0,
+    "predicted_probability": 0.024027133360505104
+  },
+  {
+    "study_id": "94bf7bf284a6ab1eadb498bde7bda741",
+    "true_label": 1,
+    "predicted_probability": 0.010302284732460976
+  },
+  {
+    "study_id": "c0c5128d14a98e97346abd59ee902ff9",
+    "true_label": 0,
+    "predicted_probability": 0.007199406158179045
+  },
+  {
+    "study_id": "8c0c3e588d854362b8025a7ce36580b6",
+    "true_label": 0,
+    "predicted_probability": 0.02068987861275673
+  },
+  {
+    "study_id": "01b135a21ab403d288ad4e779590083c",
+    "true_label": 0,
+    "predicted_probability": 0.2317945659160614
+  },
+  {
+    "study_id": "f99a5505fc6e9b6fb710a4f50b197007",
+    "true_label": 0,
+    "predicted_probability": 0.01087960321456194
+  },
+  {
+    "study_id": "f9aa163c024ff695405c5f091df8386a",
+    "true_label": 0,
+    "predicted_probability": 0.010258023627102375
+  },
+  {
+    "study_id": "94c7c7cb9abd2e3ca04c407ba0c37ba9",
+    "true_label": 0,
+    "predicted_probability": 0.010030626319348812
+  },
+  {
+    "study_id": "a752bee16733c71757dad363cd479325",
+    "true_label": 0,
+    "predicted_probability": 0.008906255476176739
+  },
+  {
+    "study_id": "7795d09e52505903af3568bce7bd9c92",
+    "true_label": 0,
+    "predicted_probability": 0.008550387807190418
+  },
+  {
+    "study_id": "c7efc618457fab6c75860ad3023a056e",
+    "true_label": 1,
+    "predicted_probability": 0.004916100762784481
+  },
+  {
+    "study_id": "6c4e86701d8d1ba62b3b42931c91bf6e",
+    "true_label": 0,
+    "predicted_probability": 0.004602394998073578
+  },
+  {
+    "study_id": "5fcca213052838013b31289cb7ae7042",
+    "true_label": 0,
+    "predicted_probability": 0.0028474510181695223
+  },
+  {
+    "study_id": "3b350da299f8b1de6d0a17bc62bcf131",
+    "true_label": 0,
+    "predicted_probability": 0.03829691559076309
+  },
+  {
+    "study_id": "5ae1e62ab43d573b6f3243e7472e4008",
+    "true_label": 0,
+    "predicted_probability": 0.012288174591958523
+  },
+  {
+    "study_id": "f18f2f68b5a0d5e3944a3b5d0d6af869",
+    "true_label": 0,
+    "predicted_probability": 0.0064928908832371235
+  },
+  {
+    "study_id": "4734fa3590084dc21fa0be16ee828e6f",
+    "true_label": 0,
+    "predicted_probability": 0.007926369085907936
+  },
+  {
+    "study_id": "9d79f22414d7ebfff8fde61421302b28",
+    "true_label": 0,
+    "predicted_probability": 0.004456878639757633
+  },
+  {
+    "study_id": "4f5f3d6531d7852e6ccce1c075e64330",
+    "true_label": 0,
+    "predicted_probability": 0.0067560384050011635
+  },
+  {
+    "study_id": "0c6bc92e0b041f5015b28f67e11f5c0d",
+    "true_label": 0,
+    "predicted_probability": 0.01865200698375702
+  },
+  {
+    "study_id": "a213069e2e4095ee10b88cce715ca0e1",
+    "true_label": 0,
+    "predicted_probability": 0.011383051052689552
+  },
+  {
+    "study_id": "fb6a80caea4f811816a7129f3496b1ea",
+    "true_label": 0,
+    "predicted_probability": 0.006799190305173397
+  },
+  {
+    "study_id": "ed977bccc4eb1386b607e5de6cc95ec5",
+    "true_label": 0,
+    "predicted_probability": 0.007706862408667803
+  },
+  {
+    "study_id": "366bf1bffacd41ca9d53b15b87a3f508",
+    "true_label": 0,
+    "predicted_probability": 0.6536117792129517
+  },
+  {
+    "study_id": "764f0649b11623a66b60bd29707150fd",
+    "true_label": 0,
+    "predicted_probability": 0.013362884521484375
+  },
+  {
+    "study_id": "48e2884ac235c81efca0f264442a6caa",
+    "true_label": 0,
+    "predicted_probability": 0.009045531041920185
+  },
+  {
+    "study_id": "fac21d0f88f16a86a4f518a9379d0c76",
+    "true_label": 0,
+    "predicted_probability": 0.007449194323271513
+  },
+  {
+    "study_id": "f9b3e67ee4b1722bccb0c622c21826b8",
+    "true_label": 0,
+    "predicted_probability": 0.005005753133445978
+  },
+  {
+    "study_id": "b1547727448666cfa7e4ff36752b23a5",
+    "true_label": 0,
+    "predicted_probability": 0.005267611239105463
+  },
+  {
+    "study_id": "3ddb7884a8796ad2ad19910d5f2dbaf0",
+    "true_label": 0,
+    "predicted_probability": 0.048334766179323196
+  },
+  {
+    "study_id": "19c0b9aaca930b073af99ab2e3ae1879",
+    "true_label": 0,
+    "predicted_probability": 0.00716919731348753
+  },
+  {
+    "study_id": "7fd9c5dda625564ca7650fa4f6598358",
+    "true_label": 0,
+    "predicted_probability": 0.044730160385370255
+  },
+  {
+    "study_id": "8f42cb03637d71269df99d7b870f3999",
+    "true_label": 0,
+    "predicted_probability": 0.006261328235268593
+  },
+  {
+    "study_id": "2fd29c153daf0252d64287af0776cb79",
+    "true_label": 0,
+    "predicted_probability": 0.004260627087205648
+  },
+  {
+    "study_id": "93b2edbe1a3302f122be0e3d985f8875",
+    "true_label": 0,
+    "predicted_probability": 0.030875450000166893
+  },
+  {
+    "study_id": "903da61442e93f144b0aba6321d56ae7",
+    "true_label": 0,
+    "predicted_probability": 0.008361252956092358
+  },
+  {
+    "study_id": "12aca50c0fd2b6309e42d9244559cade",
+    "true_label": 0,
+    "predicted_probability": 0.01523847971111536
+  },
+  {
+    "study_id": "22bcaeb0b2d2bafba7f45a237cbd1527",
+    "true_label": 0,
+    "predicted_probability": 0.008333472535014153
+  },
+  {
+    "study_id": "d095e59b44d82dd103e8f5c94fe321b0",
+    "true_label": 0,
+    "predicted_probability": 0.010607982985675335
+  },
+  {
+    "study_id": "d3aaf5a9f11d6dc1120f6ffa539838cb",
+    "true_label": 0,
+    "predicted_probability": 0.010856377892196178
+  },
+  {
+    "study_id": "ea90a353de2dc5361b7841b2627d455f",
+    "true_label": 0,
+    "predicted_probability": 0.01039981096982956
+  },
+  {
+    "study_id": "2f126c81d8337238775a8585712d9711",
+    "true_label": 0,
+    "predicted_probability": 0.004701200406998396
+  },
+  {
+    "study_id": "0e724925c58d762192f1520471ca16e1",
+    "true_label": 0,
+    "predicted_probability": 0.012371933087706566
+  },
+  {
+    "study_id": "9adfebdbf918359af33b9fbd0141f7f2",
+    "true_label": 0,
+    "predicted_probability": 0.014506081119179726
+  },
+  {
+    "study_id": "d3a651252d937fa6f89d26961bb07455",
+    "true_label": 0,
+    "predicted_probability": 0.011741474270820618
+  },
+  {
+    "study_id": "796beae113580280c859d5f06e4adb6c",
+    "true_label": 0,
+    "predicted_probability": 0.006843628361821175
+  },
+  {
+    "study_id": "f3d1727622d7bddd0afa0efbe0207a6c",
+    "true_label": 0,
+    "predicted_probability": 0.016062067821621895
+  },
+  {
+    "study_id": "d82d6c5649e553f1f974f43c17d292e2",
+    "true_label": 0,
+    "predicted_probability": 0.005712671671062708
+  },
+  {
+    "study_id": "ebe0a3f059759e24a8f3d682f503e2f3",
+    "true_label": 0,
+    "predicted_probability": 0.010707231238484383
+  },
+  {
+    "study_id": "c7a6bcb9dd5cb7f576bc2eda4034e94d",
+    "true_label": 0,
+    "predicted_probability": 0.005323957186192274
+  },
+  {
+    "study_id": "d90ff5299dccc0956e48d70541372015",
+    "true_label": 0,
+    "predicted_probability": 0.012262171134352684
+  },
+  {
+    "study_id": "12cb790484b10d38b76531ddda368c85",
+    "true_label": 0,
+    "predicted_probability": 0.0041361418552696705
+  },
+  {
+    "study_id": "9f0d58bba5d31da6eab6d2fb6cae38c5",
+    "true_label": 0,
+    "predicted_probability": 0.011171438731253147
+  },
+  {
+    "study_id": "61647978d6166d293470a149f375f0c5",
+    "true_label": 0,
+    "predicted_probability": 0.1404798924922943
+  },
+  {
+    "study_id": "d78191b9cd7beb8650b3e02e3e76e7f2",
+    "true_label": 0,
+    "predicted_probability": 0.005381358787417412
+  },
+  {
+    "study_id": "081f3a745d04594d58fd24fe39687f20",
+    "true_label": 0,
+    "predicted_probability": 0.003243840066716075
+  },
+  {
+    "study_id": "b306bdb2fa3bb2890ba420d32b3f8fcb",
+    "true_label": 1,
+    "predicted_probability": 0.008294849656522274
+  },
+  {
+    "study_id": "1c6912027a8d9e945f215bb9c8d151cc",
+    "true_label": 0,
+    "predicted_probability": 0.004472384229302406
+  },
+  {
+    "study_id": "36a1ff934bbc829886ae1e78ffd772aa",
+    "true_label": 0,
+    "predicted_probability": 0.004801373928785324
+  },
+  {
+    "study_id": "5fd640da7cae8113984d0e92e8f675bb",
+    "true_label": 0,
+    "predicted_probability": 0.00494767352938652
+  },
+  {
+    "study_id": "329fca43eb20fbd6d36ea4c29e211922",
+    "true_label": 0,
+    "predicted_probability": 0.005283134989440441
+  },
+  {
+    "study_id": "df8dd41ceeab917b59184941ba429bdc",
+    "true_label": 0,
+    "predicted_probability": 0.010865951888263226
+  },
+  {
+    "study_id": "3d8561fbf9ba3c9182d177019e885f19",
+    "true_label": 0,
+    "predicted_probability": 0.032209768891334534
+  },
+  {
+    "study_id": "a18ea1b872f67b38ffdef8b4e8ad4b54",
+    "true_label": 0,
+    "predicted_probability": 0.02477051131427288
+  },
+  {
+    "study_id": "97e25f2f88f13545187827a890e8650a",
+    "true_label": 0,
+    "predicted_probability": 0.020234711468219757
+  },
+  {
+    "study_id": "d047a94657d618650c95e078d58754df",
+    "true_label": 0,
+    "predicted_probability": 0.007012579124420881
+  },
+  {
+    "study_id": "b27a7dc2ffdc37a10c6e78eabfb23eb6",
+    "true_label": 0,
+    "predicted_probability": 0.00505673186853528
+  },
+  {
+    "study_id": "c19c0dda160c4be9871d8cf5186c7b82",
+    "true_label": 0,
+    "predicted_probability": 0.013022445142269135
+  },
+  {
+    "study_id": "672e4a8b265c9d541c39a838a5b23371",
+    "true_label": 0,
+    "predicted_probability": 0.006956940516829491
+  },
+  {
+    "study_id": "03e6e9a7430649373bd8e65102326bc5",
+    "true_label": 0,
+    "predicted_probability": 0.012326511554419994
+  },
+  {
+    "study_id": "8e2c14f3e66006854cf234053b589f7b",
+    "true_label": 0,
+    "predicted_probability": 0.00964304618537426
+  },
+  {
+    "study_id": "bf435f69d73987cecb87d9d16ebc7b6e",
+    "true_label": 0,
+    "predicted_probability": 0.004244119394570589
+  },
+  {
+    "study_id": "8aa98e423da25974dc78fc7cf402ce96",
+    "true_label": 0,
+    "predicted_probability": 0.01437824685126543
+  },
+  {
+    "study_id": "d1c6c8f46f3a2112c7fb8e1882c6acd1",
+    "true_label": 0,
+    "predicted_probability": 0.03774508461356163
+  },
+  {
+    "study_id": "aaea3452ed641f39198509aa2b58a037",
+    "true_label": 0,
+    "predicted_probability": 0.002981472061946988
+  },
+  {
+    "study_id": "d94fa669c37cc757ea519ca3c291ccb4",
+    "true_label": 0,
+    "predicted_probability": 0.031524330377578735
+  },
+  {
+    "study_id": "97676356446f9a7699e83ce7e191cfdb",
+    "true_label": 0,
+    "predicted_probability": 0.00505702942609787
+  },
+  {
+    "study_id": "7ecaf59d591676b5c3026a9a67ef8317",
+    "true_label": 0,
+    "predicted_probability": 0.016187358647584915
+  },
+  {
+    "study_id": "038fb81d23c1df8547f2068fe6673b52",
+    "true_label": 0,
+    "predicted_probability": 0.030596265569329262
+  },
+  {
+    "study_id": "9c1cd4d1050f511245afd4b3b36a2cea",
+    "true_label": 0,
+    "predicted_probability": 0.019075915217399597
+  },
+  {
+    "study_id": "e7c4b9f4035d7a1601f2a943bffe28d0",
+    "true_label": 0,
+    "predicted_probability": 0.01468493789434433
+  },
+  {
+    "study_id": "ceab8161e6137c7510e2249628674306",
+    "true_label": 0,
+    "predicted_probability": 0.005625157617032528
+  },
+  {
+    "study_id": "0eed82d8d6646b31122789b991427cfd",
+    "true_label": 0,
+    "predicted_probability": 0.016219494864344597
+  },
+  {
+    "study_id": "fd37a07786639ebc6799ad64efc88d40",
+    "true_label": 0,
+    "predicted_probability": 0.010642068460583687
+  },
+  {
+    "study_id": "891ff1343a54c212f973f1b83ec4952c",
+    "true_label": 0,
+    "predicted_probability": 0.00866218376904726
+  },
+  {
+    "study_id": "af5993bad933f69d1181e383b2ac8fbf",
+    "true_label": 0,
+    "predicted_probability": 0.007627155631780624
+  },
+  {
+    "study_id": "ca1e0106f56436be3292ae42eb62a205",
+    "true_label": 0,
+    "predicted_probability": 0.010327022522687912
+  },
+  {
+    "study_id": "75321149284715e8cb0d08590ab777cb",
+    "true_label": 0,
+    "predicted_probability": 0.011659381911158562
+  },
+  {
+    "study_id": "67e3f610188217a67cac87d03b2a1562",
+    "true_label": 0,
+    "predicted_probability": 0.005680455826222897
+  },
+  {
+    "study_id": "86e51ba349175ad4311ba5db0cd5bfdb",
+    "true_label": 0,
+    "predicted_probability": 0.0122957993298769
+  },
+  {
+    "study_id": "59a4436af3f680f40a4c23f1c4775519",
+    "true_label": 0,
+    "predicted_probability": 0.26397281885147095
+  },
+  {
+    "study_id": "8f5af84cac43e3d019f20610e1b87e72",
+    "true_label": 0,
+    "predicted_probability": 0.0071556540206074715
+  },
+  {
+    "study_id": "e1314fcdd554aa328145271d19db6929",
+    "true_label": 1,
+    "predicted_probability": 0.9987815022468567
+  },
+  {
+    "study_id": "6b8e483001ee8cea0673292b6e4a083c",
+    "true_label": 0,
+    "predicted_probability": 0.0018821044359356165
+  },
+  {
+    "study_id": "755d5d31a6675739b15fcdd0543a1b9f",
+    "true_label": 0,
+    "predicted_probability": 0.0015748911537230015
+  },
+  {
+    "study_id": "843abf53ca13b08410085e28fe4de489",
+    "true_label": 0,
+    "predicted_probability": 0.0030477046966552734
+  },
+  {
+    "study_id": "99f8ee0074c65cc7c5b115e182cc9504",
+    "true_label": 0,
+    "predicted_probability": 0.9248157739639282
+  },
+  {
+    "study_id": "93514476602890f55d1758d1f3e1a9b5",
+    "true_label": 1,
+    "predicted_probability": 0.0277539175003767
+  },
+  {
+    "study_id": "95ef99a6fa2678032cc976d18f178ba1",
+    "true_label": 0,
+    "predicted_probability": 0.106909841299057
+  },
+  {
+    "study_id": "5f97a8ee0bc7b1ffb941035bc5291db8",
+    "true_label": 1,
+    "predicted_probability": 0.9439557194709778
+  },
+  {
+    "study_id": "ea0b2567f5e36739f34c4699b329e131",
+    "true_label": 0,
+    "predicted_probability": 0.9448180794715881
+  },
+  {
+    "study_id": "23ae781b46f7eaaffb8d4d7b3a7f968c",
+    "true_label": 0,
+    "predicted_probability": 0.0105353482067585
+  },
+  {
+    "study_id": "ef84574d27b45c3ff9b4da5bab2c3b1d",
+    "true_label": 0,
+    "predicted_probability": 0.004466354846954346
+  },
+  {
+    "study_id": "3852e7f01c152a96a6524c842e4ec7c8",
+    "true_label": 0,
+    "predicted_probability": 0.0013465507654473186
+  },
+  {
+    "study_id": "3cf40abc1f1a567153e2cca832a95c77",
+    "true_label": 0,
+    "predicted_probability": 0.004884059075266123
+  },
+  {
+    "study_id": "048e7e201817043fefe33de8a9f41259",
+    "true_label": 0,
+    "predicted_probability": 0.0015238974010571837
+  },
+  {
+    "study_id": "ff5bf77c804db0ac2c1f3ab8ac5d89da",
+    "true_label": 0,
+    "predicted_probability": 0.004129827953875065
+  },
+  {
+    "study_id": "6d20837c70bbf9223c27b05abf7e2b59",
+    "true_label": 0,
+    "predicted_probability": 0.0012485779589042068
+  },
+  {
+    "study_id": "52e49d5a3642f9c0f9f47aaf36b7b747",
+    "true_label": 0,
+    "predicted_probability": 0.0027829541359096766
+  },
+  {
+    "study_id": "d2e0bf1c2d64096a8d28ec4992e1a97c",
+    "true_label": 0,
+    "predicted_probability": 0.0020575192756950855
+  },
+  {
+    "study_id": "371263f0f6a6eb61134203bf44190a5f",
+    "true_label": 0,
+    "predicted_probability": 0.0022100445348769426
+  },
+  {
+    "study_id": "42162efc3b63ab43fb62fa3ab897c940",
+    "true_label": 0,
+    "predicted_probability": 0.002783106407150626
+  },
+  {
+    "study_id": "6ab37fd9019921e5ea1f26869bde5636",
+    "true_label": 0,
+    "predicted_probability": 0.001701677218079567
+  },
+  {
+    "study_id": "099b5675cd67818fa74f97a1cdda48ef",
+    "true_label": 0,
+    "predicted_probability": 0.011233840137720108
+  },
+  {
+    "study_id": "f5f372805822b8e263351cf80cbc97d1",
+    "true_label": 0,
+    "predicted_probability": 0.0013804045738652349
+  },
+  {
+    "study_id": "1c682f03417c4ab9f4fdaedc0860f869",
+    "true_label": 0,
+    "predicted_probability": 0.004427919629961252
+  },
+  {
+    "study_id": "75be759b5f98aa7bc5ca30f262d7d16d",
+    "true_label": 0,
+    "predicted_probability": 0.002023984445258975
+  },
+  {
+    "study_id": "48728ef1b0e6b3eaa91ae76a51f2045d",
+    "true_label": 0,
+    "predicted_probability": 0.003318298375234008
+  },
+  {
+    "study_id": "5a831426527bd4d9f6205e95bf2b53bc",
+    "true_label": 0,
+    "predicted_probability": 0.009707454591989517
+  },
+  {
+    "study_id": "a2b59892275f14beb886388de76b37f1",
+    "true_label": 0,
+    "predicted_probability": 0.0017001921078190207
+  },
+  {
+    "study_id": "4144e342f1d51d29b09fbccc774061a1",
+    "true_label": 0,
+    "predicted_probability": 0.002623004838824272
+  },
+  {
+    "study_id": "d9792a77adde996ea4c2147137a70aaf",
+    "true_label": 0,
+    "predicted_probability": 0.002516448497772217
+  },
+  {
+    "study_id": "ad5c5621f0cf6bb5209abeee0e574334",
+    "true_label": 0,
+    "predicted_probability": 0.0019705614540725946
+  },
+  {
+    "study_id": "f4e603589e6995f53db69b3108b0512f",
+    "true_label": 0,
+    "predicted_probability": 0.0015475567197427154
+  },
+  {
+    "study_id": "7c7751e70391f842a984f66eb93f48fa",
+    "true_label": 0,
+    "predicted_probability": 0.0015115702990442514
+  },
+  {
+    "study_id": "7330d23e7da70312849a9d9783ba528d",
+    "true_label": 0,
+    "predicted_probability": 0.006142782978713512
+  },
+  {
+    "study_id": "53e742eb8e91caa870b5dc1fafeec048",
+    "true_label": 0,
+    "predicted_probability": 0.003301850752905011
+  },
+  {
+    "study_id": "f83b21e63b18d6b9af2b4d85a79f3f9b",
+    "true_label": 0,
+    "predicted_probability": 0.002323630265891552
+  },
+  {
+    "study_id": "43da538c512859f055deb67d02facf16",
+    "true_label": 0,
+    "predicted_probability": 0.0013235599035397172
+  },
+  {
+    "study_id": "1e268822a8d423b5a117b6e102b3a2db",
+    "true_label": 0,
+    "predicted_probability": 0.001376197556965053
+  },
+  {
+    "study_id": "b42477aa85ccdf9fbb468f4773fb0f09",
+    "true_label": 0,
+    "predicted_probability": 0.0021130142267793417
+  },
+  {
+    "study_id": "c519974ec0f6a536640dc0a96742d3ad",
+    "true_label": 0,
+    "predicted_probability": 0.0012219807831570506
+  },
+  {
+    "study_id": "6fb939e29e2f60726f20994fbf53d5b8",
+    "true_label": 0,
+    "predicted_probability": 0.0022639569360762835
+  },
+  {
+    "study_id": "292309186646b88430a1e0337e2abad7",
+    "true_label": 0,
+    "predicted_probability": 0.0015774499624967575
+  },
+  {
+    "study_id": "c20d362aaca64f6016a8be6421fe5cd6",
+    "true_label": 0,
+    "predicted_probability": 0.002558994572609663
+  },
+  {
+    "study_id": "1c4e4e58044240277b88473ec11e0234",
+    "true_label": 0,
+    "predicted_probability": 0.003387425560504198
+  },
+  {
+    "study_id": "ec8f0df09f531817085c87dd45844cec",
+    "true_label": 0,
+    "predicted_probability": 0.006235881708562374
+  },
+  {
+    "study_id": "242d0a67f7fb4e69f1eba5756ec13343",
+    "true_label": 0,
+    "predicted_probability": 0.002200372749939561
+  },
+  {
+    "study_id": "e29ade31fe04d80d2df48f2b4036eb13",
+    "true_label": 0,
+    "predicted_probability": 0.006651801057159901
+  },
+  {
+    "study_id": "b68a676a13ebfa43b174007b6bc82eca",
+    "true_label": 0,
+    "predicted_probability": 0.012078761123120785
+  },
+  {
+    "study_id": "953167f397fdb932f9858a93e9b644d3",
+    "true_label": 0,
+    "predicted_probability": 0.007566849701106548
+  },
+  {
+    "study_id": "91c89103d74a2907bb02c94c5b4581d6",
+    "true_label": 0,
+    "predicted_probability": 0.007991672493517399
+  },
+  {
+    "study_id": "627d80eadec8c202e86ef37ef97b37d6",
+    "true_label": 0,
+    "predicted_probability": 0.0011975448578596115
+  },
+  {
+    "study_id": "dba87db4c7224d1f12918fda66a2e63e",
+    "true_label": 0,
+    "predicted_probability": 0.010448911227285862
+  },
+  {
+    "study_id": "0f19f51df3ae39481f0a88d5b17b8499",
+    "true_label": 0,
+    "predicted_probability": 0.002666236599907279
+  },
+  {
+    "study_id": "04efe65df0c93da03988008ab4c2f4e7",
+    "true_label": 0,
+    "predicted_probability": 0.008913603611290455
+  },
+  {
+    "study_id": "0816e84bd8ceaac6a5b0884c52cbcd13",
+    "true_label": 0,
+    "predicted_probability": 0.0016772568924352527
+  },
+  {
+    "study_id": "55d30432099d803d6e0f429077eab1c1",
+    "true_label": 0,
+    "predicted_probability": 0.0033952612429857254
+  },
+  {
+    "study_id": "35c85a3aa682ad6e780622947abaf6cf",
+    "true_label": 0,
+    "predicted_probability": 0.0045093754306435585
+  },
+  {
+    "study_id": "f7cf0e81dc71ee3d2cfd209cf030b143",
+    "true_label": 0,
+    "predicted_probability": 0.001621972769498825
+  },
+  {
+    "study_id": "555f181d07aea483d0d0de346098bc4b",
+    "true_label": 0,
+    "predicted_probability": 0.0027527196798473597
+  },
+  {
+    "study_id": "ee13646de89c94bdaa6d0cb751f1c3eb",
+    "true_label": 0,
+    "predicted_probability": 0.002671916736289859
+  },
+  {
+    "study_id": "e96df68bfea5ae9171077df984d86abe",
+    "true_label": 0,
+    "predicted_probability": 0.002213970059528947
+  },
+  {
+    "study_id": "72d2ac2ea863261f4f13b28c78561edb",
+    "true_label": 0,
+    "predicted_probability": 0.0036346844863146544
+  },
+  {
+    "study_id": "782126c9ce4768b828e3bc32394dbbc3",
+    "true_label": 0,
+    "predicted_probability": 0.011313076131045818
+  },
+  {
+    "study_id": "95f247ce37d090fcd4bdb752e85e8bdd",
+    "true_label": 0,
+    "predicted_probability": 0.004177458584308624
+  },
+  {
+    "study_id": "3677d505944a9ac35a6384757fd73ee5",
+    "true_label": 0,
+    "predicted_probability": 0.0019320776918902993
+  },
+  {
+    "study_id": "b747b4375fed5007db728d35b1acac93",
+    "true_label": 0,
+    "predicted_probability": 0.0020878142677247524
+  },
+  {
+    "study_id": "a6cede6b5c10ed39f58e363c75603716",
+    "true_label": 0,
+    "predicted_probability": 0.006184118799865246
+  },
+  {
+    "study_id": "85d26c72e12b6139a6d26b54c3706c30",
+    "true_label": 1,
+    "predicted_probability": 0.9199450016021729
+  },
+  {
+    "study_id": "56ff4bd823ad42c4413b1fe40deb4c0c",
+    "true_label": 0,
+    "predicted_probability": 0.003005841514095664
+  },
+  {
+    "study_id": "07d39d3262b0d4e6cfde03da5cba43eb",
+    "true_label": 0,
+    "predicted_probability": 0.0024271979928016663
+  },
+  {
+    "study_id": "8851da72a07732833ad812f3b865b5a5",
+    "true_label": 0,
+    "predicted_probability": 0.004679756239056587
+  },
+  {
+    "study_id": "3e51c09f5125372d95692a88b2f97a7d",
+    "true_label": 0,
+    "predicted_probability": 0.05816799774765968
+  },
+  {
+    "study_id": "62d00d6de77f3f187452028e4b03db81",
+    "true_label": 0,
+    "predicted_probability": 0.020510178059339523
+  },
+  {
+    "study_id": "9bc8a6fe32d26a988e56bd490f0f245a",
+    "true_label": 0,
+    "predicted_probability": 0.005099201574921608
+  },
+  {
+    "study_id": "f64b4d28092443aacf493234f6914393",
+    "true_label": 0,
+    "predicted_probability": 0.0026666182093322277
+  },
+  {
+    "study_id": "077cb33aac308b9533e6d4a5d701d44c",
+    "true_label": 0,
+    "predicted_probability": 0.009398861788213253
+  },
+  {
+    "study_id": "ed516aec2d4cbbec27fe135e199fca04",
+    "true_label": 0,
+    "predicted_probability": 0.006591219920665026
+  },
+  {
+    "study_id": "b92866ae274bf695b28b2ae27e8bc1b4",
+    "true_label": 0,
+    "predicted_probability": 0.004253873601555824
+  },
+  {
+    "study_id": "cce8d13e5e4e9412608850f48bdbd5a4",
+    "true_label": 0,
+    "predicted_probability": 0.005321316421031952
+  },
+  {
+    "study_id": "357014e8a48f0f7051717aa965f4deb5",
+    "true_label": 0,
+    "predicted_probability": 0.0022540916688740253
+  },
+  {
+    "study_id": "2d11cdada397a8441039e4726e5d72b5",
+    "true_label": 0,
+    "predicted_probability": 0.007912525907158852
+  },
+  {
+    "study_id": "c35cfa4c2b4f469e6c6f7f3a8a14827f",
+    "true_label": 0,
+    "predicted_probability": 0.004298316314816475
+  },
+  {
+    "study_id": "35c623293e2f2a5897e77a41e2a4390f",
+    "true_label": 0,
+    "predicted_probability": 0.005556223914027214
+  },
+  {
+    "study_id": "4f8feabfc8bda759faf63c608c7d98c4",
+    "true_label": 0,
+    "predicted_probability": 0.02371354214847088
+  },
+  {
+    "study_id": "ac4aadacbdccf3cf3d735e43211f05ef",
+    "true_label": 0,
+    "predicted_probability": 0.012922716327011585
+  },
+  {
+    "study_id": "6ac743abe5c8bc85d311a5a2f80a5a1d",
+    "true_label": 0,
+    "predicted_probability": 0.0015327404253184795
+  },
+  {
+    "study_id": "3320b1bfbefba905b18408f114680c87",
+    "true_label": 0,
+    "predicted_probability": 0.002371141454204917
+  },
+  {
+    "study_id": "8e29ff5683bfba53a52dc4b881ae3081",
+    "true_label": 0,
+    "predicted_probability": 0.013606633991003036
+  },
+  {
+    "study_id": "feda66d831bb76c4e9068cdb58312ec9",
+    "true_label": 0,
+    "predicted_probability": 0.014503893442451954
+  },
+  {
+    "study_id": "937f8b7c688c373cff168ea6529a4731",
+    "true_label": 0,
+    "predicted_probability": 0.00378505140542984
+  },
+  {
+    "study_id": "050575b290a81b8c1c27aa4859c41b5f",
+    "true_label": 0,
+    "predicted_probability": 0.004406513646245003
+  },
+  {
+    "study_id": "25e26de58e476ec0075b26f8d55898d3",
+    "true_label": 0,
+    "predicted_probability": 0.014992373995482922
+  },
+  {
+    "study_id": "35d1be9d08f71555ac78e6de82590374",
+    "true_label": 0,
+    "predicted_probability": 0.015769191086292267
+  },
+  {
+    "study_id": "184e63414faf89c7988c37f02e8c8d5f",
+    "true_label": 0,
+    "predicted_probability": 0.0018929752986878157
+  },
+  {
+    "study_id": "2d695a0c4e412141399510da3190cf1a",
+    "true_label": 0,
+    "predicted_probability": 0.022582804784178734
+  },
+  {
+    "study_id": "741038cb89466ea9f025c89646982062",
+    "true_label": 0,
+    "predicted_probability": 0.0250786691904068
+  },
+  {
+    "study_id": "851e387e17df214ec4a50bcc713a078a",
+    "true_label": 0,
+    "predicted_probability": 0.005483199376612902
+  },
+  {
+    "study_id": "2bcf0f39dedf7ad64032b0252bef2245",
+    "true_label": 0,
+    "predicted_probability": 0.0029864259995520115
+  },
+  {
+    "study_id": "4c63eb0489d9f95ec55fabc8e9e3577d",
+    "true_label": 0,
+    "predicted_probability": 0.0021849346812814474
+  },
+  {
+    "study_id": "9a60aa042e957dd739d89ca91a11d27a",
+    "true_label": 0,
+    "predicted_probability": 0.002908767433837056
+  },
+  {
+    "study_id": "d069b7b6b07b8cf68e3831ddd82daa88",
+    "true_label": 0,
+    "predicted_probability": 0.0028611598536372185
+  },
+  {
+    "study_id": "081c41baccc933b99ca516c7ef22dd59",
+    "true_label": 0,
+    "predicted_probability": 0.0019083213992416859
+  },
+  {
+    "study_id": "ac4b30ce8688e24f90dab2364b9d4911",
+    "true_label": 0,
+    "predicted_probability": 0.0023581983987241983
+  },
+  {
+    "study_id": "4f113acfcdc2c90fc2125dfc434cc03b",
+    "true_label": 0,
+    "predicted_probability": 0.003502203617244959
+  },
+  {
+    "study_id": "92c364ed59f7ed2d980ac1b53deaf346",
+    "true_label": 0,
+    "predicted_probability": 0.0016873625572770834
+  },
+  {
+    "study_id": "4bb09822907f62cd3a65200c517a0f7c",
+    "true_label": 0,
+    "predicted_probability": 0.0024139005690813065
+  },
+  {
+    "study_id": "802fce0565abf124219bcbe1b4b1c3a4",
+    "true_label": 0,
+    "predicted_probability": 0.004037672653794289
+  },
+  {
+    "study_id": "8662844ffa8734588464845a8e36cdc5",
+    "true_label": 0,
+    "predicted_probability": 0.0026357420720160007
+  },
+  {
+    "study_id": "c4e6f81d57735d9d42720d531d433ccf",
+    "true_label": 0,
+    "predicted_probability": 0.0031313805375248194
+  },
+  {
+    "study_id": "e30924fc9a7ddc8fc288ad0dfe85fca3",
+    "true_label": 0,
+    "predicted_probability": 0.004094730131328106
+  },
+  {
+    "study_id": "6bbcf1982ca47016b2e69d373d8a1058",
+    "true_label": 0,
+    "predicted_probability": 0.008309995755553246
+  },
+  {
+    "study_id": "dd87d47923f7915055390d138f294a95",
+    "true_label": 0,
+    "predicted_probability": 0.0013484508963301778
+  },
+  {
+    "study_id": "cff4c13b9347fce40aa30d6d575d46bd",
+    "true_label": 0,
+    "predicted_probability": 0.001801936188712716
+  },
+  {
+    "study_id": "bb307884bfe5da3db54b94b736f10023",
+    "true_label": 0,
+    "predicted_probability": 0.010136912576854229
+  },
+  {
+    "study_id": "6b0ff076ecb74691769c1248a8a031dc",
+    "true_label": 0,
+    "predicted_probability": 0.003065250813961029
+  },
+  {
+    "study_id": "0e9af0d2f3cf26c336fdf8209bcd151d",
+    "true_label": 0,
+    "predicted_probability": 0.0035181723069399595
+  },
+  {
+    "study_id": "9b9636fabbf0932014232744b9dc74e1",
+    "true_label": 0,
+    "predicted_probability": 0.002955594565719366
+  },
+  {
+    "study_id": "b907fe24d3fb3f931c401a36c355ccfb",
+    "true_label": 0,
+    "predicted_probability": 0.0037590672727674246
+  },
+  {
+    "study_id": "a363586a04ef07cd9e2387baf9fd4ee5",
+    "true_label": 0,
+    "predicted_probability": 0.006760711781680584
+  },
+  {
+    "study_id": "6cd794c512516d64ccebd8b6977dd10e",
+    "true_label": 0,
+    "predicted_probability": 0.004473099950700998
+  },
+  {
+    "study_id": "0b3b62b337781ed3fdf2a8a4f4c5cf82",
+    "true_label": 0,
+    "predicted_probability": 0.001910033286549151
+  },
+  {
+    "study_id": "a70244177ad4d8ab95639970e99fdc48",
+    "true_label": 0,
+    "predicted_probability": 0.00207694829441607
+  },
+  {
+    "study_id": "14c0f604ddec78d80ce425d03b3275dc",
+    "true_label": 0,
+    "predicted_probability": 0.00223786779679358
+  },
+  {
+    "study_id": "b9a88b5686e36f2f3ce7726179ee9367",
+    "true_label": 0,
+    "predicted_probability": 0.001349392463453114
+  },
+  {
+    "study_id": "44f530fcd3f304f311c5488537a43e29",
+    "true_label": 0,
+    "predicted_probability": 0.002248520962893963
+  },
+  {
+    "study_id": "7aa3de66d3dac4c76ddc3b840c686e47",
+    "true_label": 0,
+    "predicted_probability": 0.0011907643638551235
+  },
+  {
+    "study_id": "247141b74b782af302fa2f968c4795b7",
+    "true_label": 0,
+    "predicted_probability": 0.0058181085623800755
+  },
+  {
+    "study_id": "a8be1ed231ad57d877849e74271db07b",
+    "true_label": 0,
+    "predicted_probability": 0.001855210866779089
+  },
+  {
+    "study_id": "ac291932cd3d647cdf3c72287c2a959c",
+    "true_label": 0,
+    "predicted_probability": 0.0018151226686313748
+  },
+  {
+    "study_id": "d347075c1b8f1bdb656f88042024459d",
+    "true_label": 0,
+    "predicted_probability": 0.0026641287840902805
+  },
+  {
+    "study_id": "ecd281761b3bcd696cb6ef2684162d1a",
+    "true_label": 0,
+    "predicted_probability": 0.003404945135116577
+  },
+  {
+    "study_id": "d08c8945a30b6a8c84b4ae516d050604",
+    "true_label": 0,
+    "predicted_probability": 0.005403820425271988
+  },
+  {
+    "study_id": "b55f62c38a904a5ae962ea6349f83f82",
+    "true_label": 0,
+    "predicted_probability": 0.0014228638028725982
+  },
+  {
+    "study_id": "71790833dcbec93e2e5245833c26ddbd",
+    "true_label": 0,
+    "predicted_probability": 0.004031577613204718
+  },
+  {
+    "study_id": "9acdd0f05640ff2e4e04d1d8d7869737",
+    "true_label": 0,
+    "predicted_probability": 0.008987640962004662
+  },
+  {
+    "study_id": "2486fafb68786b7f8ed662783ee25a49",
+    "true_label": 0,
+    "predicted_probability": 0.04055796191096306
+  },
+  {
+    "study_id": "f4501ce4ea52e408424017af0bfdd24a",
+    "true_label": 0,
+    "predicted_probability": 0.0025026474613696337
+  },
+  {
+    "study_id": "7fac2afe8b886024072b33b0acf4bf42",
+    "true_label": 0,
+    "predicted_probability": 0.010326568968594074
+  },
+  {
+    "study_id": "db141d6904b3c6cde887aa99f8e5cea9",
+    "true_label": 0,
+    "predicted_probability": 0.4610983729362488
+  },
+  {
+    "study_id": "2793ad9543274aff9a73297a4f1cb241",
+    "true_label": 0,
+    "predicted_probability": 0.022421328350901604
+  },
+  {
+    "study_id": "213e8e44f45597baf7602230806d9ef0",
+    "true_label": 0,
+    "predicted_probability": 0.010918805375695229
+  },
+  {
+    "study_id": "cd03d5b75d7349d56f1bdcbd2703ddf5",
+    "true_label": 1,
+    "predicted_probability": 0.020337820053100586
+  },
+  {
+    "study_id": "f8cad9332ce86c9904aba32ce1881926",
+    "true_label": 0,
+    "predicted_probability": 0.09624680876731873
+  },
+  {
+    "study_id": "a7fcf5fd0df0381cf3aef1a710de762a",
+    "true_label": 0,
+    "predicted_probability": 0.882590115070343
+  },
+  {
+    "study_id": "6b136dc933598fbd66e8708b03c27fe7",
+    "true_label": 0,
+    "predicted_probability": 0.011197205632925034
+  },
+  {
+    "study_id": "d318f61543f89c5bd892db51561b498c",
+    "true_label": 0,
+    "predicted_probability": 0.00841682031750679
+  },
+  {
+    "study_id": "74a3ef20153e32ba78ab99bfba542713",
+    "true_label": 0,
+    "predicted_probability": 0.044058337807655334
+  },
+  {
+    "study_id": "28a4a6bb5b389475a6b85988366205a6",
+    "true_label": 0,
+    "predicted_probability": 0.09790818393230438
+  },
+  {
+    "study_id": "ece4ed1f124af0508f7dc44e2e2153af",
+    "true_label": 0,
+    "predicted_probability": 0.005334537476301193
+  },
+  {
+    "study_id": "833f7e133a01c296bf6dbdfd2565d337",
+    "true_label": 0,
+    "predicted_probability": 0.0585525743663311
+  },
+  {
+    "study_id": "855386729b3c1938efa569eb057bdcac",
+    "true_label": 0,
+    "predicted_probability": 0.09619908034801483
+  },
+  {
+    "study_id": "aba909f14c21dc68e13e516c8a8cbb7e",
+    "true_label": 1,
+    "predicted_probability": 0.026473963633179665
+  },
+  {
+    "study_id": "6f9a7e206e52623c945f1039cd069cee",
+    "true_label": 1,
+    "predicted_probability": 0.989316999912262
+  },
+  {
+    "study_id": "ff5c656fb6757b708d64d2ebdd33c421",
+    "true_label": 0,
+    "predicted_probability": 0.006081547122448683
+  },
+  {
+    "study_id": "89e03e9698a3d7e9aceef0a5dc6da78b",
+    "true_label": 1,
+    "predicted_probability": 0.014912665821611881
+  },
+  {
+    "study_id": "fa9226b8d31971dc665bf1f4066f8e59",
+    "true_label": 0,
+    "predicted_probability": 0.0277539175003767
+  },
+  {
+    "study_id": "96e3b1bdfe0b2dcdadde96bc1e716880",
+    "true_label": 1,
+    "predicted_probability": 0.9660074710845947
+  },
+  {
+    "study_id": "72eb70deeb1df7551b28c7b30b8f034c",
+    "true_label": 1,
+    "predicted_probability": 0.9793053269386292
+  },
+  {
+    "study_id": "674410c521b869b22e6f826e98fd4db1",
+    "true_label": 0,
+    "predicted_probability": 0.020298657938838005
+  },
+  {
+    "study_id": "52bd2f2f2a70263495e7cce47c2ab229",
+    "true_label": 0,
+    "predicted_probability": 0.027337772771716118
+  },
+  {
+    "study_id": "8ae2db86499819584e175cadf9099d25",
+    "true_label": 0,
+    "predicted_probability": 0.09714487940073013
+  },
+  {
+    "study_id": "0a83f94db524266b567882c2695a4cfe",
+    "true_label": 0,
+    "predicted_probability": 0.006360984407365322
+  },
+  {
+    "study_id": "5b5b8cc749e8bf6a7d1baa629904baeb",
+    "true_label": 0,
+    "predicted_probability": 0.0019123062957078218
+  },
+  {
+    "study_id": "2c4096483a86e8a429496ccf5ce70353",
+    "true_label": 0,
+    "predicted_probability": 0.6697763800621033
+  },
+  {
+    "study_id": "71c6ba28c22f47a5480ee91838e4078c",
+    "true_label": 0,
+    "predicted_probability": 0.008695660158991814
+  },
+  {
+    "study_id": "0bfd4fcebaba4e9c4086edd05044a75f",
+    "true_label": 1,
+    "predicted_probability": 0.08796968311071396
+  },
+  {
+    "study_id": "d0c7b0c665082e592efe4653567112a3",
+    "true_label": 0,
+    "predicted_probability": 0.010728941299021244
+  },
+  {
+    "study_id": "1cd256c6c6305f54ab8ab30095f39604",
+    "true_label": 0,
+    "predicted_probability": 0.026410777121782303
+  },
+  {
+    "study_id": "0bfb4e582c69fa4d06d011e637b44fe8",
+    "true_label": 0,
+    "predicted_probability": 0.005773966200649738
+  },
+  {
+    "study_id": "f2093a752e6b44df5990f5fd38c99dd2",
+    "true_label": 0,
+    "predicted_probability": 0.0041412003338336945
+  }
+]
