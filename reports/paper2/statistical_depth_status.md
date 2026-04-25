@@ -37,26 +37,25 @@ final legacy checkpoint to regenerate:
 
 ### A3. Breast-density subgroup
 
-This is out of scope for the current paper-ready pass.
+Density retention support has now been added to
+`agents/mammography/preprocessing/prepare_vindr.py`.
 
-`agents/mammography/preprocessing/prepare_vindr.py` currently saves:
+The updated preprocessing path writes:
 
-- `study_id`
-- `image_id`
-- `laterality`
-- `view`
-- `label`
-- `split`
-- `png_path`
+- `breast_density`
+- `exam_density`
 
-It does not preserve `breast_density`, so subgrouping by density would require:
+alongside the existing metadata fields.
 
-1. modifying preprocessing,
-2. re-running VinDr preprocessing, and
-3. re-running Stage 1 evaluation.
+The remaining work for a density subgroup analysis is operational:
 
-Recommendation: treat A3 as supplementary or future work unless specifically
-requested by reviewers.
+1. re-run VinDr preprocessing with the updated script,
+2. regenerate the processed `metadata.csv`,
+3. re-run Stage 1 evaluation against the refreshed metadata, and
+4. stratify the saved Stage 1 predictions by density.
+
+Recommendation: keep A3 as supplementary / low-priority analysis unless
+specifically requested by reviewers.
 
 ## Expected Reporting Caveat
 
