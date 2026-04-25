@@ -33,7 +33,7 @@ final legacy checkpoint to regenerate:
 - `reports/paper2/stage1_statistics/predictions.json`
 - `reports/paper2/stage1_statistics/stage1_statistical_depth.json`
 
-## Confirmed Limitation
+## Completed Follow-up
 
 ### A3. Breast-density subgroup
 
@@ -47,15 +47,18 @@ The updated preprocessing path writes:
 
 alongside the existing metadata fields.
 
-The remaining work for a density subgroup analysis is operational:
+VinDr preprocessing was re-run on Isambard, refreshed `metadata.csv` was
+generated with `exam_density`, and the saved Stage 1 predictions were
+stratified by density.
 
-1. re-run VinDr preprocessing with the updated script,
-2. regenerate the processed `metadata.csv`,
-3. re-run Stage 1 evaluation against the refreshed metadata, and
-4. stratify the saved Stage 1 predictions by density.
+Current subgroup summary:
 
-Recommendation: keep A3 as supplementary / low-priority analysis unless
-specifically requested by reviewers.
+- Density B: `n=73`, positives `5`, AUROC `0.8265`
+- Density C: `n=564`, positives `24`, AUROC `0.7257`
+- Density D: `n=113`, positives `1`, AUROC `0.7054`
+
+The density-D subgroup contains only one positive exam, so that estimate is
+descriptive rather than stable.
 
 ## Expected Reporting Caveat
 

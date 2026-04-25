@@ -34,6 +34,19 @@ At the Youden threshold:
 - FN: `13`
 - TP: `17`
 
+### Density subgroup summary
+
+After refreshing VinDr preprocessing to retain density metadata, Stage 1
+predictions were stratified by `exam_density`.
+
+- Density B: `n=73`, positives `5`, prevalence `0.0685`, AUROC `0.8265`
+- Density C: `n=564`, positives `24`, prevalence `0.0426`, AUROC `0.7257`
+- Density D: `n=113`, positives `1`, prevalence `0.0088`, AUROC `0.7054`
+
+### Suggested density subgroup wording
+
+`In a supplementary density-stratified analysis using refreshed VinDr metadata, the test cohort contained density categories B (n=73, 5 positive), C (n=564, 24 positive), and D (n=113, 1 positive). AUROC estimates were 0.8265 for density B and 0.7257 for density C. The density-D estimate (0.7054) should be interpreted cautiously because only one positive exam was present in that subgroup.`
+
 ## Stage 2 statistical-depth highlights
 
 ### Pairwise encoder significance
