@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 *.pt
+outputs/paper/*/model.pt
 .pytest_cache/
 .mypy_cache/
 .DS_Store

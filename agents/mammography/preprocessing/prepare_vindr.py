@@ -16,7 +16,8 @@ This script:
 3. Converts DICOM to 16-bit PNG, preserving aspect ratio and padding to square
 4. Creates train/val/test splits (70/15/15, stratified)
 5. Saves metadata CSV with columns:
-   study_id, image_id, laterality, view, label, split, png_path
+   study_id, image_id, laterality, view, label, split, png_path,
+   breast_density, exam_density
 
 Usage:
   python -m agents.mammography.preprocessing.prepare_vindr \
@@ -60,6 +61,20 @@ def assign_label(birads):
     elif score in [4, 5]:
         return 1  # suspicious
     return -1  # exclude
+
+
+def normalize_density(density):
+    """Map VinDr density annotations to A/B/C/D when present."""
+    text = str(density).strip().upper()
+    if not text or text in {"NAN", "NONE"}:
+        return ""
+    direct_match = re.search(r"\b([ABCD])\b", text)
+    if direct_match is not None:
+        return direct_match.group(1)
+    ordinal_match = re.search(r"([1-4])", text)
+    if ordinal_match is None:
+        return ""
+    return {"1": "A", "2": "B", "3": "C", "4": "D"}[ordinal_match.group(1)]
 
 
 def resolve_raw_image_root(input_dir):
@@ -142,8 +157,28 @@ def main():
     # Assign labels
     df["label"] = df["breast_birads"].apply(assign_label)
     df = df[df["label"] >= 0].reset_index(drop=True)
+    density_column = None
+    for candidate in ["breast_density", "density", "breast composition", "breast_composition"]:
+        if candidate in df.columns:
+            density_column = candidate
+            break
+    if density_column is not None:
+        df["breast_density"] = df[density_column].apply(normalize_density)
+    else:
+        df["breast_density"] = ""
+    density_order = {"": -1, "A": 0, "B": 1, "C": 2, "D": 3}
+    df["exam_density"] = (
+        df.groupby("study_id")["breast_density"]
+        .transform(lambda series: max((density_order.get(value, -1), value) for value in series)[1])
+    )
     print(f"After filtering: {len(df)} samples")
     print(f"Label distribution: {df['label'].value_counts().to_dict()}")
+    if density_column is not None:
+        print(f"Density source column: {density_column}")
+        print(f"Breast-density distribution: {df['breast_density'].value_counts().to_dict()}")
+        print(f"Exam-density distribution: {df['exam_density'].value_counts().to_dict()}")
+    else:
+        print("WARNING: No breast density column found; density fields will be blank.")
 
     # Stratified split
     from sklearn.model_selection import train_test_split

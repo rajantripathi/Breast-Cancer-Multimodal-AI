@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FINAL_RESULTS_PATH = ROOT / "reports" / "paper" / "final_results.json"
 KM_DATA_PATH = ROOT / "reports" / "paper" / "km_data.json"
 MAMMO_SUMMARY_PATH = ROOT / "outputs" / "mammography" / "summary.json"
+STAGE1_STATS_PATH = ROOT / "reports" / "paper2" / "stage1_statistical_depth.json"
 OUT_DIR = ROOT / "reports" / "paper2" / "figures"
 
 NAVY = "#1B3A5C"
@@ -238,16 +239,107 @@ def figure5_km_curves(km_data: dict) -> None:
     save(fig, "figure5_km_curves.png")
 
 
+def figure6_stage1_calibration(stage1_stats: dict) -> None:
+    bins = stage1_stats["calibration_curve"]
+    x = np.array([row["mean_predicted_probability"] for row in bins], dtype=float)
+    y = np.array([row["observed_positive_rate"] for row in bins], dtype=float)
+    sizes = np.array([row["n_exams"] for row in bins], dtype=float)
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    ax.plot([0, 1], [0, 1], linestyle="--", color=GRAY, linewidth=1.2, label="Ideal calibration")
+    scatter = ax.scatter(
+        x,
+        y,
+        s=np.clip(sizes * 5, 40, 320),
+        c=TEAL,
+        edgecolors=NAVY,
+        linewidths=1.0,
+        alpha=0.9,
+    )
+    ax.plot(x, y, color=TEAL, linewidth=1.6, alpha=0.8)
+    ax.set_xlim(0, max(0.2, float(x.max()) + 0.02))
+    ax.set_ylim(0, max(0.2, float(y.max()) + 0.02))
+    ax.set_xlabel("Mean predicted probability")
+    ax.set_ylabel("Observed positive rate")
+    ax.set_title("Stage 1 calibration curve")
+    ax.grid(axis="both", alpha=0.15, linewidth=0.6)
+    ax.legend(frameon=False, loc="upper left")
+    ax.text(
+        0.98,
+        0.06,
+        f"Brier score = {stage1_stats['brier_score']:.4f}",
+        transform=ax.transAxes,
+        ha="right",
+        va="bottom",
+        fontsize=11,
+        fontweight="semibold",
+        color=NAVY,
+    )
+    for idx, (xp, yp, n) in enumerate(zip(x, y, sizes), start=1):
+        ax.annotate(
+            f"{idx}",
+            (xp, yp),
+            textcoords="offset points",
+            xytext=(0, 8),
+            ha="center",
+            fontsize=8,
+            color=NAVY,
+        )
+    save(fig, "figure6_stage1_calibration.png")
+
+
+def draw_confusion_panel(ax, matrix: np.ndarray, title: str, threshold: float) -> None:
+    im = ax.imshow(matrix, cmap="Blues", vmin=0, vmax=max(1, int(matrix.max())))
+    ax.set_xticks([0, 1], labels=["Pred. negative", "Pred. positive"])
+    ax.set_yticks([0, 1], labels=["True negative", "True positive"])
+    ax.set_title(f"{title}\nthreshold = {threshold:.6f}", fontsize=11)
+    for row in range(matrix.shape[0]):
+        for col in range(matrix.shape[1]):
+            value = int(matrix[row, col])
+            color = "white" if value > matrix.max() * 0.55 else NAVY
+            ax.text(col, row, f"{value}", ha="center", va="center", color=color, fontweight="semibold")
+    return im
+
+
+def figure7_stage1_confusion(stage1_stats: dict) -> None:
+    cm_90spec = stage1_stats["confusion_matrix_90spec"]
+    cm_youden = stage1_stats["confusion_matrix_youden"]
+    matrix_90spec = np.array([[cm_90spec["tn"], cm_90spec["fp"]], [cm_90spec["fn"], cm_90spec["tp"]]], dtype=int)
+    matrix_youden = np.array([[cm_youden["tn"], cm_youden["fp"]], [cm_youden["fn"], cm_youden["tp"]]], dtype=int)
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 5.2))
+    im = draw_confusion_panel(axes[0], matrix_90spec, "90% specificity operating point", cm_90spec["threshold"])
+    draw_confusion_panel(axes[1], matrix_youden, "Youden operating point", cm_youden["threshold"])
+    cbar = fig.colorbar(im, ax=axes.ravel().tolist(), shrink=0.86, pad=0.02)
+    cbar.ax.set_ylabel("Exam count", rotation=90)
+    fig.suptitle("Stage 1 confusion matrices", fontsize=14, fontweight="bold")
+    fig.text(
+        0.5,
+        0.02,
+        (
+            f"90%-specificity point: TP={cm_90spec['tp']}, FN={cm_90spec['fn']}, "
+            f"FP={cm_90spec['fp']}, TN={cm_90spec['tn']}"
+        ),
+        ha="center",
+        fontsize=10,
+        color=NAVY,
+    )
+    save(fig, "figure7_stage1_confusion_matrix.png")
+
+
 def main() -> None:
     set_style()
     final_results = load_json(FINAL_RESULTS_PATH)
     km_data = load_json(KM_DATA_PATH)
+    stage1_stats = load_json(STAGE1_STATS_PATH)
 
     figure1_architecture()
     figure2_mammography_curve()
     figure3_encoder_comparison(final_results)
     figure4_ablation(final_results)
     figure5_km_curves(km_data)
+    figure6_stage1_calibration(stage1_stats)
+    figure7_stage1_confusion(stage1_stats)
     print(f"Saved figures to {OUT_DIR}")
 
 
