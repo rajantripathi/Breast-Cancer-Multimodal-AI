@@ -10,6 +10,8 @@
 
 set -euo pipefail
 REPO_DIR="${REPO_DIR:-$PWD}"
+SEED="${SEED:-42}"
+OUTPUT_DIR="${OUTPUT_DIR:-outputs/stage2/conch/simple_fusion_transmil/${SEED}}"
 cd "$REPO_DIR"
 source "$REPO_DIR/scripts/isambard/slurm_env.sh"
 python -u -c "import torch; assert torch.cuda.is_available(), 'CUDA not available'; print(f'GPU: {torch.cuda.get_device_name(0)}')"
@@ -20,6 +22,9 @@ python -u -m training.tcga_simple_fusion \
   --modalities vision,clinical,genomics \
   --endpoint pfi \
   --vision-aggregation transmil \
+  --genomics-aggregation flat \
+  --clinical-aggregation flat \
   --max-vision-instances "${MAX_VISION_INSTANCES:-256}" \
+  --seed "$SEED" \
   --device auto \
-  --output-dir outputs/tcga_simple_fusion_conch_vcg_transmil_pfi_cv
+  --output-dir "$OUTPUT_DIR"
