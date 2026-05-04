@@ -13,6 +13,7 @@ REPO_DIR="${REPO_DIR:-$PWD}"
 SEED="${SEED:-42}"
 OUTPUT_DIR="${OUTPUT_DIR:-outputs/stage2/conch/verifier_abmil/${SEED}}"
 cd "$REPO_DIR"
+mkdir -p "$OUTPUT_DIR"
 source "$REPO_DIR/scripts/isambard/slurm_env.sh"
 python -u -c "import torch; assert torch.cuda.is_available(), 'CUDA not available'; print(f'GPU: {torch.cuda.get_device_name(0)}')"
 

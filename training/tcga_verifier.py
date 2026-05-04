@@ -928,6 +928,7 @@ def _predict(model: TCGAVerifier, loader: DataLoader, device: torch.device, thre
 
 def train_tcga_verifier(args: Any, output_dir: Path) -> Path:
     seed_state = set_global_seed(int(args.seed))
+    output_dir.mkdir(parents=True, exist_ok=True)
     crosswalk_path = Path(args.crosswalk)
     clinical_csv = Path(args.clinical_csv)
     endpoint = str(getattr(args, "endpoint", "pfi"))
