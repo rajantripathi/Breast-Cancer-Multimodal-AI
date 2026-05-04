@@ -7,6 +7,7 @@ AI platform (screening + multimodal diagnosis/prognosis).
 ## Dataset
 - VinDr-Mammo (PhysioNet): 5,000 exams, 20,000 images, multi-reader BI-RADS
 - Access: https://physionet.org/content/vindr-mammo/1.0.0/
+- Optional auxiliary source: CBIS-DDSM, integrated as train-only metadata-compatible input
 
 ## Architecture
 - Input: 4-view mammogram (L-CC, R-CC, L-MLO, R-MLO)
@@ -18,4 +19,10 @@ AI platform (screening + multimodal diagnosis/prognosis).
 - AUROC (primary)
 - Sensitivity at 90% specificity
 - Specificity at 90% sensitivity
+- External metadata-compatible cohorts can be evaluated with `agents.mammography.evaluation.evaluate_screener --model-type standard`
 
+## Auxiliary Data
+- The non-legacy screener can ingest additional image-level metadata CSVs via `--aux-metadata-csv`
+- Auxiliary datasets must use the same metadata contract as VinDr and include `dataset_source`
+- Validation and test remain VinDr-only so benchmark reporting stays comparable
+- Source-aware train-fit intensity harmonization is available via `--harmonization-method source_percentile`
