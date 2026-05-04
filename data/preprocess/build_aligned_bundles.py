@@ -140,6 +140,7 @@ def build_tcga_crosswalk(model: str = "uni2"):
     manifest = pd.read_csv(manifest_path).copy()
     manifest["patient_barcode"] = manifest["patient_barcode"].astype(str).map(extract_patient_barcode)
     vision_root = settings.project_root / "tcga-brca" / "embeddings" / model
+    patch_vision_root = settings.project_root / "tcga-brca" / "patch_embeddings" / model
     genomics_root = settings.project_root / "tcga-brca" / "genomics"
 
     aligned_rows: list[dict[str, Any]] = []
@@ -148,6 +149,7 @@ def build_tcga_crosswalk(model: str = "uni2"):
             continue
         patient_barcode = str(row.patient_barcode)
         vision_path = vision_root / f"{patient_barcode}.pt"
+        patch_vision_path = patch_vision_root / f"{patient_barcode}.pt"
         genomics_path = genomics_root / f"{patient_barcode}.pt"
         clinical_match = clinical.loc[clinical["patient_barcode"] == patient_barcode]
         if not vision_path.exists() or not genomics_path.exists() or clinical_match.empty:
@@ -157,6 +159,7 @@ def build_tcga_crosswalk(model: str = "uni2"):
             {
                 "patient_barcode": patient_barcode,
                 "vision_path": str(vision_path),
+                "vision_patch_path": str(patch_vision_path) if patch_vision_path.exists() else "",
                 "genomics_path": str(genomics_path),
                 "clinical_row_idx": int(clinical_row["clinical_row_idx"]),
                 "vital_status": str(clinical_row.get("vital_status", "")),
@@ -177,6 +180,7 @@ def build_tcga_crosswalk(model: str = "uni2"):
         f"Total manifest patients: {total}",
         f"Aligned patients: {aligned} of {total} total ({fraction:.2f}%)",
         f"Vision root: {vision_root}",
+        f"Patch vision root: {patch_vision_root}",
         f"Genomics root: {genomics_root}",
         f"Clinical CSV: {clinical_csv}",
     ]

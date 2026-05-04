@@ -13,6 +13,7 @@ from data.preprocess.build_aligned_bundles import extract_patient_barcode
 CLINICAL_COLUMNS = [
     "patient_barcode",
     "vision_path",
+    "vision_patch_path",
     "genomics_path",
     "clinical_row_idx",
     "vital_status",
@@ -42,18 +43,21 @@ def build_tcga_crosswalk() -> pd.DataFrame:
 
 def build_tcga_crosswalk_with_roots(
     vision_root: Path | None = None,
+    patch_vision_root: Path | None = None,
     genomics_root: Path | None = None,
     output_csv: Path | None = None,
     report_path: Path | None = None,
 ) -> pd.DataFrame:
     settings = load_settings()
     vision_root = vision_root or (settings.project_root / "tcga-brca" / "embeddings" / "uni2")
+    patch_vision_root = patch_vision_root or (settings.project_root / "tcga-brca" / "patch_embeddings" / vision_root.name)
     genomics_root = genomics_root or (settings.project_root / "tcga-brca" / "genomics")
     clinical_csv = settings.repo_root / "data" / "tcga_brca_clinical.csv"
     output_csv = output_csv or (settings.repo_root / "data" / "tcga_crosswalk.csv")
     report_path = report_path or (settings.repo_root / "reports" / "tcga_alignment_report.txt")
 
     vision = _paths_to_frame(vision_root, "vision_path")
+    patch_vision = _paths_to_frame(patch_vision_root, "vision_patch_path") if patch_vision_root.exists() else pd.DataFrame(columns=["patient_barcode", "vision_patch_path"])
     genomics = _paths_to_frame(genomics_root, "genomics_path")
 
     clinical = pd.read_csv(clinical_csv).copy()
@@ -62,7 +66,8 @@ def build_tcga_crosswalk_with_roots(
     clinical = clinical.dropna(subset=["patient_barcode"]).drop_duplicates(subset=["patient_barcode"], keep="first")
 
     aligned = (
-        vision.merge(genomics, on="patient_barcode", how="inner")
+        vision.merge(patch_vision, on="patient_barcode", how="left")
+        .merge(genomics, on="patient_barcode", how="inner")
         .merge(
             clinical[
                 [
@@ -90,10 +95,12 @@ def build_tcga_crosswalk_with_roots(
 
     report_lines = [
         f"Vision patients with embeddings: {vision['patient_barcode'].nunique()}",
+        f"Vision patients with patch embeddings: {patch_vision['patient_barcode'].nunique()}",
         f"Genomics patients with tensors: {genomics['patient_barcode'].nunique()}",
         f"Clinical patients with rows: {clinical['patient_barcode'].nunique()}",
         f"Aligned patients: {len(aligned)}",
         f"Vision root: {vision_root}",
+        f"Patch vision root: {patch_vision_root}",
         f"Genomics root: {genomics_root}",
         f"Clinical CSV: {clinical_csv}",
         f"Crosswalk CSV: {output_csv}",
@@ -118,6 +125,7 @@ def main() -> None:
         default=None,
         help="Override the vision embedding root for alternative encoders",
     )
+    parser.add_argument("--patch-vision-root", default=None, help="Override the patch-level vision embedding root")
     parser.add_argument("--genomics-root", default=None, help="Override the genomics tensor root for alternative representations")
     parser.add_argument(
         "--output-csv",
@@ -135,11 +143,13 @@ def main() -> None:
     )
     args = parser.parse_args()
     vision_root = Path(args.vision_root) if args.vision_root else None
+    patch_vision_root = Path(args.patch_vision_root) if args.patch_vision_root else None
     genomics_root = Path(args.genomics_root) if args.genomics_root else None
     output_csv = Path(args.output_csv) if args.output_csv else None
     report_path = Path(args.report_path) if args.report_path else None
     build_tcga_crosswalk_with_roots(
         vision_root=vision_root,
+        patch_vision_root=patch_vision_root,
         genomics_root=genomics_root,
         output_csv=output_csv,
         report_path=report_path,

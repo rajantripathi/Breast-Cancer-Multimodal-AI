@@ -4,11 +4,33 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+import math
 from pathlib import Path
+import sys
 
 import numpy as np
-from scipy import stats
 
+try:
+    from scipy import stats
+except ImportError:  # pragma: no cover - depends on local environment
+    stats = None
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from evaluation.statistics import (
+    binary_brier_score,
+    calibration_slope_intercept,
+    decision_curve,
+    exact_sign_flip_pvalue,
+    harrell_c_index,
+    survival_binary_labels_at_horizon,
+)
+from evaluation.subgroups import (
+    attach_tcga_subgroups,
+    load_tcga_clinical_subgroups,
+    resolve_optional_repo_path,
+    summarize_survival_subgroups,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "outputs" / "paper"
@@ -51,30 +73,8 @@ def load_predictions(name: str) -> list[dict]:
     return predictions
 
 
-def harrell_c_index(times: list[float], scores: list[float], events: list[int]) -> float:
-    concordant = 0.0
-    admissible = 0
-    total = len(times)
-    for i in range(total):
-        for j in range(i + 1, total):
-            t_i, t_j = times[i], times[j]
-            e_i, e_j = events[i], events[j]
-            r_i, r_j = scores[i], scores[j]
-            if t_i == t_j and not (e_i or e_j):
-                continue
-            if t_i < t_j and e_i:
-                admissible += 1
-                if r_i > r_j:
-                    concordant += 1.0
-                elif r_i == r_j:
-                    concordant += 0.5
-            elif t_j < t_i and e_j:
-                admissible += 1
-                if r_j > r_i:
-                    concordant += 1.0
-                elif r_i == r_j:
-                    concordant += 0.5
-    return concordant / admissible if admissible else 0.0
+def resolve_artifact_input_path(artifact: dict, key: str) -> Path | None:
+    return resolve_optional_repo_path(artifact.get(key), ROOT)
 
 
 def per_fold_c_indices(predictions: list[dict]) -> tuple[list[float], list[int]]:
@@ -94,27 +94,15 @@ def per_fold_c_indices(predictions: list[dict]) -> tuple[list[float], list[int]]
         )
     return values, folds
 
-
-def exact_sign_flip_pvalue(differences: list[float]) -> float:
-    n = len(differences)
-    observed = abs(float(np.mean(differences)))
-    extreme = 0
-    for mask in range(2**n):
-        signed = []
-        for idx, value in enumerate(differences):
-            signed.append(-value if (mask >> idx) & 1 else value)
-        if abs(float(np.mean(signed))) >= observed - 1e-12:
-            extreme += 1
-    return extreme / (2**n)
-
-
 def paired_significance(name_a: str, name_b: str, folds_a: list[float], folds_b: list[float]) -> dict:
     differences = [a - b for a, b in zip(folds_a, folds_b)]
     try:
+        if stats is None:
+            raise RuntimeError("scipy unavailable")
         wilcoxon = stats.wilcoxon(folds_a, folds_b, alternative="two-sided", zero_method="wilcox")
         statistic = float(wilcoxon.statistic)
         p_value = float(wilcoxon.pvalue)
-    except ValueError:
+    except Exception:
         statistic = 0.0
         p_value = 1.0
     return {
@@ -168,7 +156,9 @@ def time_dependent_auc(predictions: list[dict], horizon_days: float) -> dict:
 
 
 def normal_survival_prob(z: float) -> float:
-    return float(stats.norm.sf(z))
+    if stats is not None:
+        return float(stats.norm.sf(z))
+    return float(0.5 * math.erfc(z / math.sqrt(2.0)))
 
 
 def log_rank_test(times_a: list[float], events_a: list[int], times_b: list[float], events_b: list[int]) -> float:
@@ -242,6 +232,30 @@ def calibration_bins(predictions: list[dict], horizon_days: float, n_bins: int =
     return bins
 
 
+def subgroup_payload(experiment_name: str, horizon_days: float) -> dict:
+    artifact = load_artifact(experiment_name)
+    predictions = artifact.get("predictions", [])
+    clinical_path = resolve_artifact_input_path(artifact, "clinical_csv")
+    if clinical_path is None:
+        return {
+            "status": "clinical_csv_missing",
+            "requested_path": artifact.get("clinical_csv"),
+        }
+    lookup = load_tcga_clinical_subgroups(clinical_path)
+    attached = attach_tcga_subgroups(predictions, lookup)
+    return {
+        "status": "ok",
+        "clinical_csv": str(clinical_path),
+        "groupings": {
+            "pathologic_stage": summarize_survival_subgroups(attached, "pathologic_stage", horizon_days=horizon_days),
+            "tumor_stage": summarize_survival_subgroups(attached, "tumor_stage", horizon_days=horizon_days),
+            "er_status": summarize_survival_subgroups(attached, "er_status", horizon_days=horizon_days),
+            "pr_status": summarize_survival_subgroups(attached, "pr_status", horizon_days=horizon_days),
+            "her2_status": summarize_survival_subgroups(attached, "her2_status", horizon_days=horizon_days),
+        },
+    }
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -270,10 +284,21 @@ def main() -> None:
     for label, experiment in ENCODER_EXPERIMENTS.items():
         b3_results[f"5_year_{label}"] = time_dependent_auc(load_predictions(experiment), TIME_HORIZONS["5_year"])
 
+    horizon_payload = survival_binary_labels_at_horizon(
+        [float(row["survival_time"]) for row in best_predictions],
+        [int(row["event_observed"]) for row in best_predictions],
+        [float(row["risk_score"]) for row in best_predictions],
+        TIME_HORIZONS["5_year"],
+    )
     b4_results = {
         "horizon_days": TIME_HORIZONS["5_year"],
         "n_bins": 10,
         "calibration_bins": calibration_bins(best_predictions, TIME_HORIZONS["5_year"]),
+        "eligible_patients": int(horizon_payload["n_eligible"]),
+        "eligible_events": int(horizon_payload["n_events"]),
+        "brier_score": round(binary_brier_score(horizon_payload["labels"], horizon_payload["scores"]), 4),
+        "calibration_slope_intercept": calibration_slope_intercept(horizon_payload["labels"], horizon_payload["scores"]),
+        "decision_curve": decision_curve(horizon_payload["labels"], horizon_payload["scores"]),
     }
 
     scores = np.asarray([float(row["risk_score"]) for row in best_predictions], dtype=np.float64)
@@ -315,12 +340,15 @@ def main() -> None:
         },
     }
 
+    b6_results = subgroup_payload("conch_ca_vcg", TIME_HORIZONS["5_year"])
+
     payload = {
         "B1_encoder_pairwise_tests": b1_results,
         "B2_ablation_significance": b2_results,
         "B3_time_dependent_auc": b3_results,
         "B4_survival_calibration": b4_results,
         "B5_alternative_stratification": b5_results,
+        "B6_tcga_subgroups": b6_results,
     }
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Saved Stage 2 statistical depth results to {OUTPUT_PATH}")

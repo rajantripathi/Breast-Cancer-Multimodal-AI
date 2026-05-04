@@ -20,6 +20,18 @@ vision:
       architecture: ViT-H
       gated: true
       access_url: https://huggingface.co/paige-ai/Virchow2
+    gigapath:
+      hub: prov-gigapath/prov-gigapath
+      embed_dim: 1536
+      architecture: ViT-g/14 tile encoder
+      gated: true
+      access_url: https://huggingface.co/prov-gigapath/prov-gigapath
+    hoptimus0:
+      hub: bioptimus/H-optimus-0
+      embed_dim: 1536
+      architecture: ViT-H
+      gated: true
+      access_url: https://huggingface.co/bioptimus/H-optimus-0
     ctranspath:
       hub: xiyuez/ctranspath
       embed_dim: 768

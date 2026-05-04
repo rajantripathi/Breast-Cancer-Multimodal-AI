@@ -9,6 +9,18 @@ from pathlib import Path
 from typing import Any
 
 from .metrics import bootstrap_metric, expected_calibration_error, label_distribution
+from .statistics import (
+    binary_brier_score,
+    calibration_slope_intercept,
+    decision_curve,
+    survival_binary_labels_at_horizon,
+)
+from .subgroups import (
+    attach_tcga_subgroups,
+    load_tcga_clinical_subgroups,
+    resolve_optional_repo_path,
+    summarize_survival_subgroups,
+)
 from .visualize import render_text_report
 
 
@@ -480,6 +492,59 @@ def _survival_metrics(predictions: list[dict[str, Any]]) -> dict[str, Any]:
         }
 
 
+def _survival_calibration_metrics(predictions: list[dict[str, Any]], horizon_days: float = 1825.0) -> dict[str, Any]:
+    if not predictions or not all("survival_time" in item and "event_observed" in item for item in predictions):
+        return {}
+    horizon_payload = survival_binary_labels_at_horizon(
+        [float(item["survival_time"]) for item in predictions],
+        [int(item["event_observed"]) for item in predictions],
+        [float(item.get("risk_score", item.get("probabilities", {}).get("high_concern", 0.0))) for item in predictions],
+        horizon_days,
+    )
+    labels = horizon_payload["labels"]
+    scores = horizon_payload["scores"]
+    if not labels:
+        return {"horizon_days": horizon_days, "eligible_patients": 0, "eligible_events": 0}
+    result: dict[str, Any] = {
+        "horizon_days": horizon_days,
+        "eligible_patients": int(horizon_payload["n_eligible"]),
+        "eligible_events": int(horizon_payload["n_events"]),
+        "brier_score": round(binary_brier_score(labels, scores), 4),
+        "decision_curve": decision_curve(labels, scores),
+    }
+    if len(set(labels)) > 1:
+        result["calibration_slope_intercept"] = calibration_slope_intercept(labels, scores)
+    else:
+        result["calibration_slope_intercept"] = {"intercept": None, "slope": None}
+    return result
+
+
+def _tcga_subgroup_metrics(
+    predictions: list[dict[str, Any]],
+    clinical_csv: str | Path | None,
+    repo_root: Path,
+    horizon_days: float = 1825.0,
+) -> dict[str, Any]:
+    clinical_path = resolve_optional_repo_path(clinical_csv, repo_root)
+    if clinical_csv is None:
+        return {}
+    if clinical_path is None:
+        return {"status": "clinical_csv_missing", "requested_path": str(clinical_csv)}
+    clinical_lookup = load_tcga_clinical_subgroups(clinical_path)
+    attached = attach_tcga_subgroups(predictions, clinical_lookup)
+    return {
+        "status": "ok",
+        "clinical_csv": str(clinical_path),
+        "groupings": {
+            "pathologic_stage": summarize_survival_subgroups(attached, "pathologic_stage", horizon_days=horizon_days),
+            "tumor_stage": summarize_survival_subgroups(attached, "tumor_stage", horizon_days=horizon_days),
+            "er_status": summarize_survival_subgroups(attached, "er_status", horizon_days=horizon_days),
+            "pr_status": summarize_survival_subgroups(attached, "pr_status", horizon_days=horizon_days),
+            "her2_status": summarize_survival_subgroups(attached, "her2_status", horizon_days=horizon_days),
+        },
+    }
+
+
 def evaluate_predictions(
     prediction_file: str | Path,
     verifier_artifact_path: str | Path | None = None,
@@ -558,6 +623,12 @@ def evaluate_predictions(
     metrics["risk_group_summary"] = _fixed_threshold_risk_group_summary(verifier_predictions)
     metrics["modality_agreement_summary"] = _modality_agreement_summary(verifier_predictions)
     metrics.update(survival_metrics)
+    survival_calibration = _survival_calibration_metrics(verifier_predictions)
+    if survival_calibration:
+        metrics["survival_calibration_5yr"] = survival_calibration
+    subgroup_metrics = _tcga_subgroup_metrics(verifier_predictions, clinical_csv, repo_root)
+    if subgroup_metrics:
+        metrics["tcga_subgroups"] = subgroup_metrics
     metrics["primary_results"] = {
         "c_index": metrics.get("c_index", metrics.get("c_index_message")),
         "5yr_auroc": (metrics.get("time_dependent_auroc_5yr") or {}).get("auroc"),

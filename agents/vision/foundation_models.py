@@ -69,6 +69,14 @@ MODELS: dict[str, dict[str, Any]] = {
         "architecture": "ViT-H",
         "gated": True,
         "access_url": "https://huggingface.co/paige-ai/Virchow2",
+        "timm_kwargs": {
+            "img_size": 224,
+            "patch_size": 14,
+            "embed_dim": 1280,
+            "mlp_layer": "SwiGLUPacked",
+            "act_layer": "SiLU",
+            "init_values": 1e-5,
+        },
     },
     "virchow": {
         "hub": "paige-ai/Virchow",
@@ -85,6 +93,26 @@ MODELS: dict[str, dict[str, Any]] = {
         "gated": False,
         "access_url": "https://huggingface.co/1aurent/swin_tiny_patch4_window7_224.CTransPath",
         "timm_model_name": "hf-hub:1aurent/swin_tiny_patch4_window7_224.CTransPath",
+    },
+    "gigapath": {
+        "hub": "prov-gigapath/prov-gigapath",
+        "embed_dim": 1536,
+        "architecture": "ViT-g/14 tile encoder",
+        "gated": True,
+        "access_url": "https://huggingface.co/prov-gigapath/prov-gigapath",
+        "timm_model_name": "hf_hub:prov-gigapath/prov-gigapath",
+    },
+    "hoptimus0": {
+        "hub": "bioptimus/H-optimus-0",
+        "embed_dim": 1536,
+        "architecture": "ViT-H",
+        "gated": True,
+        "access_url": "https://huggingface.co/bioptimus/H-optimus-0",
+        "timm_model_name": "hf-hub:bioptimus/H-optimus-0",
+        "timm_kwargs": {
+            "init_values": 1e-5,
+            "dynamic_img_size": False,
+        },
     },
 }
 
