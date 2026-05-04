@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Stage 2 statistical-depth analyses from saved paper artifacts."""
 
+import argparse
 import json
 from collections import defaultdict
 import math
@@ -65,12 +66,33 @@ def load_artifact(name: str) -> dict:
     return json.loads(path.read_text())
 
 
+def load_artifact_from_path(path: Path) -> dict:
+    if path.is_dir():
+        artifact_path = path / "artifact.json"
+    else:
+        artifact_path = path
+    if not artifact_path.exists():
+        raise FileNotFoundError(f"Missing artifact: {artifact_path}")
+    return json.loads(artifact_path.read_text())
+
+
 def load_predictions(name: str) -> list[dict]:
     artifact = load_artifact(name)
     predictions = artifact.get("predictions", [])
     if not predictions:
         raise RuntimeError(f"No predictions found in {name}/artifact.json")
     return predictions
+
+
+def load_predictions_from_path(path: Path) -> list[dict]:
+    artifact = load_artifact_from_path(path)
+    predictions = artifact.get("predictions", [])
+    if predictions:
+        return predictions
+    predictions_path = path / "predictions.json" if path.is_dir() else path.with_name("predictions.json")
+    if predictions_path.exists():
+        return json.loads(predictions_path.read_text())
+    raise RuntimeError(f"No predictions found in {path}")
 
 
 def resolve_artifact_input_path(artifact: dict, key: str) -> Path | None:
@@ -256,7 +278,96 @@ def subgroup_payload(experiment_name: str, horizon_days: float) -> dict:
     }
 
 
+def seed_artifact_dirs(experiment_dir: Path) -> dict[str, Path]:
+    if not experiment_dir.exists():
+        raise FileNotFoundError(f"Missing experiment directory: {experiment_dir}")
+    seed_dirs = {
+        child.name: child
+        for child in sorted(experiment_dir.iterdir())
+        if child.is_dir() and (child / "artifact.json").exists()
+    }
+    if seed_dirs:
+        return seed_dirs
+    if experiment_dir.is_dir() and (experiment_dir / "artifact.json").exists():
+        return {experiment_dir.name: experiment_dir}
+    raise FileNotFoundError(f"No seed artifact directories found under {experiment_dir}")
+
+
+def compare_experiment_dirs(baseline_dir: Path, candidate_dir: Path) -> dict:
+    baseline_seeds = seed_artifact_dirs(baseline_dir)
+    candidate_seeds = seed_artifact_dirs(candidate_dir)
+    common_seeds = sorted(set(baseline_seeds) & set(candidate_seeds), key=lambda value: int(value) if value.isdigit() else value)
+    if not common_seeds:
+        raise RuntimeError(f"No overlapping seed directories between {baseline_dir} and {candidate_dir}")
+
+    per_seed: list[dict[str, object]] = []
+    all_differences: list[float] = []
+    for seed in common_seeds:
+        baseline_predictions = load_predictions_from_path(baseline_seeds[seed])
+        candidate_predictions = load_predictions_from_path(candidate_seeds[seed])
+        baseline_folds, baseline_fold_ids = per_fold_c_indices(baseline_predictions)
+        candidate_folds, candidate_fold_ids = per_fold_c_indices(candidate_predictions)
+        if baseline_fold_ids != candidate_fold_ids:
+            raise RuntimeError(
+                f"Fold mismatch for seed {seed}: baseline={baseline_fold_ids} candidate={candidate_fold_ids}"
+            )
+        fold_differences = [cand - base for cand, base in zip(candidate_folds, baseline_folds)]
+        all_differences.extend(fold_differences)
+        per_seed.append(
+            {
+                "seed": int(seed) if str(seed).isdigit() else seed,
+                "baseline_mean_c_index": round(float(np.mean(baseline_folds)), 4),
+                "candidate_mean_c_index": round(float(np.mean(candidate_folds)), 4),
+                "mean_delta": round(float(np.mean(fold_differences)), 4),
+                "baseline_fold_c_indices": [round(float(value), 4) for value in baseline_folds],
+                "candidate_fold_c_indices": [round(float(value), 4) for value in candidate_folds],
+                "fold_deltas": [round(float(value), 4) for value in fold_differences],
+            }
+        )
+
+    try:
+        if stats is None:
+            raise RuntimeError("scipy unavailable")
+        wilcoxon = stats.wilcoxon(all_differences, alternative="two-sided", zero_method="wilcox")
+        wilcoxon_statistic = float(wilcoxon.statistic)
+        wilcoxon_p = float(wilcoxon.pvalue)
+    except Exception:
+        wilcoxon_statistic = 0.0
+        wilcoxon_p = 1.0
+
+    return {
+        "baseline_dir": str(baseline_dir),
+        "candidate_dir": str(candidate_dir),
+        "seeds_compared": [entry["seed"] for entry in per_seed],
+        "n_seeds": len(per_seed),
+        "n_paired_folds": len(all_differences),
+        "baseline_mean_c_index": round(float(np.mean([entry["baseline_mean_c_index"] for entry in per_seed])), 4),
+        "candidate_mean_c_index": round(float(np.mean([entry["candidate_mean_c_index"] for entry in per_seed])), 4),
+        "mean_delta": round(float(np.mean(all_differences)), 4),
+        "exact_sign_flip_p": round(float(exact_sign_flip_pvalue(all_differences)), 6),
+        "wilcoxon_statistic": round(wilcoxon_statistic, 6),
+        "wilcoxon_p": round(wilcoxon_p, 6),
+        "per_seed": per_seed,
+    }
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Stage 2 statistical-depth analyses")
+    parser.add_argument("--baseline", type=Path, default=None, help="Baseline experiment directory with per-seed artifacts")
+    parser.add_argument("--candidate", type=Path, default=None, help="Candidate experiment directory with per-seed artifacts")
+    parser.add_argument("--output", type=Path, default=None, help="Optional output JSON path for comparison mode")
+    args = parser.parse_args()
+
+    if args.baseline is not None or args.candidate is not None:
+        if args.baseline is None or args.candidate is None:
+            raise SystemExit("comparison mode requires both --baseline and --candidate")
+        payload = compare_experiment_dirs(args.baseline, args.candidate)
+        output_path = args.output or OUTPUT_PATH
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(json.dumps(payload, indent=2))
+        print(f"Saved Stage 2 comparison results to {output_path}")
+        return
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     encoder_folds: dict[str, list[float]] = {}
