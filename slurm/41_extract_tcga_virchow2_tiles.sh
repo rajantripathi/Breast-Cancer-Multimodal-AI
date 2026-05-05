@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=bcai-gigapath-extract
+#SBATCH --job-name=bcai-virchow2-extract
 #SBATCH --partition=workq
 #SBATCH --account=brics.u6ef
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
-#SBATCH --time=24:00:00
-#SBATCH --output=logs/gigapath_extract_%A_%a.out
+#SBATCH --time=06:00:00
+#SBATCH --output=logs/virchow2_extract_%A_%a.out
 #SBATCH --array=0-0
 
 set -euo pipefail
@@ -44,14 +44,15 @@ export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 export PYTHONUNBUFFERED=1
 
 if [ -z "${HF_TOKEN:-}" ]; then
-  echo "HF_TOKEN is unset; continuing because Prov-GigaPath is publicly accessible" >&2
+  echo "HF_TOKEN must be set for gated Virchow2 access" >&2
+  exit 1
 fi
 
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
 BATCH_SIZE="${BATCH_SIZE:-1}"
 NUM_SHARDS="${NUM_SHARDS:-32}"
-SLIDE_OUTPUT_DIR="${SLIDE_OUTPUT_DIR:-$PROJECT_ROOT/tcga-brca/embeddings/gigapath}"
-PATCH_OUTPUT_DIR="${PATCH_OUTPUT_DIR:-$PROJECT_ROOT/tcga-brca/patch_embeddings/gigapath}"
+SLIDE_OUTPUT_DIR="${SLIDE_OUTPUT_DIR:-$REPO_DIR/data/embeddings/virchow2/slides}"
+PATCH_OUTPUT_DIR="${PATCH_OUTPUT_DIR:-$REPO_DIR/data/embeddings/virchow2/patches}"
 mkdir -p "$SLIDE_OUTPUT_DIR" "$PATCH_OUTPUT_DIR"
 
 "$VENV_DIR/bin/python" -u -c "import timm, huggingface_hub; print('bootstrap_ok')" >/dev/null
@@ -63,14 +64,14 @@ if [ -n "${CHUNK_DIR:-}" ]; then
     exit 1
   fi
   "$VENV_DIR/bin/python" -u -m data.preprocess.extract_tcga_features \
-    --model gigapath \
+    --model virchow2 \
     --batch-size "$BATCH_SIZE" \
     --tile-list "$TILE_LIST" \
     --output-dir "$SLIDE_OUTPUT_DIR" \
     --patch-output-dir "$PATCH_OUTPUT_DIR"
 else
   "$VENV_DIR/bin/python" -u -m data.preprocess.extract_tcga_features \
-    --model gigapath \
+    --model virchow2 \
     --batch-size "$BATCH_SIZE" \
     --shard-index "$TASK_ID" \
     --num-shards "$NUM_SHARDS" \
