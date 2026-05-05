@@ -55,12 +55,10 @@ analysis artifacts. It is not tied to a single manuscript submission target.
 ```text
 agents/
   mammography/          # Stage 1: screening
-  vision/               # Stage 2: pathology vision encoder
-  genomics/             # Stage 2: pathway genomics
-  clinical/             # Stage 2: clinical features
+  vision/               # Stage 2: pathology vision encoder registry + extraction
   literature/           # Stage 2: PubMed RAG
-training/               # Fusion training (Cox survival)
-evaluation/             # Metrics and visualisation
+training/               # Stage 2 multimodal fusion and survival training
+evaluation/             # Metrics, significance utilities, and visualisation
 orchestrator/           # Two-stage routing logic
 apps/                   # Streamlit demo
 slurm/                  # Isambard job scripts

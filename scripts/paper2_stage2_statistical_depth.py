@@ -2,13 +2,36 @@ from __future__ import annotations
 
 """Stage 2 statistical-depth analyses from saved paper artifacts."""
 
+import argparse
 import json
 from collections import defaultdict
+import math
 from pathlib import Path
+import sys
 
 import numpy as np
-from scipy import stats
 
+try:
+    from scipy import stats
+except ImportError:  # pragma: no cover - depends on local environment
+    stats = None
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from evaluation.statistics import (
+    binary_brier_score,
+    calibration_slope_intercept,
+    decision_curve,
+    exact_sign_flip_pvalue,
+    harrell_c_index,
+    survival_binary_labels_at_horizon,
+)
+from evaluation.subgroups import (
+    attach_tcga_subgroups,
+    load_tcga_clinical_subgroups,
+    resolve_optional_repo_path,
+    summarize_survival_subgroups,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "outputs" / "paper"
@@ -43,6 +66,16 @@ def load_artifact(name: str) -> dict:
     return json.loads(path.read_text())
 
 
+def load_artifact_from_path(path: Path) -> dict:
+    if path.is_dir():
+        artifact_path = path / "artifact.json"
+    else:
+        artifact_path = path
+    if not artifact_path.exists():
+        raise FileNotFoundError(f"Missing artifact: {artifact_path}")
+    return json.loads(artifact_path.read_text())
+
+
 def load_predictions(name: str) -> list[dict]:
     artifact = load_artifact(name)
     predictions = artifact.get("predictions", [])
@@ -51,30 +84,19 @@ def load_predictions(name: str) -> list[dict]:
     return predictions
 
 
-def harrell_c_index(times: list[float], scores: list[float], events: list[int]) -> float:
-    concordant = 0.0
-    admissible = 0
-    total = len(times)
-    for i in range(total):
-        for j in range(i + 1, total):
-            t_i, t_j = times[i], times[j]
-            e_i, e_j = events[i], events[j]
-            r_i, r_j = scores[i], scores[j]
-            if t_i == t_j and not (e_i or e_j):
-                continue
-            if t_i < t_j and e_i:
-                admissible += 1
-                if r_i > r_j:
-                    concordant += 1.0
-                elif r_i == r_j:
-                    concordant += 0.5
-            elif t_j < t_i and e_j:
-                admissible += 1
-                if r_j > r_i:
-                    concordant += 1.0
-                elif r_i == r_j:
-                    concordant += 0.5
-    return concordant / admissible if admissible else 0.0
+def load_predictions_from_path(path: Path) -> list[dict]:
+    artifact = load_artifact_from_path(path)
+    predictions = artifact.get("predictions", [])
+    if predictions:
+        return predictions
+    predictions_path = path / "predictions.json" if path.is_dir() else path.with_name("predictions.json")
+    if predictions_path.exists():
+        return json.loads(predictions_path.read_text())
+    raise RuntimeError(f"No predictions found in {path}")
+
+
+def resolve_artifact_input_path(artifact: dict, key: str) -> Path | None:
+    return resolve_optional_repo_path(artifact.get(key), ROOT)
 
 
 def per_fold_c_indices(predictions: list[dict]) -> tuple[list[float], list[int]]:
@@ -94,27 +116,15 @@ def per_fold_c_indices(predictions: list[dict]) -> tuple[list[float], list[int]]
         )
     return values, folds
 
-
-def exact_sign_flip_pvalue(differences: list[float]) -> float:
-    n = len(differences)
-    observed = abs(float(np.mean(differences)))
-    extreme = 0
-    for mask in range(2**n):
-        signed = []
-        for idx, value in enumerate(differences):
-            signed.append(-value if (mask >> idx) & 1 else value)
-        if abs(float(np.mean(signed))) >= observed - 1e-12:
-            extreme += 1
-    return extreme / (2**n)
-
-
 def paired_significance(name_a: str, name_b: str, folds_a: list[float], folds_b: list[float]) -> dict:
     differences = [a - b for a, b in zip(folds_a, folds_b)]
     try:
+        if stats is None:
+            raise RuntimeError("scipy unavailable")
         wilcoxon = stats.wilcoxon(folds_a, folds_b, alternative="two-sided", zero_method="wilcox")
         statistic = float(wilcoxon.statistic)
         p_value = float(wilcoxon.pvalue)
-    except ValueError:
+    except Exception:
         statistic = 0.0
         p_value = 1.0
     return {
@@ -168,7 +178,9 @@ def time_dependent_auc(predictions: list[dict], horizon_days: float) -> dict:
 
 
 def normal_survival_prob(z: float) -> float:
-    return float(stats.norm.sf(z))
+    if stats is not None:
+        return float(stats.norm.sf(z))
+    return float(0.5 * math.erfc(z / math.sqrt(2.0)))
 
 
 def log_rank_test(times_a: list[float], events_a: list[int], times_b: list[float], events_b: list[int]) -> float:
@@ -242,7 +254,120 @@ def calibration_bins(predictions: list[dict], horizon_days: float, n_bins: int =
     return bins
 
 
+def subgroup_payload(experiment_name: str, horizon_days: float) -> dict:
+    artifact = load_artifact(experiment_name)
+    predictions = artifact.get("predictions", [])
+    clinical_path = resolve_artifact_input_path(artifact, "clinical_csv")
+    if clinical_path is None:
+        return {
+            "status": "clinical_csv_missing",
+            "requested_path": artifact.get("clinical_csv"),
+        }
+    lookup = load_tcga_clinical_subgroups(clinical_path)
+    attached = attach_tcga_subgroups(predictions, lookup)
+    return {
+        "status": "ok",
+        "clinical_csv": str(clinical_path),
+        "groupings": {
+            "pathologic_stage": summarize_survival_subgroups(attached, "pathologic_stage", horizon_days=horizon_days),
+            "tumor_stage": summarize_survival_subgroups(attached, "tumor_stage", horizon_days=horizon_days),
+            "er_status": summarize_survival_subgroups(attached, "er_status", horizon_days=horizon_days),
+            "pr_status": summarize_survival_subgroups(attached, "pr_status", horizon_days=horizon_days),
+            "her2_status": summarize_survival_subgroups(attached, "her2_status", horizon_days=horizon_days),
+        },
+    }
+
+
+def seed_artifact_dirs(experiment_dir: Path) -> dict[str, Path]:
+    if not experiment_dir.exists():
+        raise FileNotFoundError(f"Missing experiment directory: {experiment_dir}")
+    seed_dirs = {
+        child.name: child
+        for child in sorted(experiment_dir.iterdir())
+        if child.is_dir() and (child / "artifact.json").exists()
+    }
+    if seed_dirs:
+        return seed_dirs
+    if experiment_dir.is_dir() and (experiment_dir / "artifact.json").exists():
+        return {experiment_dir.name: experiment_dir}
+    raise FileNotFoundError(f"No seed artifact directories found under {experiment_dir}")
+
+
+def compare_experiment_dirs(baseline_dir: Path, candidate_dir: Path) -> dict:
+    baseline_seeds = seed_artifact_dirs(baseline_dir)
+    candidate_seeds = seed_artifact_dirs(candidate_dir)
+    common_seeds = sorted(set(baseline_seeds) & set(candidate_seeds), key=lambda value: int(value) if value.isdigit() else value)
+    if not common_seeds:
+        raise RuntimeError(f"No overlapping seed directories between {baseline_dir} and {candidate_dir}")
+
+    per_seed: list[dict[str, object]] = []
+    all_differences: list[float] = []
+    for seed in common_seeds:
+        baseline_predictions = load_predictions_from_path(baseline_seeds[seed])
+        candidate_predictions = load_predictions_from_path(candidate_seeds[seed])
+        baseline_folds, baseline_fold_ids = per_fold_c_indices(baseline_predictions)
+        candidate_folds, candidate_fold_ids = per_fold_c_indices(candidate_predictions)
+        if baseline_fold_ids != candidate_fold_ids:
+            raise RuntimeError(
+                f"Fold mismatch for seed {seed}: baseline={baseline_fold_ids} candidate={candidate_fold_ids}"
+            )
+        fold_differences = [cand - base for cand, base in zip(candidate_folds, baseline_folds)]
+        all_differences.extend(fold_differences)
+        per_seed.append(
+            {
+                "seed": int(seed) if str(seed).isdigit() else seed,
+                "baseline_mean_c_index": round(float(np.mean(baseline_folds)), 4),
+                "candidate_mean_c_index": round(float(np.mean(candidate_folds)), 4),
+                "mean_delta": round(float(np.mean(fold_differences)), 4),
+                "baseline_fold_c_indices": [round(float(value), 4) for value in baseline_folds],
+                "candidate_fold_c_indices": [round(float(value), 4) for value in candidate_folds],
+                "fold_deltas": [round(float(value), 4) for value in fold_differences],
+            }
+        )
+
+    try:
+        if stats is None:
+            raise RuntimeError("scipy unavailable")
+        wilcoxon = stats.wilcoxon(all_differences, alternative="two-sided", zero_method="wilcox")
+        wilcoxon_statistic = float(wilcoxon.statistic)
+        wilcoxon_p = float(wilcoxon.pvalue)
+    except Exception:
+        wilcoxon_statistic = 0.0
+        wilcoxon_p = 1.0
+
+    return {
+        "baseline_dir": str(baseline_dir),
+        "candidate_dir": str(candidate_dir),
+        "seeds_compared": [entry["seed"] for entry in per_seed],
+        "n_seeds": len(per_seed),
+        "n_paired_folds": len(all_differences),
+        "baseline_mean_c_index": round(float(np.mean([entry["baseline_mean_c_index"] for entry in per_seed])), 4),
+        "candidate_mean_c_index": round(float(np.mean([entry["candidate_mean_c_index"] for entry in per_seed])), 4),
+        "mean_delta": round(float(np.mean(all_differences)), 4),
+        "exact_sign_flip_p": round(float(exact_sign_flip_pvalue(all_differences)), 6),
+        "wilcoxon_statistic": round(wilcoxon_statistic, 6),
+        "wilcoxon_p": round(wilcoxon_p, 6),
+        "per_seed": per_seed,
+    }
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Stage 2 statistical-depth analyses")
+    parser.add_argument("--baseline", type=Path, default=None, help="Baseline experiment directory with per-seed artifacts")
+    parser.add_argument("--candidate", type=Path, default=None, help="Candidate experiment directory with per-seed artifacts")
+    parser.add_argument("--output", type=Path, default=None, help="Optional output JSON path for comparison mode")
+    args = parser.parse_args()
+
+    if args.baseline is not None or args.candidate is not None:
+        if args.baseline is None or args.candidate is None:
+            raise SystemExit("comparison mode requires both --baseline and --candidate")
+        payload = compare_experiment_dirs(args.baseline, args.candidate)
+        output_path = args.output or OUTPUT_PATH
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(json.dumps(payload, indent=2))
+        print(f"Saved Stage 2 comparison results to {output_path}")
+        return
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     encoder_folds: dict[str, list[float]] = {}
@@ -270,10 +395,21 @@ def main() -> None:
     for label, experiment in ENCODER_EXPERIMENTS.items():
         b3_results[f"5_year_{label}"] = time_dependent_auc(load_predictions(experiment), TIME_HORIZONS["5_year"])
 
+    horizon_payload = survival_binary_labels_at_horizon(
+        [float(row["survival_time"]) for row in best_predictions],
+        [int(row["event_observed"]) for row in best_predictions],
+        [float(row["risk_score"]) for row in best_predictions],
+        TIME_HORIZONS["5_year"],
+    )
     b4_results = {
         "horizon_days": TIME_HORIZONS["5_year"],
         "n_bins": 10,
         "calibration_bins": calibration_bins(best_predictions, TIME_HORIZONS["5_year"]),
+        "eligible_patients": int(horizon_payload["n_eligible"]),
+        "eligible_events": int(horizon_payload["n_events"]),
+        "brier_score": round(binary_brier_score(horizon_payload["labels"], horizon_payload["scores"]), 4),
+        "calibration_slope_intercept": calibration_slope_intercept(horizon_payload["labels"], horizon_payload["scores"]),
+        "decision_curve": decision_curve(horizon_payload["labels"], horizon_payload["scores"]),
     }
 
     scores = np.asarray([float(row["risk_score"]) for row in best_predictions], dtype=np.float64)
@@ -315,12 +451,15 @@ def main() -> None:
         },
     }
 
+    b6_results = subgroup_payload("conch_ca_vcg", TIME_HORIZONS["5_year"])
+
     payload = {
         "B1_encoder_pairwise_tests": b1_results,
         "B2_ablation_significance": b2_results,
         "B3_time_dependent_auc": b3_results,
         "B4_survival_calibration": b4_results,
         "B5_alternative_stratification": b5_results,
+        "B6_tcga_subgroups": b6_results,
     }
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Saved Stage 2 statistical depth results to {OUTPUT_PATH}")

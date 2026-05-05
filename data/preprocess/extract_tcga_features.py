@@ -87,7 +87,11 @@ def _extract_one(
 def main() -> None:
     """CLI entrypoint for TCGA slide feature extraction."""
     parser = argparse.ArgumentParser(description="Extract TCGA slide embeddings from tiled HDF5 files")
-    parser.add_argument("--model", default="uni2", choices=["uni2", "conch", "ctranspath", "virchow"])
+    parser.add_argument(
+        "--model",
+        default="uni2",
+        choices=["uni2", "conch", "ctranspath", "virchow", "virchow2", "gigapath", "hoptimus0"],
+    )
     parser.add_argument("--tiles-dir", default=None)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--patch-output-dir", default=None)

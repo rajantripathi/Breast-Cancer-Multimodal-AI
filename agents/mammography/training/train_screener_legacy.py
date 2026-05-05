@@ -1,13 +1,17 @@
 """
-Exact legacy-style screener training path for provenance recovery.
+Training script for mammography screening model.
 
-This mirrors commit f209755:
-- ConvNeXt-Base 4-view attention fusion
-- 224px default image size
-- raw DICOM loading only
-- no explicit augmentations
-- plain BCEWithLogitsLoss
-- shuffle-based training loader
+Recovered from commit f209755, which produced the tracked
+`outputs/mammography/summary.json` benchmark at test AUROC 0.7407.
+
+Usage:
+  python -m agents.mammography.training.train_screener_legacy \
+    --data-dir data/mammography/vindr-mammo/processed \
+    --output-dir outputs/mammography \
+    --epochs 50 \
+    --lr 1e-4 \
+    --batch-size 8 \
+    --device auto
 """
 
 import argparse
@@ -22,7 +26,12 @@ import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 
-from agents.mammography.models.screening_model_legacy import LegacyMammographyScreener
+from agents.mammography.models.screening_model_legacy import LegacyMammographyScreener as MammographyScreener
+from training.reproducibility import (
+    build_run_manifest,
+    get_git_commit as reproducibility_git_commit,
+    set_global_seed,
+)
 
 try:
     import pydicom
@@ -39,6 +48,16 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", required=True)
     parser.add_argument("--output-dir", default="outputs/mammography")
+    parser.add_argument(
+        "--checkpoint",
+        default=None,
+        help="Optional checkpoint to evaluate or resume from. Defaults to <output-dir>/best_model.pt.",
+    )
+    parser.add_argument(
+        "--eval-only",
+        action="store_true",
+        help="Skip training and only evaluate the provided checkpoint on the test split.",
+    )
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--batch-size", type=int, default=8)
@@ -50,11 +69,7 @@ def parse_args():
 
 
 def set_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
+    return set_global_seed(seed)
 
 
 def resolve_device(device_arg):
@@ -129,7 +144,7 @@ def filter_valid_exams(exams):
     return valid, dropped
 
 
-class LegacyMammographyExamDataset(Dataset):
+class MammographyExamDataset(Dataset):
     def __init__(self, exams, image_size):
         if pydicom is None or Image is None:
             raise ImportError("pydicom and Pillow are required for mammography training")
@@ -229,19 +244,44 @@ def run_epoch(model, loader, criterion, device, optimizer=None):
     return metrics
 
 
+@torch.no_grad()
+def predict_dataset(model, loader, device):
+    model.eval()
+    predictions = []
+    for batch in loader:
+        views = {k: v.to(device) for k, v in batch["views"].items()}
+        logits, _ = model(views)
+        probs = torch.sigmoid(logits.squeeze(1)).detach().cpu().numpy()
+        labels = batch["labels"].detach().cpu().numpy()
+        for study_id, label, probability in zip(batch["study_ids"], labels.tolist(), probs.tolist()):
+            predictions.append(
+                {
+                    "study_id": study_id,
+                    "true_label": int(label),
+                    "predicted_probability": float(probability),
+                }
+            )
+    return predictions
+
+
 def save_json(path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2))
 
 
+def get_git_commit():
+    return reproducibility_git_commit(Path(__file__).resolve().parents[3])
+
+
 def main():
     args = parse_args()
-    set_seed(args.seed)
+    seed_state = set_seed(args.seed)
     device = resolve_device(args.device)
 
     data_dir = Path(args.data_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_path = Path(args.checkpoint) if args.checkpoint else (output_dir / "best_model.pt")
 
     metadata_path = data_dir / "metadata.csv"
     if not metadata_path.exists():
@@ -267,9 +307,25 @@ def main():
     if dropped:
         print(f"Dropped invalid exams: {dropped}")
 
-    train_ds = LegacyMammographyExamDataset(split_buckets["train"], args.image_size)
-    val_ds = LegacyMammographyExamDataset(split_buckets["val"], args.image_size)
-    test_ds = LegacyMammographyExamDataset(split_buckets["test"], args.image_size)
+    manifest = build_run_manifest(
+        task="mammography_screener_legacy",
+        args=args,
+        input_paths=[metadata_path],
+        split_counts={key: len(value) for key, value in split_buckets.items()},
+        seed_state=seed_state,
+        extra={
+            "data_dir": str(data_dir),
+            "output_dir": str(output_dir),
+            "raw_dir": str(raw_dir),
+            "dropped_invalid_exams": int(dropped),
+        },
+        repo_root=Path(__file__).resolve().parents[3],
+    )
+    save_json(output_dir / "manifest.json", manifest)
+
+    train_ds = MammographyExamDataset(split_buckets["train"], args.image_size)
+    val_ds = MammographyExamDataset(split_buckets["val"], args.image_size)
+    test_ds = MammographyExamDataset(split_buckets["test"], args.image_size)
 
     train_loader = DataLoader(
         train_ds,
@@ -296,16 +352,43 @@ def main():
         collate_fn=collate_batch,
     )
 
-    model = LegacyMammographyScreener(pretrained=True)
+    model = MammographyScreener(pretrained=True)
     if model.encoder.backbone is None:
         raise RuntimeError("timm is required for real mammography training but is not installed")
     model = model.to(device)
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
     best_val_auroc = -1.0
     best_epoch = -1
     history = []
+
+    if args.eval_only:
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"Missing checkpoint for eval-only run: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        best_epoch = int(checkpoint.get("best_epoch", -1))
+        best_val_auroc = float(checkpoint.get("best_val_auroc", float("nan")))
+        test_metrics = run_epoch(model, test_loader, criterion, device)
+        test_predictions = predict_dataset(model, test_loader, device)
+        summary = {
+            "best_epoch": best_epoch,
+            "best_val_auroc": best_val_auroc,
+            "test_auroc": test_metrics["auroc"],
+            "test_sensitivity_at_90_specificity": test_metrics["sensitivity_at_90_specificity"],
+            "test_specificity_at_90_sensitivity": test_metrics["specificity_at_90_sensitivity"],
+            "train_exams": len(train_ds),
+            "val_exams": len(val_ds),
+            "test_exams": len(test_ds),
+            "image_size": args.image_size,
+            "git_commit": get_git_commit(),
+        }
+        save_json(output_dir / "summary.json", summary)
+        save_json(output_dir / "predictions.json", test_predictions)
+        print(json.dumps(summary, indent=2))
+        return
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train_metrics = run_epoch(model, train_loader, criterion, device, optimizer=optimizer)
@@ -332,15 +415,16 @@ def main():
                     "best_epoch": best_epoch,
                     "best_val_auroc": best_val_auroc,
                 },
-                output_dir / "best_model.pt",
+                checkpoint_path,
             )
 
     if best_epoch < 0:
         raise RuntimeError("Validation AUROC was never defined; check label balance.")
 
-    checkpoint = torch.load(output_dir / "best_model.pt", map_location=device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
     test_metrics = run_epoch(model, test_loader, criterion, device)
+    test_predictions = predict_dataset(model, test_loader, device)
 
     summary = {
         "best_epoch": best_epoch,
@@ -352,9 +436,12 @@ def main():
         "val_exams": len(val_ds),
         "test_exams": len(test_ds),
         "image_size": args.image_size,
+        "git_commit": get_git_commit(),
     }
     save_json(output_dir / "summary.json", summary)
     save_json(output_dir / "history.json", history)
+    save_json(output_dir / "manifest.json", manifest)
+    save_json(output_dir / "predictions.json", test_predictions)
     print(json.dumps(summary, indent=2))
 
 

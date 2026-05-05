@@ -18,7 +18,7 @@ set +a
 source "$REPO_DIR/scripts/isambard/slurm_env.sh"
 export HF_TOKEN="${HF_TOKEN:-}"
 if [ -z "$HF_TOKEN" ]; then
-  echo "WARNING: HF_TOKEN is unset. UNI2, CONCH, and Virchow2 may fail; CTransPath can still work."
+  echo "WARNING: HF_TOKEN is unset. UNI2, CONCH, Virchow2, GigaPath, and H-optimus-0 may fail; CTransPath can still work."
 fi
 python3 -c "import timm; print('timm version:', timm.__version__)"
 python3 -c "import huggingface_hub; print('huggingface_hub version:', huggingface_hub.__version__)"
@@ -31,7 +31,7 @@ declare -A MODEL_STATUS=()
 succeeded=0
 failed=0
 
-for MODEL in ctranspath uni2 conch virchow2; do
+for MODEL in ctranspath uni2 conch virchow2 gigapath hoptimus0; do
   echo "=== START ${MODEL} ==="
   set +e
   python -m agents.vision.extract_features \
@@ -63,7 +63,7 @@ done
 
 status_file="$REPO_DIR/outputs/vision/extraction_status.json"
 printf '{' > "$status_file"
-for model_name in ctranspath uni2 conch virchow2; do
+for model_name in ctranspath uni2 conch virchow2 gigapath hoptimus0; do
   printf '"%s": "%s", ' "$model_name" "${MODEL_STATUS[$model_name]:-not_run}" >> "$status_file"
 done
 printf '"succeeded": %s, "failed": %s}\n' "$succeeded" "$failed" >> "$status_file"
