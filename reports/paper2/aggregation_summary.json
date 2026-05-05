@@ -124,5 +124,22 @@
     "mean_c_index": 0.6125,
     "std_across_seeds": 0.0091,
     "mean_auroc": 0.5641
+  },
+  "final_decision": {
+    "default_aggregation": "mean",
+    "decision": "mean pooling adopted as default after MIL ablation",
+    "rationale": [
+      "verifier_abmil did not improve over verifier_mean in the 3-seed sweep",
+      "verifier_transmil improved mean c-index but did not clear the fold-variance robustness gate strongly enough to replace the default",
+      "both MIL variants regressed relative to simple_fusion_mean"
+    ],
+    "paper_default_applies_to": [
+      "stage2 verifier runs",
+      "paper-facing CONCH V+C+G benchmark runs"
+    ],
+    "opt_in_replication_modes": [
+      "abmil",
+      "transmil"
+    ]
   }
 }
