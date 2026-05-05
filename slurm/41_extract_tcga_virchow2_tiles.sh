@@ -51,6 +51,7 @@ fi
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
 BATCH_SIZE="${BATCH_SIZE:-1}"
 NUM_SHARDS="${NUM_SHARDS:-32}"
+SKIP_PATCH_OUTPUT="${SKIP_PATCH_OUTPUT:-1}"
 SLIDE_OUTPUT_DIR="${SLIDE_OUTPUT_DIR:-$REPO_DIR/data/embeddings/virchow2/slides}"
 PATCH_OUTPUT_DIR="${PATCH_OUTPUT_DIR:-$REPO_DIR/data/embeddings/virchow2/patches}"
 mkdir -p "$SLIDE_OUTPUT_DIR" "$PATCH_OUTPUT_DIR"
@@ -68,7 +69,8 @@ if [ -n "${CHUNK_DIR:-}" ]; then
     --batch-size "$BATCH_SIZE" \
     --tile-list "$TILE_LIST" \
     --output-dir "$SLIDE_OUTPUT_DIR" \
-    --patch-output-dir "$PATCH_OUTPUT_DIR"
+    --patch-output-dir "$PATCH_OUTPUT_DIR" \
+    ${SKIP_PATCH_OUTPUT:+--skip-patch-output}
 else
   "$VENV_DIR/bin/python" -u -m data.preprocess.extract_tcga_features \
     --model virchow2 \
@@ -76,5 +78,6 @@ else
     --shard-index "$TASK_ID" \
     --num-shards "$NUM_SHARDS" \
     --output-dir "$SLIDE_OUTPUT_DIR" \
-    --patch-output-dir "$PATCH_OUTPUT_DIR"
+    --patch-output-dir "$PATCH_OUTPUT_DIR" \
+    ${SKIP_PATCH_OUTPUT:+--skip-patch-output}
 fi

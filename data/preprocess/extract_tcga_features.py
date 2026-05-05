@@ -47,6 +47,7 @@ def _extract_one(
     device: Any,
     batch_size: int,
     print_h5_diagnostic: bool,
+    save_patch_embeddings: bool,
 ) -> tuple[Any, Any]:
     """Extract patch and slide embeddings from one tiled slide."""
     import h5py
@@ -60,6 +61,8 @@ def _extract_one(
             print(f"H5 keys: {list(handle.keys())}, shape: {tiles_shape}", flush=True)
         tiles = handle["tiles"]
         patch_embeddings: list[torch.Tensor] = []
+        running_sum: torch.Tensor | None = None
+        total_instances = 0
         for start in range(0, len(tiles), batch_size):
             batch = [transform(Image.fromarray(tile)) for tile in tiles[start : start + batch_size]]
             inputs = torch.stack(batch, dim=0).to(device)
@@ -73,11 +76,19 @@ def _extract_one(
                     outputs = outputs[0]
                 else:
                     raise TypeError(f"{model_key} returned non-tensor outputs")
-            patch_embeddings.append(outputs.detach().cpu())
-    if not patch_embeddings:
+            outputs_cpu = outputs.detach().cpu()
+            batch_sum = outputs_cpu.sum(dim=0)
+            running_sum = batch_sum if running_sum is None else running_sum + batch_sum
+            total_instances += int(outputs_cpu.shape[0])
+            if save_patch_embeddings:
+                patch_embeddings.append(outputs_cpu)
+            del outputs_cpu
+            del outputs
+            del inputs
+    if total_instances == 0 or running_sum is None:
         raise ValueError(f"{tile_path.name} contains no tiles")
-    patch_tensor = torch.cat(patch_embeddings, dim=0)
-    slide_embedding = patch_tensor.mean(dim=0)
+    patch_tensor = torch.cat(patch_embeddings, dim=0) if save_patch_embeddings else None
+    slide_embedding = running_sum / total_instances
     expected_dim = get_embed_dim(model_key)
     if slide_embedding.shape[-1] != expected_dim:
         raise AssertionError(f"{model_key} embedding dim {slide_embedding.shape[-1]} != {expected_dim}")
@@ -95,6 +106,7 @@ def main() -> None:
     parser.add_argument("--tiles-dir", default=None)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--patch-output-dir", default=None)
+    parser.add_argument("--skip-patch-output", action="store_true", help="Write slide embeddings only and skip patch tensors")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--device", default=None)
     parser.add_argument("--shard-index", type=int, default=None)
@@ -114,11 +126,14 @@ def main() -> None:
     settings = load_settings()
     tiles_dir = Path(args.tiles_dir) if args.tiles_dir else settings.project_root / "tcga-brca" / "tiles"
     output_dir = Path(args.output_dir) if args.output_dir else settings.project_root / "tcga-brca" / "embeddings" / args.model
-    patch_output_dir = (
-        Path(args.patch_output_dir) if args.patch_output_dir else settings.project_root / "tcga-brca" / "patch_embeddings" / args.model
-    )
+    patch_output_dir = None
+    if not args.skip_patch_output:
+        patch_output_dir = (
+            Path(args.patch_output_dir) if args.patch_output_dir else settings.project_root / "tcga-brca" / "patch_embeddings" / args.model
+        )
     output_dir.mkdir(parents=True, exist_ok=True)
-    patch_output_dir.mkdir(parents=True, exist_ok=True)
+    if patch_output_dir is not None:
+        patch_output_dir.mkdir(parents=True, exist_ok=True)
 
     device = _device_from_arg(args.device)
     print(f"Loading model {args.model}...", flush=True)
@@ -155,7 +170,7 @@ def main() -> None:
     if tile_list_path is not None:
         print(f"Tile list: {tile_list_path}", flush=True)
     print(f"Slide embedding output directory: {output_dir}", flush=True)
-    print(f"Patch embedding output directory: {patch_output_dir}", flush=True)
+    print(f"Patch embedding output directory: {patch_output_dir if patch_output_dir is not None else '<skipped>'}", flush=True)
     print(f"Found {total_tile_paths} tile files to process", flush=True)
     if tile_list_path is None:
         print(f"Shard {shard_index}/{num_shards}: processing {len(tile_paths)} of {total_tile_paths} files", flush=True)
@@ -167,9 +182,9 @@ def main() -> None:
     for index, tile_path in enumerate(tile_paths, start=1):
         patient_barcode = tile_path.stem
         slide_output = output_dir / f"{patient_barcode}.pt"
-        patch_output = patch_output_dir / f"{patient_barcode}.pt"
+        patch_output = patch_output_dir / f"{patient_barcode}.pt" if patch_output_dir is not None else None
         print(f"Processing {index}/{len(tile_paths)}: {tile_path.name}", flush=True)
-        if slide_output.exists() and patch_output.exists():
+        if slide_output.exists() and (patch_output is None or patch_output.exists()):
             print(f"Skipping existing outputs for {tile_path.name}", flush=True)
             continue
         try:
@@ -181,6 +196,7 @@ def main() -> None:
                 device,
                 args.batch_size,
                 print_h5_diagnostic=not printed_h5_diagnostic,
+                save_patch_embeddings=patch_output_dir is not None,
             )
             printed_h5_diagnostic = True
         except (OSError, KeyError, ValueError, TypeError, AssertionError) as exc:
@@ -188,9 +204,13 @@ def main() -> None:
             print(f"skip failed tile file {tile_path.name}: {type(exc).__name__}: {exc}", flush=True)
             continue
         torch.save(slide_tensor, slide_output)
-        torch.save(patch_tensor, patch_output)
+        if patch_output is not None and patch_tensor is not None:
+            torch.save(patch_tensor, patch_output)
         processed += 1
-        print(f"Saved embeddings for {tile_path.name}: {slide_output.name}, {patch_output.name}", flush=True)
+        if patch_output is not None:
+            print(f"Saved embeddings for {tile_path.name}: {slide_output.name}, {patch_output.name}", flush=True)
+        else:
+            print(f"Saved slide embedding for {tile_path.name}: {slide_output.name}", flush=True)
         if processed % 50 == 0:
             print(f"processed {processed} slides with {args.model}", flush=True)
     print(f"finished extraction with {args.model}, processed={processed}, skipped={skipped}", flush=True)

@@ -50,6 +50,7 @@ fi
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
 BATCH_SIZE="${BATCH_SIZE:-1}"
 NUM_SHARDS="${NUM_SHARDS:-32}"
+SKIP_PATCH_OUTPUT="${SKIP_PATCH_OUTPUT:-1}"
 SLIDE_OUTPUT_DIR="${SLIDE_OUTPUT_DIR:-$PROJECT_ROOT/tcga-brca/embeddings/gigapath}"
 PATCH_OUTPUT_DIR="${PATCH_OUTPUT_DIR:-$PROJECT_ROOT/tcga-brca/patch_embeddings/gigapath}"
 mkdir -p "$SLIDE_OUTPUT_DIR" "$PATCH_OUTPUT_DIR"
@@ -67,7 +68,8 @@ if [ -n "${CHUNK_DIR:-}" ]; then
     --batch-size "$BATCH_SIZE" \
     --tile-list "$TILE_LIST" \
     --output-dir "$SLIDE_OUTPUT_DIR" \
-    --patch-output-dir "$PATCH_OUTPUT_DIR"
+    --patch-output-dir "$PATCH_OUTPUT_DIR" \
+    ${SKIP_PATCH_OUTPUT:+--skip-patch-output}
 else
   "$VENV_DIR/bin/python" -u -m data.preprocess.extract_tcga_features \
     --model gigapath \
@@ -75,5 +77,6 @@ else
     --shard-index "$TASK_ID" \
     --num-shards "$NUM_SHARDS" \
     --output-dir "$SLIDE_OUTPUT_DIR" \
-    --patch-output-dir "$PATCH_OUTPUT_DIR"
+    --patch-output-dir "$PATCH_OUTPUT_DIR" \
+    ${SKIP_PATCH_OUTPUT:+--skip-patch-output}
 fi
