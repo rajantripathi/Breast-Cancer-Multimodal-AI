@@ -409,8 +409,8 @@ def run_simple_fusion_inference(args: argparse.Namespace, output_dir: Path) -> P
     seed_state = set_global_seed(int(args.seed))
     output_dir.mkdir(parents=True, exist_ok=True)
     device = _resolve_device(str(args.device))
-    reference_endpoint = str(getattr(args, "reference_endpoint", args.endpoint))
-    reference_horizon = float(getattr(args, "reference_survival_horizon_days", args.survival_horizon_days))
+    reference_endpoint = str(getattr(args, "reference_endpoint", None) or args.endpoint)
+    reference_horizon = float(getattr(args, "reference_survival_horizon_days", None) or args.survival_horizon_days)
     reference_frame, _clinical, feature_columns = _load_aligned_frame(
         Path(args.reference_crosswalk),
         Path(args.reference_clinical_csv),
