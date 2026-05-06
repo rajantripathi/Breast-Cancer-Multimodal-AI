@@ -90,14 +90,26 @@ def _fetch_patients(page_size: int) -> list[str]:
     return patient_ids
 
 
-def _fetch_patient_clinical(patient_ids: list[str]) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    for patient_id in patient_ids:
-        clinical_rows = _request_json(f"/studies/{STUDY_ID}/patients/{patient_id}/clinical-data")
-        values = {item.get("clinicalAttributeId"): item.get("value") for item in clinical_rows}
-        values["patient_id"] = patient_id
-        rows.append(values)
-    return rows
+def _fetch_patient_clinical(patient_ids: list[str], attribute_ids: list[str], batch_size: int) -> list[dict[str, Any]]:
+    grouped: dict[str, dict[str, Any]] = {patient_id: {"patient_id": patient_id} for patient_id in patient_ids}
+    for start in range(0, len(patient_ids), batch_size):
+        chunk = patient_ids[start : start + batch_size]
+        payload = {"ids": chunk, "attributeIds": attribute_ids}
+        rows = _request_json(
+            f"/studies/{STUDY_ID}/clinical-data/fetch?clinicalDataType=PATIENT&projection=SUMMARY",
+            payload,
+        )
+        for row in rows:
+            patient_id = str(row.get("patientId") or "").strip()
+            attribute_id = str(row.get("clinicalAttributeId") or "").strip()
+            if not patient_id or not attribute_id:
+                continue
+            grouped.setdefault(patient_id, {"patient_id": patient_id})[attribute_id] = row.get("value")
+        print(
+            f"downloaded clinical data for {min(start + batch_size, len(patient_ids))}/{len(patient_ids)} patients",
+            flush=True,
+        )
+    return [grouped[patient_id] for patient_id in patient_ids]
 
 
 def _fetch_gene_map(hugo_symbols: list[str], batch_size: int) -> tuple[dict[str, int], list[str]]:
@@ -242,6 +254,7 @@ def main() -> None:
     parser.add_argument("--molecular-profile-id", default=DEFAULT_MOLECULAR_PROFILE)
     parser.add_argument("--sample-list-id", default=DEFAULT_SAMPLE_LIST)
     parser.add_argument("--page-size", type=int, default=500)
+    parser.add_argument("--clinical-batch-size", type=int, default=250)
     parser.add_argument("--gene-map-batch-size", type=int, default=500)
     parser.add_argument("--expression-batch-size", type=int, default=32)
     parser.add_argument("--horizon-days", type=float, default=DEFAULT_HORIZON_DAYS)
@@ -258,7 +271,11 @@ def main() -> None:
     study = _request_json(f"/studies/{STUDY_ID}")
     attributes = _request_json(f"/studies/{STUDY_ID}/clinical-attributes?projection=SUMMARY")
     patient_ids = _fetch_patients(int(args.page_size))
-    raw_clinical_rows = _fetch_patient_clinical(patient_ids)
+    raw_clinical_rows = _fetch_patient_clinical(
+        patient_ids,
+        list(DEFAULT_ATTRIBUTES),
+        int(args.clinical_batch_size),
+    )
 
     _write_csv(metadata_dir / "clinical_raw.csv", raw_clinical_rows)
     write_json(metadata_dir / "study.json", study)
