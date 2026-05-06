@@ -15,40 +15,82 @@
   - DeLong ROC comparison
   - calibration and Brier utilities
 
-## CPTAC-BRCA blocker
+## CPTAC-BRCA status
 
-The genomics side is reachable through `GDC`:
+The public imaging and RNA sides can be aligned.
 
-- CPTAC breast RNA-seq `Gene Expression Quantification` files are available.
-- The current probe found `135` RNA-seq files under `CPTAC-2`.
-- GDC submitter IDs use the expected CPTAC subject form, e.g. `05BR001`.
+- The official TCIA collection page confirms `134` subjects in `CPTAC-BRCA`.
+- The TCIA/pathdb cohort-builder CSV is usable even though the older NBIA v1
+  probe endpoints returned empty payloads.
+- That pathdb manifest contains:
+  - `patient_id`
+  - `slide_id`
+  - `camic_id`
+  - direct `wsiimage_url` links to the SVS files
+- The public GDC CPTAC breast RNA-seq manifest contains `134` patient IDs.
+- The direct patient-ID overlap between TCIA/pathdb and GDC is `122` patients.
 
-The imaging side is not yet consumable programmatically from the current
-Isambard environment:
+Implication:
 
-- The official collection page confirms `134` subjects in `CPTAC-BRCA`.
-- The public NBIA v1 probe endpoints for `CPTAC-BRCA` returned empty payloads
-  for `getPatient` and `getSeries` from Isambard.
-- That means the patient-level TCIA imaging manifest needed for a deterministic
-  subject join is not available through the current direct API path.
+- `CPTAC-BRCA` is **ready for V+G alignment and slide download**.
+- The branch script `data/preprocess/download_cptac_brca.py` now codifies that
+  overlap and writes:
+  - `external/cptac_brca/metadata/tcia_slide_manifest.csv`
+  - `external/cptac_brca/metadata/gdc_rnaseq_manifest.csv`
+  - `external/cptac_brca/metadata/alignment_probe.json`
 
-## Stop-rule outcome
+Current limitation:
 
-Phase 4 is blocked before WSI download and before inference.
+- I did **not** identify a public survival endpoint for CPTAC-BRCA in the
+  sources used here.
+- GDC public case fields expose age and pathologic stage, but not a usable
+  survival outcome.
+- The public `brca_cptac_2020` cBioPortal study exposes receptor/status fields
+  but no survival attributes.
 
-Reason:
+So CPTAC currently supports:
 
-- patient-level TCIA to GDC alignment count cannot be computed reliably from
-  the current environment because the TCIA side is not exposing a usable
-  machine-readable patient manifest for `CPTAC-BRCA`.
+- image download
+- image/RNA patient alignment
+- likely `V+G` or `V` external inference runs
 
-The branch contains a codified probe at:
+But it does **not yet support a public external C-index calculation** without
+an additional outcome source.
 
-- `data/preprocess/download_cptac_brca.py`
+## METABRIC status
 
-That script writes:
+The public `brca_metabric` cBioPortal study is viable for quantitative external
+validation of the non-vision arm.
 
-- `external/cptac_brca/metadata/cptac_collection_probe.json`
-- `external/cptac_brca/metadata/tcia_nbia_probe.json`
-- `external/cptac_brca/metadata/gdc_rnaseq_manifest.json`
-- `external/cptac_brca/metadata/alignment_probe.json`
+Verified public attributes include:
+
+- `AGE_AT_DIAGNOSIS`
+- `ER_IHC`
+- `HER2_SNP6`
+- `OS_MONTHS`
+- `OS_STATUS`
+- `PR_STATUS`
+- `TUMOR_STAGE`
+- `GRADE`
+
+Verified molecular profiles include:
+
+- `brca_metabric_mrna`
+- `brca_metabric_mrna_median_all_sample_Zscores`
+
+The branch script `data/preprocess/download_metabric.py` now downloads the
+patient-level clinical metadata from those endpoints into:
+
+- `external/metabric/metadata/clinical_raw.csv`
+- `external/metabric/metadata/study.json`
+- `external/metabric/metadata/clinical_attributes.json`
+
+## Practical Phase 4 interpretation
+
+- `METABRIC` is the cohort that can produce the first quantitative external
+  survival number now.
+- `CPTAC-BRCA` is no longer blocked on imaging/RNA alignment, but it is still
+  blocked on publicly accessible survival outcomes.
+- The next defensible move is:
+  1. complete METABRIC `C+G` / `G-only` external evaluation
+  2. keep CPTAC as a matched image+RNA external cohort pending outcome labels
