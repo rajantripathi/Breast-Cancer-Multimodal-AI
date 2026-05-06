@@ -15,6 +15,7 @@ import csv
 import json
 import math
 from pathlib import Path
+import re
 from typing import Any
 import urllib.request
 
@@ -60,6 +61,11 @@ def _request_json(path: str, payload: Any | None = None) -> Any:
         )
     with urllib.request.urlopen(request, timeout=180) as response:
         return json.load(response)
+
+
+def _request_text(url: str) -> str:
+    with urllib.request.urlopen(url, timeout=180) as response:
+        return response.read().decode("utf-8", errors="replace")
 
 
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -246,6 +252,36 @@ def _build_pathway_matrix(matrix: pd.DataFrame, pathways: dict[str, list[str]]) 
     return pathway_frame
 
 
+def _load_hallmark_pathways_with_fallback(path_hint: str | Path) -> tuple[dict[str, list[str]], str]:
+    path = Path(path_hint)
+    if path.exists():
+        return _load_hallmark_pathways(path), str(path.resolve())
+
+    genesets = _request_json("/genesets?projection=SUMMARY&pageSize=20000&pageNumber=0")
+    hallmark_ids = sorted(
+        {
+            str(item.get("genesetId", "")).strip()
+            for item in genesets
+            if str(item.get("genesetId", "")).strip().startswith("HALLMARK_")
+        }
+    )
+    if not hallmark_ids:
+        raise FileNotFoundError(f"Hallmark GMT {path_hint} is missing and no Hallmark genesets were listed via cBioPortal")
+
+    gene_pattern = re.compile(
+        r"<td valign=\"top\"><a target='_blank' href='http://ensembl.org/[^']+' title='view Ensembl entry for gene symbol'>([^<]+)</a></td>"
+    )
+    pathways: dict[str, list[str]] = {}
+    for index, geneset_id in enumerate(hallmark_ids, start=1):
+        html = _request_text(f"https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/{geneset_id}.html?ex=1")
+        genes = [gene.strip().upper() for gene in gene_pattern.findall(html) if gene.strip()]
+        if not genes:
+            raise ValueError(f"Could not parse members for {geneset_id} from the public MSigDB Hallmark page")
+        pathways[geneset_id] = genes
+        print(f"loaded hallmark definition {index}/{len(hallmark_ids)}: {geneset_id}", flush=True)
+    return pathways, "official_msigdb_hallmark_pages"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Prepare METABRIC external-validation assets from cBioPortal")
     parser.add_argument("--output-dir", required=True, help="Root external/metabric directory")
@@ -297,7 +333,7 @@ def main() -> None:
     clinical_frame["clinical_row_idx"] = clinical_frame.index.astype(int)
     clinical_frame.to_csv(metadata_dir / "clinical.csv", index=False)
 
-    pathways = _load_hallmark_pathways(Path(args.hallmark_gmt))
+    pathways, hallmark_source = _load_hallmark_pathways_with_fallback(args.hallmark_gmt)
     hallmark_genes = sorted({gene.upper() for genes in pathways.values() for gene in genes})
     gene_map, missing_genes = _fetch_gene_map(hallmark_genes, int(args.gene_map_batch_size))
     entrez_to_symbol = {entrez: symbol for symbol, entrez in gene_map.items()}
@@ -332,7 +368,8 @@ def main() -> None:
         "num_features": int(len(pathway_frame.columns)),
         "molecular_profile_id": str(args.molecular_profile_id),
         "sample_list_id": str(args.sample_list_id),
-        "hallmark_gmt": str(Path(args.hallmark_gmt).resolve()),
+        "hallmark_gmt": str(Path(args.hallmark_gmt).resolve()) if Path(args.hallmark_gmt).exists() else "",
+        "hallmark_source": hallmark_source,
         "matrix_output": str(pathway_matrix_path.resolve()),
         "feature_list_path": str(feature_list_path.resolve()),
         "feature_construction": "mean_expression_per_hallmark_gene_set",
