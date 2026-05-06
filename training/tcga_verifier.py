@@ -816,14 +816,13 @@ def _build_vision_tensor(
     vision_aggregation: str,
     max_vision_instances: int | None,
 ) -> tuple[torch.Tensor, int]:
+    if "vision" not in modalities:
+        if vision_aggregation == "mean":
+            return torch.zeros(vision_dim, dtype=torch.float32), 0
+        return torch.zeros((1, vision_dim), dtype=torch.float32), 0
     if vision_aggregation == "mean":
         vision_tensor = _fixed_width(_load_tensor(str(row["vision_path"])), vision_dim)
-        if "vision" not in modalities:
-            vision_tensor = torch.zeros_like(vision_tensor)
         return vision_tensor, 0
-
-    if "vision" not in modalities:
-        return torch.zeros((1, vision_dim), dtype=torch.float32), 0
 
     patch_path = _resolve_patch_vision_path(row)
     patch_tensor = _load_patch_tensor(patch_path, vision_dim)
@@ -859,9 +858,10 @@ def _build_samples(
             vision_aggregation=vision_aggregation,
             max_vision_instances=max_vision_instances,
         )
-        genomics_tensor = _fixed_width(_load_tensor(str(row["genomics_path"])), genomics_dim)
-        if "genomics" not in modalities:
-            genomics_tensor = torch.zeros_like(genomics_tensor)
+        if "genomics" in modalities:
+            genomics_tensor = _fixed_width(_load_tensor(str(row["genomics_path"])), genomics_dim)
+        else:
+            genomics_tensor = torch.zeros(genomics_dim, dtype=torch.float32)
         if "clinical" not in modalities:
             clinical_tensor = torch.zeros_like(clinical_tensor)
             clinical_categories = torch.zeros_like(clinical_categories)
