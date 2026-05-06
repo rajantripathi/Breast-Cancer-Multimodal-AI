@@ -20,13 +20,17 @@ from training.tcga_verifier import (
     _collate,
     _fold_metrics,
     _genomics_metadata,
+    _last_fold_reference_frames,
     _load_aligned_frame,
     _load_tensor,
     _mean_std,
     _parse_clinical_aggregation,
     _parse_genomics_aggregation,
     _parse_modalities,
+    _prediction_calibration,
+    _prediction_rows_to_csv,
     _parse_vision_aggregation,
+    _resolve_device,
     cox_nll_loss,
     CLINICAL_CATEGORICAL_COLUMNS,
     EmbeddedClinicalEncoder,
@@ -209,18 +213,7 @@ def train_simple_fusion(args: argparse.Namespace, output_dir: Path) -> Path:
     genomics_dim = int(first_genomics.numel())
     splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=int(args.seed))
 
-    requested_device = str(args.device).lower()
-    if requested_device == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    elif requested_device.startswith("cuda"):
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-        else:
-            raise RuntimeError("CUDA requested but unavailable")
-    elif requested_device == "cpu":
-        device = torch.device("cpu")
-    else:
-        device = torch.device(requested_device)
+    device = _resolve_device(str(args.device))
 
     fold_metrics: list[dict[str, Any]] = []
     predictions: list[dict[str, Any]] = []
@@ -412,10 +405,145 @@ def train_simple_fusion(args: argparse.Namespace, output_dir: Path) -> Path:
     return output_dir / 'artifact.json'
 
 
+def run_simple_fusion_inference(args: argparse.Namespace, output_dir: Path) -> Path:
+    seed_state = set_global_seed(int(args.seed))
+    output_dir.mkdir(parents=True, exist_ok=True)
+    device = _resolve_device(str(args.device))
+    reference_endpoint = str(getattr(args, "reference_endpoint", args.endpoint))
+    reference_horizon = float(getattr(args, "reference_survival_horizon_days", args.survival_horizon_days))
+    reference_frame, _clinical, feature_columns = _load_aligned_frame(
+        Path(args.reference_crosswalk),
+        Path(args.reference_clinical_csv),
+        reference_endpoint,
+        reference_horizon,
+    )
+    if reference_frame.empty:
+        raise ValueError("Reference TCGA frame produced no samples for inference calibration")
+    train_frame, _, _ = _last_fold_reference_frames(reference_frame, int(args.seed))
+    means, stds = _clinical_scaler(train_frame if not train_frame.empty else reference_frame, feature_columns)
+    clinical_category_schema = _build_clinical_category_schema(reference_frame)
+    target_frame, _, _ = _load_aligned_frame(
+        Path(args.crosswalk),
+        Path(args.clinical_csv),
+        str(args.endpoint),
+        float(args.survival_horizon_days),
+    )
+    if target_frame.empty:
+        raise ValueError("Target external frame produced no aligned samples")
+    modalities = _parse_modalities(args.modalities)
+    vision_aggregation = _parse_vision_aggregation(getattr(args, "vision_aggregation", "mean"))
+    genomics_aggregation = _parse_genomics_aggregation(getattr(args, "genomics_aggregation", "flat"))
+    clinical_aggregation = _parse_clinical_aggregation(getattr(args, "clinical_aggregation", "flat"))
+    max_vision_instances = int(getattr(args, "max_vision_instances", 256))
+
+    first_vision = _load_tensor(str(reference_frame.iloc[0]["vision_path"]))
+    vision_dim = int(first_vision.numel())
+    first_genomics = _load_tensor(str(reference_frame.iloc[0]["genomics_path"]))
+    genomics_dim = int(first_genomics.numel())
+
+    model = TCGASimpleFusion(
+        vision_dim,
+        genomics_dim,
+        len(feature_columns) or 1,
+        vision_aggregation=vision_aggregation,
+        genomics_aggregation=genomics_aggregation,
+        clinical_aggregation=clinical_aggregation,
+        clinical_category_cardinalities=[len(clinical_category_schema[column]) for column in CLINICAL_CATEGORICAL_COLUMNS],
+    ).to(device)
+    checkpoint_state = torch.load(Path(args.checkpoint), map_location="cpu")
+    model.load_state_dict(checkpoint_state)
+
+    target_samples = _build_samples(
+        target_frame,
+        feature_columns,
+        means,
+        stds,
+        vision_dim,
+        genomics_dim,
+        modalities,
+        vision_aggregation=vision_aggregation,
+        max_vision_instances=max_vision_instances,
+        category_schema=clinical_category_schema,
+    )
+    batch_cap = 4 if vision_aggregation != "mean" else 16
+    target_loader = DataLoader(
+        TCGAAlignedDataset(target_samples),
+        batch_size=min(batch_cap, max(1, len(target_samples))),
+        shuffle=False,
+        collate_fn=_collate,
+    )
+    predictions = _predict(model, target_loader, device)
+    summary = _fold_metrics(predictions)
+    summary.update(
+        {
+            'num_samples': len(predictions),
+            'seed': int(args.seed),
+        }
+    )
+    calibration = _prediction_calibration(predictions)
+    manifest = build_run_manifest(
+        task='tcga_simple_late_fusion_external_inference',
+        args=args,
+        input_paths=[
+            Path(args.checkpoint),
+            Path(args.reference_crosswalk),
+            Path(args.reference_clinical_csv),
+            Path(args.crosswalk),
+            Path(args.clinical_csv),
+        ],
+        split_counts={
+            'reference_samples': int(len(reference_frame)),
+            'target_samples': int(len(target_frame)),
+        },
+        seed_state=seed_state,
+        extra={
+            'modalities': sorted(modalities),
+            'vision_aggregation': vision_aggregation,
+            'genomics_aggregation': genomics_aggregation,
+            'clinical_aggregation': clinical_aggregation,
+        },
+        repo_root=Path(__file__).resolve().parents[1],
+    )
+    artifact = {
+        'task': 'simple_fusion_external_inference',
+        'model_name': 'tcga_simple_late_fusion',
+        'device': str(device),
+        'checkpoint_path': str(Path(args.checkpoint)),
+        'reference_crosswalk': str(Path(args.reference_crosswalk)),
+        'reference_clinical_csv': str(Path(args.reference_clinical_csv)),
+        'crosswalk_path': str(Path(args.crosswalk)),
+        'clinical_csv': str(Path(args.clinical_csv)),
+        'endpoint': str(args.endpoint),
+        'survival_horizon_days': float(args.survival_horizon_days),
+        'modalities': sorted(modalities),
+        'vision_aggregation': vision_aggregation,
+        'genomics_aggregation': genomics_aggregation,
+        'clinical_aggregation': clinical_aggregation,
+        'max_vision_instances': max_vision_instances,
+        'metrics': summary,
+        'calibration': calibration,
+        'predictions': predictions,
+        'seed_state': seed_state,
+    }
+    write_json(output_dir / 'manifest.json', manifest)
+    write_json(output_dir / 'artifact.json', artifact)
+    write_json(output_dir / 'summary.json', summary)
+    write_json(output_dir / 'calibration.json', calibration)
+    write_json(output_dir / 'predictions.json', predictions)
+    _prediction_rows_to_csv(output_dir / 'predictions.csv', predictions)
+    return output_dir / 'artifact.json'
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='TCGA simple fusion trainer')
     parser.add_argument('--crosswalk', required=True)
     parser.add_argument('--clinical-csv', required=True)
+    parser.add_argument('--inference-only', action='store_true')
+    parser.add_argument('--checkpoint', default=None)
+    parser.add_argument('--reference-crosswalk', default=None)
+    parser.add_argument('--reference-clinical-csv', default=None)
+    parser.add_argument('--reference-endpoint', choices=['overall_survival', '5yr_survival', 'pfi'], default=None)
+    parser.add_argument('--reference-survival-horizon-days', type=float, default=None)
     parser.add_argument('--modalities', default='vision,clinical,genomics')
     parser.add_argument('--endpoint', choices=['overall_survival', '5yr_survival', 'pfi'], default='pfi')
     parser.add_argument('--survival-horizon-days', type=float, default=1825.0)
@@ -436,7 +564,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
-    path = train_simple_fusion(args, Path(args.output_dir))
+    if args.inference_only:
+        if not args.checkpoint or not args.reference_crosswalk or not args.reference_clinical_csv:
+            raise ValueError('--checkpoint, --reference-crosswalk, and --reference-clinical-csv are required for --inference-only')
+        path = run_simple_fusion_inference(args, Path(args.output_dir))
+    else:
+        path = train_simple_fusion(args, Path(args.output_dir))
     print(f'simple fusion artifact written to {path}', flush=True)
 
 
