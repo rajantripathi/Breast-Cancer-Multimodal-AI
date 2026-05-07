@@ -17,11 +17,20 @@ set -euo pipefail
 source scripts/isambard/slurm_env.sh
 
 EMBED_ROOT="${EMBED_ROOT:-$PROJECT_ROOT/data/mammography/embed}"
+EMBED_UNSIGNED="${EMBED_UNSIGNED:-1}"
 
 python3 -c "import boto3" >/dev/null 2>&1 || {
   echo "Installing boto3 into $VENV_DIR"
   "$VENV_DIR/bin/pip" install boto3
 }
 
-"$VENV_DIR/bin/python" -u -m data.preprocess.download_embed \
+CMD=(
+  "$VENV_DIR/bin/python" -u -m data.preprocess.download_embed
   --output-dir "$EMBED_ROOT/raw"
+)
+
+if [[ "$EMBED_UNSIGNED" == "1" ]]; then
+  CMD+=(--unsigned)
+fi
+
+"${CMD[@]}"

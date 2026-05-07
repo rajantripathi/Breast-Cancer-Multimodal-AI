@@ -20,6 +20,7 @@ RAW_ROOT="${RAW_ROOT:-$EMBED_ROOT/raw}"
 PROCESSED_ROOT="${PROCESSED_ROOT:-$EMBED_ROOT/processed}"
 MANIFEST_PATH="${MANIFEST_PATH:-$PROCESSED_ROOT/download_manifest.txt}"
 LIMIT_IMAGES="${LIMIT_IMAGES:-}"
+EMBED_UNSIGNED="${EMBED_UNSIGNED:-1}"
 
 python3 -c "import boto3" >/dev/null 2>&1 || {
   echo "Installing boto3 into $VENV_DIR"
@@ -36,6 +37,9 @@ CMD=(
 
 if [[ -n "$LIMIT_IMAGES" ]]; then
   CMD+=(--limit-images "$LIMIT_IMAGES")
+fi
+if [[ "$EMBED_UNSIGNED" == "1" ]]; then
+  CMD+=(--unsigned)
 fi
 
 "${CMD[@]}"

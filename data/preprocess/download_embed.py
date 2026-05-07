@@ -42,6 +42,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--region", default="us-east-1", help="AWS region for the EMBED bucket")
     parser.add_argument("--profile", default=None, help="Optional AWS profile name")
     parser.add_argument(
+        "--unsigned",
+        action="store_true",
+        help="Use unsigned anonymous S3 access. Useful when the EMBED bucket is readable without configured AWS credentials.",
+    )
+    parser.add_argument(
         "--table-key",
         action="append",
         default=[],
@@ -76,13 +81,20 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _build_s3_client(profile: str | None, region: str):
+def _build_s3_client(profile: str | None, region: str, *, unsigned: bool):
     try:
         import boto3
     except ImportError as exc:
         raise ImportError("boto3 is required for EMBED download. Install it into the active environment.") from exc
+    try:
+        from botocore import UNSIGNED
+        from botocore.config import Config
+    except ImportError as exc:
+        raise ImportError("botocore is required for EMBED download. Install boto3/botocore into the active environment.") from exc
 
     session = boto3.session.Session(profile_name=profile, region_name=region)
+    if unsigned:
+        return session.client("s3", config=Config(signature_version=UNSIGNED))
     return session.client("s3")
 
 
@@ -141,7 +153,7 @@ def main() -> None:
     raw_tables_dir.mkdir(parents=True, exist_ok=True)
     raw_images_dir.mkdir(parents=True, exist_ok=True)
 
-    client = _build_s3_client(args.profile, args.region)
+    client = _build_s3_client(args.profile, args.region, unsigned=bool(args.unsigned))
 
     table_keys = list(dict.fromkeys(args.table_key or list(DEFAULT_TABLE_KEYS)))
     table_counts = {"downloaded": 0, "skipped_existing": 0, "failed": 0}
@@ -164,6 +176,7 @@ def main() -> None:
         "bucket": args.bucket,
         "region": args.region,
         "profile": args.profile or os.environ.get("AWS_PROFILE"),
+        "unsigned": bool(args.unsigned),
         "tables": {
             "requested_keys": table_keys,
             **table_counts,

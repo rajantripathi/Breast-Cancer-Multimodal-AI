@@ -38,6 +38,8 @@ AI platform (screening + multimodal diagnosis/prognosis).
 ## EMBED External Validation
 - `data.preprocess.download_embed` downloads the EMBED table bundle first and
   then syncs only the selected DICOM objects referenced by a manifest.
+  It supports unsigned S3 reads for the public bucket and can fall back to
+  authenticated AWS access when needed.
 - `agents.mammography.preprocessing.prepare_embed` converts EMBED clinical and
   metadata tables into `metadata.csv` plus `download_manifest.txt`.
 - Recommended first pass:
