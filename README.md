@@ -34,6 +34,7 @@ cancer AI system:
 - **Task:** Population-level breast cancer detection from mammograms
 - **Data:** VinDr-Mammo (5,000 exams, 20,000 images)
 - **Auxiliary Data Path:** optional train-only public mammography expansion via metadata-compatible auxiliary datasets such as CBIS-DDSM
+- **External Validation Path:** EMBED Open Data via a tables-first acquisition and metadata-compatible external evaluation flow
 - **Model:** ConvNeXt-Base with 4-view attention fusion
 - **Final mammography benchmark:** `test_auroc = 0.7407`
 - **CMMD auxiliary ablation:** `test_auroc = 0.7092`
