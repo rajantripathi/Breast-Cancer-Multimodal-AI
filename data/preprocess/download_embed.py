@@ -133,15 +133,18 @@ def _download_many(
     pairs: Iterable[tuple[str, Path]],
     *,
     overwrite: bool,
-) -> dict[str, int]:
-    counts = {"downloaded": 0, "skipped_existing": 0, "failed": 0}
+) -> dict[str, object]:
+    counts: dict[str, object] = {"downloaded": 0, "skipped_existing": 0, "failed": 0, "errors": []}
     for key, target in pairs:
         try:
             status = _download_object(client, bucket, key, target, overwrite=overwrite)
-        except Exception:
-            counts["failed"] += 1
+        except Exception as exc:
+            counts["failed"] = int(counts["failed"]) + 1
+            errors = counts.setdefault("errors", [])
+            if isinstance(errors, list) and len(errors) < 5:
+                errors.append({"key": key, "error": str(exc)})
             continue
-        counts[status] += 1
+        counts[status] = int(counts[status]) + 1
     return counts
 
 
