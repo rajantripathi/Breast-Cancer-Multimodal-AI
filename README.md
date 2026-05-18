@@ -1,5 +1,29 @@
 # Breast Cancer Multimodal AI
 
+> **Pathology foundation model benchmark for survival prediction.**
+> CONCH V+C+G cross-attention architecture. C-index **0.609**. Stage 1 AUROC **0.741** (95% CI 0.649 to 0.825). Log-rank **p = 0.005**.
+
+## Headline Results
+
+| Metric | Value |
+|---|---|
+| Concordance Index (C-index) | 0.609 |
+| Stage 1 AUROC | 0.741 (95% CI 0.649–0.825) |
+| Median split log-rank | p = 0.005 |
+| 5-year time-dependent AUC | 0.612 |
+
+## Foundation Models Benchmarked
+
+- **CONCH** (V+C+G cross-attention) — selected architecture
+- **UNI2** — comparative baseline
+- **CTransPath** — comparative baseline
+
+Mammography module: ConvNeXt-Base baseline (AUROC 0.7407) retained as canonical; pathology pipeline used for survival prediction.
+
+---
+
+# Breast Cancer Multimodal AI
+
 Stage 2 multimodal pathology benchmarking system for breast cancer
 diagnosis and prognosis, with a two-stage screening-to-diagnosis
 deployment path.
