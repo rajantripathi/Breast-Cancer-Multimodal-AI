@@ -1,0 +1,37 @@
+{
+  "overall": {
+    "n_exams": 750,
+    "n_positive": 30,
+    "prevalence": 0.04,
+    "mean_score": 0.03,
+    "auroc": 0.7407
+  },
+  "densities_present": [
+    "B",
+    "C",
+    "D"
+  ],
+  "by_density": {
+    "B": {
+      "n_exams": 73,
+      "n_positive": 5,
+      "prevalence": 0.0685,
+      "mean_score": 0.0687,
+      "auroc": 0.8265
+    },
+    "C": {
+      "n_exams": 564,
+      "n_positive": 24,
+      "prevalence": 0.0426,
+      "mean_score": 0.0288,
+      "auroc": 0.7257
+    },
+    "D": {
+      "n_exams": 113,
+      "n_positive": 1,
+      "prevalence": 0.0088,
+      "mean_score": 0.0108,
+      "auroc": 0.7054
+    }
+  }
+}

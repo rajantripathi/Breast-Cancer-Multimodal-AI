@@ -1,0 +1,16 @@
+Evaluation Report
+Primary Survival Metrics
+- C-index mean: 0.5171
+- C-index std: 0.0452
+- AUROC mean: 0.4636
+- AUROC std: 0.0293
+
+- num_predictions: 157
+- alignment_summary: Verifier trained on 788 patient-aligned bundles
+- endpoint: pfi
+- cv_folds: 5
+- fold_metrics: [{'c_index': 0.5645, 'auroc': 0.4862, 'num_predictions': 158, 'num_events': 20, 'fold': 1, 'classification_threshold': 0.412301}, {'c_index': 0.52, 'auroc': 0.4775, 'num_predictions': 158, 'num_events': 20, 'fold': 2, 'classification_threshold': 0.472461}, {'c_index': 0.4339, 'auroc': 0.4377, 'num_predictions': 158, 'num_events': 20, 'fold': 3, 'classification_threshold': 0.215106}, {'c_index': 0.5179, 'auroc': 0.4204, 'num_predictions': 157, 'num_events': 20, 'fold': 4, 'classification_threshold': 0.016336}, {'c_index': 0.549, 'auroc': 0.496, 'num_predictions': 157, 'num_events': 20, 'fold': 5, 'classification_threshold': 0.621448}]
+- c_index_mean: 0.5171
+- c_index_std: 0.0452
+- auroc_mean: 0.4636
+- auroc_std: 0.0293

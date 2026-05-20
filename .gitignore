@@ -27,3 +27,5 @@ artifacts/
 data/splits/literature_splits.json
 data/splits/verifier_splits.json
 slurm/13_retry_failed_tcga_extract.sh
+core/
+outputs/

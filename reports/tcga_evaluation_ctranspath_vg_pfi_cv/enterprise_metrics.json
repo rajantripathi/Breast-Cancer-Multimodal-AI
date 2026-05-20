@@ -1,0 +1,58 @@
+{
+  "num_predictions": 208,
+  "alignment_summary": "Verifier trained on 1043 patient-aligned bundles",
+  "endpoint": "pfi",
+  "cv_folds": 5,
+  "fold_metrics": [
+    {
+      "c_index": 0.6255,
+      "auroc": 0.5918,
+      "num_predictions": 209,
+      "num_events": 27,
+      "fold": 1,
+      "classification_threshold": 0.573422
+    },
+    {
+      "c_index": 0.636,
+      "auroc": 0.6772,
+      "num_predictions": 209,
+      "num_events": 28,
+      "fold": 2,
+      "classification_threshold": 0.43639
+    },
+    {
+      "c_index": 0.6664,
+      "auroc": 0.5987,
+      "num_predictions": 209,
+      "num_events": 28,
+      "fold": 3,
+      "classification_threshold": 0.477787
+    },
+    {
+      "c_index": 0.6185,
+      "auroc": 0.6468,
+      "num_predictions": 208,
+      "num_events": 27,
+      "fold": 4,
+      "classification_threshold": 0.658655
+    },
+    {
+      "c_index": 0.5318,
+      "auroc": 0.5167,
+      "num_predictions": 208,
+      "num_events": 27,
+      "fold": 5,
+      "classification_threshold": 0.681593
+    }
+  ],
+  "c_index_mean": 0.6156,
+  "c_index_std": 0.045,
+  "auroc_mean": 0.6062,
+  "auroc_std": 0.0547,
+  "primary_results": {
+    "c_index_mean": 0.6156,
+    "c_index_std": 0.045,
+    "auroc_mean": 0.6062,
+    "auroc_std": 0.0547
+  }
+}
