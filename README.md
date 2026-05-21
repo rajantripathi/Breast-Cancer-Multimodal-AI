@@ -68,6 +68,19 @@ cancer AI system:
 - Isambard-AI national supercomputer (NVIDIA GH200, 32 GPUs)
 - Feature extraction parallelised across GPU shards
 
+## Enterprise Architecture and Portfolio Materials
+
+This repository now includes company-facing architecture and interview material:
+
+- [`docs/architecture_blueprints.md`](docs/architecture_blueprints.md): implemented system, DialogXR-style platform, and AWS managed-service diagrams
+- [`docs/enterprise_architecture.md`](docs/enterprise_architecture.md): production reference architecture with guardrails, audit, monitoring, and operational controls
+- [`docs/dialogxr_integration.md`](docs/dialogxr_integration.md): how this project can fit into a DialogXR-style multimodal healthcare platform
+- [`docs/interview_prep.md`](docs/interview_prep.md): concise pitch, architecture walkthrough, likely interview questions, and limitations
+- [`docs/linkedin_post.md`](docs/linkedin_post.md): LinkedIn-ready project post
+- [`docs/cv_project_summary.md`](docs/cv_project_summary.md): CV bullet and portfolio positioning
+
+The recommended positioning is **clinical decision support and research architecture**, not autonomous diagnosis. The strongest enterprise story is that the project combines medical imaging, pathology foundation models, genomics, clinical features, statistical evaluation, Isambard workflows, and governance-aware deployment design.
+
 ## Scope
 
 This repository is the project codebase for the two-stage breast cancer AI
