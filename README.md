@@ -20,10 +20,6 @@
 
 Mammography module: ConvNeXt-Base baseline (AUROC 0.7407) retained as canonical; pathology pipeline used for survival prediction.
 
----
-
-# Breast Cancer Multimodal AI
-
 Stage 2 multimodal pathology benchmarking system for breast cancer
 diagnosis and prognosis, with a two-stage screening-to-diagnosis
 deployment path.
@@ -67,6 +63,17 @@ cancer AI system:
 
 - Isambard-AI national supercomputer (NVIDIA GH200, 32 GPUs)
 - Feature extraction parallelised across GPU shards
+
+## Enterprise Architecture
+
+This repository includes healthcare AI architecture material for governed clinical decision-support workflows:
+
+- [`docs/architecture_blueprints.md`](docs/architecture_blueprints.md): implemented system, healthcare platform, and AWS managed-service diagrams
+- [`docs/enterprise_architecture.md`](docs/enterprise_architecture.md): production reference architecture with guardrails, audit, monitoring, and operational controls
+- [`docs/dialogxr_integration.md`](docs/dialogxr_integration.md): secure multimodal workflow mapping for a DialogXR-style platform
+- [`docs/cv_project_summary.md`](docs/cv_project_summary.md): concise project summary and role-facing technical positioning
+
+The project should be positioned as clinical decision support and research architecture, not autonomous diagnosis. The enterprise value is the combination of medical imaging, pathology foundation models, genomics, clinical features, statistical evaluation, Isambard workflows, and governance-aware deployment design.
 
 ## Scope
 
