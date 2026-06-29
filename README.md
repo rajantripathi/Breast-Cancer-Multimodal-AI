@@ -1,5 +1,18 @@
 # Breast Cancer Multimodal AI
 
+<!-- badges-start -->
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10-blue.svg)
+![Last Commit](https://img.shields.io/github/last-commit/rajantripathi/Breast-Cancer-Multimodal-AI)
+![Stars](https://img.shields.io/github/stars/rajantripathi/Breast-Cancer-Multimodal-AI?style=social)
+![Issues](https://img.shields.io/github/issues/rajantripathi/Breast-Cancer-Multimodal-AI)
+![Code Style: ruff](https://img.shields.io/badge/code%20style-ruff-261230.svg)
+![multimodal-ai](https://img.shields.io/badge/multimodal--ai-informational.svg)
+![biomedical](https://img.shields.io/badge/biomedical-informational.svg)
+![pathology](https://img.shields.io/badge/pathology-informational.svg)
+<!-- badges-end -->
+
+
 > **Pathology foundation model benchmark for survival prediction.**
 > CONCH V+C+G cross-attention architecture. C-index **0.609**. Stage 1 AUROC **0.741** (95% CI 0.649 to 0.825). Log-rank **p = 0.005**.
 
